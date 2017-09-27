@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 
 module.exports = (onRequest) => {
   const handleError = (error, res, next) => {
@@ -11,6 +12,7 @@ module.exports = (onRequest) => {
   };
 
   const app = express();
+  app.use(bodyParser.json());
 
   app.use(express.static('public'));
 
@@ -25,7 +27,10 @@ module.exports = (onRequest) => {
   app.post('/achievement', (req, res) => {
     const achievement = {
       achievement: req.body.achievement,
-      user: req.body.user,
+      user: {
+        username: req.body.user.username,
+        'display-name': req.body.user['display-name'],
+      },
     };
     onRequest.onPostAchievement(achievement, (error) => {
       handleError(error, res, () => {

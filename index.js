@@ -1,8 +1,14 @@
 const httpServer = require('./httpServer');
+const showAchievement = require('./showAchievement');
 const testAchievement = require('./testAchievement');
 const achievement = require('./achievement');
+const storage = require('node-persist');
 
-const ach = achievement();
+storage.initSync({
+  stringify: output => JSON.stringify(output, null, 2),
+});
+
+const ach = achievement(storage, showAchievement);
 
 const server = httpServer({
   onPostTest: testAchievement,
