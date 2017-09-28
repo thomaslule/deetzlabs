@@ -21,9 +21,10 @@ module.exports = (persist, showAchievement) => {
           achievement: achievement.achievement,
           username: achievement.user['display-name'],
           text: achievementTexts[achievement.achievement] || achievementTexts.default,
-        });
+        }, callback);
+      } else {
+        callback();
       }
-      callback();
     },
     get: (username, callback) => {
       const stored = persist.getItemSync(storeName) || [];

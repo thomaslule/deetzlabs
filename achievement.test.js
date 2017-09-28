@@ -12,7 +12,10 @@ const testAchievement = {
 test('new achievement saved and showed', (done) => {
   const store = dontPersist();
   const mockShow = jest.fn();
-  const ach = achievement(store, mockShow);
+  const ach = achievement(store, (a, callback) => {
+    mockShow(a);
+    callback();
+  });
   ach.received(testAchievement, () => {
     expect(mockShow.mock.calls.length).toBe(1);
     expect(mockShow.mock.calls[0][0]).toEqual({
@@ -41,7 +44,10 @@ test('default text for unknown achievement', (done) => {
 test('nothing showed for existing achievement', (done) => {
   const store = dontPersist();
   const mockShow = jest.fn();
-  const ach = achievement(store, mockShow);
+  const ach = achievement(store, (a, callback) => {
+    mockShow(a);
+    callback();
+  });
   store.setItemSync('achievements', [{ username: 'someone', achievement: 'Testeuse' }]);
   ach.received(testAchievement, () => {
     expect(mockShow.mock.calls.length).toBe(0);

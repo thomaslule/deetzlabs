@@ -1,10 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const logger = require('./logger');
 
 module.exports = (onRequest) => {
   const handleError = (error, res, next) => {
     if (error) {
-      console.error(error);
       res.status(500).send(`${error.name}: ${error.message}`);
     } else {
       next();
@@ -17,6 +17,7 @@ module.exports = (onRequest) => {
   app.use(express.static('public'));
 
   app.post('/test', (req, res) => {
+    logger.info('received /test POST');
     onRequest.onPostTest((error) => {
       handleError(error, res, () => {
         res.sendStatus(200);
@@ -25,6 +26,7 @@ module.exports = (onRequest) => {
   });
 
   app.post('/achievement', (req, res) => {
+    logger.info(`received /achievement POST for ${req.body.achievement} ${req.body.user.username}`);
     const achievement = {
       achievement: req.body.achievement,
       user: {
@@ -40,7 +42,8 @@ module.exports = (onRequest) => {
   });
 
   app.get('/achievements/:username', (req, res) => {
-    onRequest.onGetAchievements((error, achievements) => {
+    logger.info(`received /achievements GET for ${req.params.username}`);
+    onRequest.onGetAchievements(req.params.username, (error, achievements) => {
       handleError(error, res, () => {
         res.send(achievements);
       });
