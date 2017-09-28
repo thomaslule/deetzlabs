@@ -10,28 +10,24 @@ module.exports = (persist, showAchievement) => {
 
   return {
     received: (achievement, callback) => {
-      persist.getItem(storeName)
-        .then((stored = []) => {
-          if (stored.filter(a => achEquals(a, achievement)).length === 0) {
-            stored.push({
-              username: achievement.user.username,
-              achievement: achievement.achievement,
-            });
-            persist.setItem(storeName, stored);
-            showAchievement({
-              achievement: achievement.achievement,
-              username: achievement.user['display-name'],
-              text: achievementTexts[achievement.achievement] || achievementTexts.default,
-            });
-          }
-          callback();
+      const stored = persist.getItemSync(storeName) || [];
+      if (stored.filter(a => achEquals(a, achievement)).length === 0) {
+        stored.push({
+          username: achievement.user.username,
+          achievement: achievement.achievement,
         });
+        persist.setItemSync(storeName, stored);
+        showAchievement({
+          achievement: achievement.achievement,
+          username: achievement.user['display-name'],
+          text: achievementTexts[achievement.achievement] || achievementTexts.default,
+        });
+      }
+      callback();
     },
     get: (username, callback) => {
-      persist.getItem(storeName)
-        .then((stored = []) => {
-          callback(null, stored.filter(a => a.username === username).map(a => a.achievement));
-        });
+      const stored = persist.getItemSync(storeName) || [];
+      callback(null, stored.filter(a => a.username === username).map(a => a.achievement));
     },
   };
 };

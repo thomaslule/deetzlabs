@@ -20,7 +20,7 @@ test('new achievement saved and showed', (done) => {
       username: 'Someone',
       text: '%USER% bidouille des trucs',
     });
-    const stored = store.getItemAsync('achievements');
+    const stored = store.getItemSync('achievements');
     expect(stored.length).toBe(1);
     expect(stored[0]).toEqual({ username: 'someone', achievement: 'Testeuse' });
     done();
@@ -42,7 +42,7 @@ test('nothing showed for existing achievement', (done) => {
   const store = dontPersist();
   const mockShow = jest.fn();
   const ach = achievement(store, mockShow);
-  store.setItemAsync('achievements', [{ username: 'someone', achievement: 'Testeuse' }]);
+  store.setItemSync('achievements', [{ username: 'someone', achievement: 'Testeuse' }]);
   ach.received(testAchievement, () => {
     expect(mockShow.mock.calls.length).toBe(0);
     done();
@@ -51,7 +51,7 @@ test('nothing showed for existing achievement', (done) => {
 
 test('get return achievements array', (done) => {
   const store = dontPersist();
-  store.setItemAsync('achievements', [
+  store.setItemSync('achievements', [
     { username: 'someone', achievement: 'Testeuse' },
     { username: 'someone', achievement: 'Truqueuse' },
   ]);
