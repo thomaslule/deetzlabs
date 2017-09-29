@@ -3,4 +3,5 @@ module.exports = {
   Testeuse: '%USER% bidouille des trucs',
   'Suédois LV1': 'Hej %USER% !',
   Fossoyeuse: '%USER% est un peu sadique...',
+  'Pom-pom girl': 'Merci pour tes encouragements %USER% !',
 };
