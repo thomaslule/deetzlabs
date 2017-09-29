@@ -1,15 +1,8 @@
 document.getElementById('test-button').onclick = () => {
-  fetch('/test', { method: 'POST' });
-};
-document.getElementById('assign-button').onclick = () => {
-  fetch('/achievement', {
+  fetch('/test', {
     method: 'POST',
     body: JSON.stringify({
-      achievement: 'Truqueuse',
-      user: {
-        username: 'bidule',
-        'display-name': 'Bidule',
-      },
+      secret: document.getElementById('password').value,
     }),
     headers: {
       Accept: 'application/json',

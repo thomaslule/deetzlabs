@@ -1,8 +1,18 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const logger = require('./logger');
+const config = require('./config');
 
 module.exports = (onRequest) => {
+  const checkSecret = (req, res, next) => {
+    if (req.body.secret === config.secret) {
+      next();
+    } else {
+      logger.info('wrong secret no access');
+      res.sendStatus(403);
+    }
+  };
+
   const handleError = (error, res, next) => {
     if (error) {
       res.status(500).send(`${error.name}: ${error.message}`);
@@ -16,7 +26,7 @@ module.exports = (onRequest) => {
 
   app.use(express.static('public'));
 
-  app.post('/test', (req, res) => {
+  app.post('/test', checkSecret, (req, res) => {
     logger.info('received /test POST');
     onRequest.onPostTest((error) => {
       handleError(error, res, () => {
@@ -25,7 +35,7 @@ module.exports = (onRequest) => {
     });
   });
 
-  app.post('/achievement', (req, res) => {
+  app.post('/achievement', checkSecret, (req, res) => {
     logger.info(`received /achievement POST for ${req.body.achievement} ${req.body.user.username}`);
     const achievement = {
       achievement: req.body.achievement,
@@ -41,7 +51,7 @@ module.exports = (onRequest) => {
     });
   });
 
-  app.get('/achievements/:username', (req, res) => {
+  app.get('/achievements/:username', checkSecret, (req, res) => {
     logger.info(`received /achievements GET for ${req.params.username}`);
     onRequest.onGetAchievements(req.params.username, (error, achievements) => {
       handleError(error, res, () => {
