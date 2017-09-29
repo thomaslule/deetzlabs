@@ -1,5 +1,5 @@
 document.getElementById('test-button').onclick = () => {
-  fetch('/test', {
+  fetch('test', {
     method: 'POST',
     body: JSON.stringify({
       secret: document.getElementById('password').value,
