@@ -6,9 +6,9 @@ const config = require('./config');
 module.exports = (achievement, callback) => {
   logger.info('send show achievement command', achievement);
   const requestBody = clone(achievement);
-  requestBody.secret = config.twitch_achievements_secret;
+  requestBody.secret = config.twitch_achievements.secret;
   request({
-    uri: 'http://localhost:3101/achievement',
+    uri: `${config.twitch_achievements.url}/achievement`,
     method: 'POST',
     json: requestBody,
   }, (error) => {
