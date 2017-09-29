@@ -26,7 +26,7 @@ module.exports = (onRequest) => {
 
   app.use(express.static('public'));
 
-  app.post('/test', checkSecret, (req, res) => {
+  app.post(`${config.root_server_path}/test`, checkSecret, (req, res) => {
     logger.info('received /test POST');
     onRequest.onPostTest((error) => {
       handleError(error, res, () => {
@@ -35,7 +35,7 @@ module.exports = (onRequest) => {
     });
   });
 
-  app.post('/achievement', checkSecret, (req, res) => {
+  app.post(`${config.root_server_path}/achievement`, checkSecret, (req, res) => {
     logger.info(`received /achievement POST for ${req.body.achievement} ${req.body.user.username}`);
     const achievement = {
       achievement: req.body.achievement,
@@ -51,7 +51,7 @@ module.exports = (onRequest) => {
     });
   });
 
-  app.get('/achievements/:username', checkSecret, (req, res) => {
+  app.get(`${config.root_server_path}/achievements/:username`, checkSecret, (req, res) => {
     logger.info(`received /achievements GET for ${req.params.username}`);
     onRequest.onGetAchievements(req.params.username, (error, achievements) => {
       handleError(error, res, () => {

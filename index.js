@@ -4,6 +4,7 @@ const httpServer = require('./httpServer');
 const showAchievement = require('./showAchievement');
 const testAchievement = require('./testAchievement');
 const achievement = require('./achievement');
+const config = require('./config');
 
 
 storage.initSync({
@@ -18,6 +19,6 @@ const server = httpServer({
   onGetAchievements: ach.get,
 });
 
-server.listen(3100, () => {
-  logger.info('listening on *:3100');
+server.listen(config.server_port, () => {
+  logger.info(`listening on ${config.server_port}`);
 });
