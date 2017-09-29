@@ -1,4 +1,5 @@
 const achievementTexts = require('./achievementTexts');
+const logger = require('./logger');
 
 module.exports = (persist, showAchievement) => {
   const storeName = 'achievements';
@@ -23,6 +24,7 @@ module.exports = (persist, showAchievement) => {
           text: achievementTexts[achievement.achievement] || achievementTexts.default,
         }, callback);
       } else {
+        logger.info('achievement %s for %s already exists', achievement.achievement, achievement.user.username);
         callback();
       }
     },
