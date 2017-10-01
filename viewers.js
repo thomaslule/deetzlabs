@@ -1,18 +1,12 @@
-const logger = require('./logger');
-
 const viewers = (persist) => {
   const storeName = 'viewers';
   return {
-    received: (name, callback) => {
+    received: (name, callback = () => {}) => {
       const stored = persist.getItemSync(storeName) || [];
-      if (!stored.includes(name)) {
-        stored.push(name);
-        persist.setItemSync(storeName, stored);
-        callback();
-      } else {
-        logger.info('viewer %s already exists', name);
-        callback();
-      }
+      const newStore = stored.filter(n => n.toLowerCase() !== name.toLowerCase());
+      newStore.push(name);
+      persist.setItemSync(storeName, newStore);
+      callback();
     },
     get: () => persist.getItemSync(storeName) || [],
   };
