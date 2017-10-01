@@ -24,8 +24,6 @@ module.exports = (onRequest) => {
   const app = express();
   app.use(bodyParser.json());
 
-  app.use(config.root_server_path, express.static('public'));
-
   app.post(`${config.root_server_path}/check_secret`, checkSecret, (req, res) => {
     res.sendStatus(200);
   });
