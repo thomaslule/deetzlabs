@@ -4,6 +4,7 @@ const httpServer = require('./httpServer');
 const showAchievement = require('./showAchievement');
 const testAchievement = require('./testAchievement');
 const achievement = require('./achievement');
+const viewers = require('./viewers');
 const config = require('./config');
 
 
@@ -12,11 +13,14 @@ storage.initSync({
 });
 
 const ach = achievement(storage, showAchievement);
+const view = viewers(storage);
 
 const server = httpServer({
   onPostTest: testAchievement,
   onPostAchievement: ach.received,
   onGetAchievements: ach.get,
+  onPostViewer: view.received,
+  onGetViewers: view.get,
 });
 
 server.listen(config.server_port, () => {

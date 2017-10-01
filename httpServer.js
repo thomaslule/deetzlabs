@@ -5,7 +5,7 @@ const config = require('./config');
 
 module.exports = (onRequest) => {
   const checkSecret = (req, res, next) => {
-    if (req.body.secret === config.secret) {
+    if (req.body.secret === config.secret || req.param('secret') === config.secret) {
       next();
     } else {
       logger.info('wrong secret no access');
@@ -62,6 +62,21 @@ module.exports = (onRequest) => {
         res.send(achievements);
       });
     });
+  });
+
+  app.post(`${config.root_server_path}/viewer`, checkSecret, (req, res) => {
+    logger.info(`receieved /viewer POST for ${req.body.name}`);
+    onRequest.onPostViewer(req.body.name, (error) => {
+      handleError(error, res, () => {
+        res.sendStatus(200);
+      });
+    });
+  });
+
+  app.get(`${config.root_server_path}/viewers`, checkSecret, (req, res) => {
+    logger.info('received /viewers GET');
+    const viewers = onRequest.onGetViewers();
+    res.send(viewers);
   });
 
   return app;
