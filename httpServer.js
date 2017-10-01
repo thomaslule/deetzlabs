@@ -26,6 +26,10 @@ module.exports = (onRequest) => {
 
   app.use(config.root_server_path, express.static('public'));
 
+  app.post(`${config.root_server_path}/check_secret`, checkSecret, (req, res) => {
+    res.sendStatus(200);
+  });
+
   app.post(`${config.root_server_path}/test`, checkSecret, (req, res) => {
     logger.info('received /test POST');
     onRequest.onPostTest((error) => {
