@@ -2,16 +2,10 @@ const nock = require('nock');
 const httpServer = require('../httpServer');
 const initTestStorage = require('./util/initTestStorage');
 const postMessage = require('./util/postMessage');
+const mockSay = require('./util/mockSay');
 
 let storage;
 let app;
-
-const mockSendCommands = () =>
-  nock('http://localhost:3102')
-    .post('/send_message', {
-      message: 'Moi j\'ai qu\'une commande c\'est !succès',
-    })
-    .reply(200);
 
 beforeEach(() => {
   storage = initTestStorage();
@@ -23,7 +17,7 @@ afterEach(() => {
 });
 
 test('send its commands if someone type !commands', (done) => {
-  const expectedCall = mockSendCommands();
+  const expectedCall = mockSay('Moi j\'ai qu\'une commande c\'est !succès');
   postMessage(app, '!commands')
     .then(() => {
       expectedCall.done();
@@ -32,7 +26,7 @@ test('send its commands if someone type !commands', (done) => {
 });
 
 test('doesnt send anything if its !commands followed by something', (done) => {
-  const expectedCall = mockSendCommands();
+  const expectedCall = mockSay('Moi j\'ai qu\'une commande c\'est !succès');
   postMessage(app, '!commands add truc bidule')
     .then(() => {
       expect(expectedCall.isDone()).toBeFalsy();
