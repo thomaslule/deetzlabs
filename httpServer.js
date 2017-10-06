@@ -41,16 +41,6 @@ module.exports = (storage) => {
     },
   };
 
-  const checkSecret = (req, res, next) => {
-    next();
-    // if (req.body.secret === config.secret || req.param('secret') === config.secret) {
-    //   next();
-    // } else {
-    //   logger.info('wrong secret no access');
-    //   res.sendStatus(403);
-    // }
-  };
-
   const handleError = (error, res, next) => {
     if (error) {
       res.status(500).send(`${error.name}: ${error.message}`);
@@ -66,11 +56,7 @@ module.exports = (storage) => {
     res.sendStatus(200);
   });
 
-  app.post(`${config.root_server_path}/check_secret`, checkSecret, (req, res) => {
-    res.sendStatus(200);
-  });
-
-  app.post(`${config.root_server_path}/test`, checkSecret, (req, res) => {
+  app.post(`${config.root_server_path}/test`, (req, res) => {
     logger.info('received /test POST');
     onRequest.onPostTest((error) => {
       handleError(error, res, () => {
@@ -79,7 +65,7 @@ module.exports = (storage) => {
     });
   });
 
-  app.post(`${config.root_server_path}/achievement`, checkSecret, (req, res) => {
+  app.post(`${config.root_server_path}/achievement`, (req, res) => {
     logger.info(`received /achievement POST for ${req.body.achievement} ${req.body.user.username}`);
     const achievementObj = {
       achievement: req.body.achievement,
@@ -95,7 +81,7 @@ module.exports = (storage) => {
     });
   });
 
-  app.get(`${config.root_server_path}/achievements/:username`, checkSecret, (req, res) => {
+  app.get(`${config.root_server_path}/achievements/:username`, (req, res) => {
     logger.info(`received /achievements GET for ${req.params.username}`);
     onRequest.onGetAchievements(req.params.username, (error, achievements) => {
       handleError(error, res, () => {
@@ -104,13 +90,13 @@ module.exports = (storage) => {
     });
   });
 
-  app.get(`${config.root_server_path}/viewers`, checkSecret, (req, res) => {
+  app.get(`${config.root_server_path}/viewers`, (req, res) => {
     logger.info('received /viewers GET');
     const viewersList = onRequest.onGetViewers();
     res.send(viewersList);
   });
 
-  app.post(`${config.root_server_path}/chat_message`, checkSecret, (req, res) => {
+  app.post(`${config.root_server_path}/chat_message`, (req, res) => {
     onRequest.onPostChatMessage(req.body.user, req.body.message);
     res.sendStatus(200);
   });
