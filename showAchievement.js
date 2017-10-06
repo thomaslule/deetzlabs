@@ -1,5 +1,4 @@
 const request = require('request');
-const clone = require('clone');
 const logger = require('./logger');
 const config = require('./config');
 
@@ -16,12 +15,10 @@ const handleErrors = (error, response) => {
 
 module.exports = (achievement, callback) => {
   logger.info('send show achievement command', achievement);
-  const requestBody = clone(achievement);
-  requestBody.secret = config.twitch_achievements.secret;
   request({
     uri: `${config.twitch_achievements.url}/achievement`,
     method: 'POST',
-    json: requestBody,
+    json: achievement,
   }, (error, response) => {
     const err = handleErrors(error, response);
     callback(err);
