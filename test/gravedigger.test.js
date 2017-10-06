@@ -1,8 +1,8 @@
 const nock = require('nock');
 const httpServer = require('../httpServer');
-const initTestStorage = require('./initTestStorage');
-const postMessage = require('./postMessage');
-const mockAchievement = require('./mockAchievement');
+const initTestStorage = require('./util/initTestStorage');
+const postMessage = require('./util/postMessage');
+const mockAchievement = require('./util/mockAchievement');
 
 let storage;
 let app;
