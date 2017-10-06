@@ -7,12 +7,12 @@ const userHasAchievement = require('./util/userHasAchievement');
 
 let storage;
 let app;
-let achievementMock;
+let expectedCall;
 
 beforeEach(() => {
   storage = initTestStorage();
   app = httpServer(storage);
-  achievementMock = mockAchievement('Fossoyeuse', '%USER% est un peu sadique...');
+  expectedCall = mockAchievement('Fossoyeuse', '%USER% est un peu sadique...');
 });
 
 afterEach(() => {
@@ -27,7 +27,7 @@ test('counter goes up when user says !rip', (done) => {
     })
     .then(() => {
       expect(storage.getItemSync('gravedigger')).toEqual({ someone: 2 });
-      expect(achievementMock.isDone()).toBe(false);
+      expect(expectedCall.isDone()).toBe(false);
       expect(userHasAchievement(storage, 'Fossoyeuse')).toBeFalsy();
       done();
     });
@@ -37,7 +37,7 @@ test('achievement showed on 5th !rip', (done) => {
   storage.setItemSync('gravedigger', { someone: 4 });
   postMessage(app, '!rip')
     .then(() => {
-      achievementMock.done();
+      expectedCall.done();
       expect(userHasAchievement(storage, 'Fossoyeuse')).toBeTruthy();
       done();
     });
@@ -47,7 +47,7 @@ test('achievement not showed on 6th !rip', (done) => {
   storage.setItemSync('gravedigger', { someone: 5 });
   postMessage(app, '!rip')
     .then(() => {
-      expect(achievementMock.isDone()).toBe(false);
+      expect(expectedCall.isDone()).toBe(false);
       done();
     });
 });
