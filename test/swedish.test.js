@@ -3,12 +3,11 @@ const httpServer = require('../httpServer');
 const initTestStorage = require('./util/initTestStorage');
 const postMessage = require('./util/postMessage');
 const mockAchievement = require('./util/mockAchievement');
+const userHasAchievement = require('./util/userHasAchievement');
 
 let storage;
 let app;
 let achievementMock;
-
-const achievementEntry = { username: 'someone', achievement: 'Suédois LV1' };
 
 beforeEach(() => {
   storage = initTestStorage();
@@ -25,7 +24,7 @@ test('give achievement when user says Hej', (done) => {
     .then((response) => {
       expect(response.statusCode).toBe(200);
       achievementMock.done();
-      expect(storage.getItemSync('achievements')).toEqual([achievementEntry]);
+      expect(userHasAchievement(storage, 'Suédois LV1')).toBeTruthy();
       done();
     });
 });
@@ -46,7 +45,7 @@ test('dont give achievement twice when user says Hej twice', (done) => {
 });
 
 test('dont give achievement if user already has it', (done) => {
-  storage.setItemSync('achievements', [achievementEntry]);
+  storage.setItemSync('achievements', [{ username: 'someone', achievement: 'Suédois LV1' }]);
   postMessage(app, 'Hej !')
     .then((response) => {
       expect(response.statusCode).toBe(200);

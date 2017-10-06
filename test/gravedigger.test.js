@@ -3,6 +3,7 @@ const httpServer = require('../httpServer');
 const initTestStorage = require('./util/initTestStorage');
 const postMessage = require('./util/postMessage');
 const mockAchievement = require('./util/mockAchievement');
+const userHasAchievement = require('./util/userHasAchievement');
 
 let storage;
 let app;
@@ -27,6 +28,7 @@ test('counter goes up when user says !rip', (done) => {
     .then(() => {
       expect(storage.getItemSync('gravedigger')).toEqual({ someone: 2 });
       expect(achievementMock.isDone()).toBe(false);
+      expect(userHasAchievement(storage, 'Fossoyeuse')).toBeFalsy();
       done();
     });
 });
@@ -36,6 +38,7 @@ test('achievement showed on 5th !rip', (done) => {
   postMessage(app, '!rip')
     .then(() => {
       achievementMock.done();
+      expect(userHasAchievement(storage, 'Fossoyeuse')).toBeTruthy();
       done();
     });
 });
