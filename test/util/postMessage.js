@@ -1,11 +1,13 @@
 const request = require('supertest');
 
-module.exports = (app, message) => request(app)
-  .post('/api/chat_message')
-  .send({
-    user: {
-      username: 'someone',
-      'display-name': 'Someone',
-    },
-    message,
-  });
+module.exports = (app, message, displayName = 'Someone', username = 'someone') =>
+  request(app)
+    .post('/api/chat_message')
+    .send({
+      user: {
+        username,
+        'display-name': displayName,
+      },
+      message,
+    })
+    .expect(200);

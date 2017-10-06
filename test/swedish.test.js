@@ -21,8 +21,7 @@ afterEach(() => {
 
 test('give achievement when user says Hej', (done) => {
   postMessage(app, 'Hej !')
-    .then((response) => {
-      expect(response.statusCode).toBe(200);
+    .then(() => {
       achievementMock.done();
       expect(userHasAchievement(storage, 'Suédois LV1')).toBeTruthy();
       done();
@@ -31,14 +30,12 @@ test('give achievement when user says Hej', (done) => {
 
 test('dont give achievement twice when user says Hej twice', (done) => {
   postMessage(app, 'Hej !')
-    .then((response1) => {
-      expect(response1.statusCode).toBe(200);
+    .then(() => {
       achievementMock.done();
       achievementMock = mockAchievement('Suédois LV1', 'Hej %USER% !');
       return postMessage(app, 'hej');
     })
-    .then((response2) => {
-      expect(response2.statusCode).toBe(200);
+    .then(() => {
       expect(achievementMock.isDone()).toBe(false);
       done();
     });
@@ -47,8 +44,7 @@ test('dont give achievement twice when user says Hej twice', (done) => {
 test('dont give achievement if user already has it', (done) => {
   storage.setItemSync('achievements', [{ username: 'someone', achievement: 'Suédois LV1' }]);
   postMessage(app, 'Hej !')
-    .then((response) => {
-      expect(response.statusCode).toBe(200);
+    .then(() => {
       expect(achievementMock.isDone()).toBe(false);
       done();
     });
