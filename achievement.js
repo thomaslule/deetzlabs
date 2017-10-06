@@ -1,5 +1,4 @@
 const achievementTexts = require('./achievementTexts');
-const logger = require('./logger');
 
 module.exports = (persist, showAchievement) => {
   const storeName = 'achievements';
@@ -10,7 +9,7 @@ module.exports = (persist, showAchievement) => {
     && storedAchievement.achievement === currentAchievement.achievement;
 
   return {
-    received: (achievement, callback) => {
+    received: (achievement, callback = () => {}) => {
       const stored = persist.getItemSync(storeName) || [];
       if (stored.filter(a => achEquals(a, achievement)).length === 0) {
         stored.push({
@@ -24,7 +23,6 @@ module.exports = (persist, showAchievement) => {
           text: achievementTexts[achievement.achievement] || achievementTexts.default,
         }, callback);
       } else {
-        logger.info('achievement %s for %s already exists', achievement.achievement, achievement.user.username);
         callback();
       }
     },

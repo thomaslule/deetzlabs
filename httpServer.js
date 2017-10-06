@@ -62,19 +62,15 @@ module.exports = (onRequest) => {
     });
   });
 
-  app.post(`${config.root_server_path}/viewer`, checkSecret, (req, res) => {
-    logger.info(`receieved /viewer POST for ${req.body.name}`);
-    onRequest.onPostViewer(req.body.name, (error) => {
-      handleError(error, res, () => {
-        res.sendStatus(200);
-      });
-    });
-  });
-
   app.get(`${config.root_server_path}/viewers`, checkSecret, (req, res) => {
     logger.info('received /viewers GET');
     const viewers = onRequest.onGetViewers();
     res.send(viewers);
+  });
+
+  app.post(`${config.root_server_path}/chat_message`, checkSecret, (req, res) => {
+    onRequest.onPostChatMessage(req.body.user, req.body.message);
+    res.sendStatus(200);
   });
 
   return app;

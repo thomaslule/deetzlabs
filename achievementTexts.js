@@ -5,4 +5,5 @@ module.exports = {
   Fossoyeuse: '%USER% est un peu sadique...',
   'Pom-pom girl': 'Merci pour tes encouragements %USER% !',
   Mécène: 'Cool ! Merci pour ton soutien %USER%',
+  Ambianceuse: 'Bim plein de messages dans le chat, gg %USER%',
 };
