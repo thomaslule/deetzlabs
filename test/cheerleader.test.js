@@ -7,6 +7,7 @@ const userHasAchievement = require('./util/userHasAchievement');
 let storage;
 let app;
 let expectedCall;
+const code = 'cheerleader';
 
 beforeEach(() => {
   ({ storage, app } = initApp());
@@ -21,11 +22,11 @@ afterEach(() => {
 test('counter goes up when user says !gg', (done) => {
   postMessage(app, '!gg')
     .then(() => {
-      expect(storage.getItemSync('Pom-pom girl')).toEqual({ someone: 1 });
+      expect(storage.getItemSync(code)).toEqual({ someone: 1 });
       return postMessage(app, '!gg encore');
     })
     .then(() => {
-      expect(storage.getItemSync('Pom-pom girl')).toEqual({ someone: 2 });
+      expect(storage.getItemSync(code)).toEqual({ someone: 2 });
       expect(expectedCall.isDone()).toBe(false);
       expect(userHasAchievement(storage, 'cheerleader')).toBeFalsy();
       done();
@@ -33,7 +34,7 @@ test('counter goes up when user says !gg', (done) => {
 });
 
 test('achievement showed on 5th !gg', (done) => {
-  storage.setItemSync('Pom-pom girl', { someone: 4 });
+  storage.setItemSync(code, { someone: 4 });
   postMessage(app, '!gg')
     .then(() => {
       expectedCall.done();
@@ -43,7 +44,7 @@ test('achievement showed on 5th !gg', (done) => {
 });
 
 test('achievement not showed on 6th !gg', (done) => {
-  storage.setItemSync('Pom-pom girl', { someone: 5 });
+  storage.setItemSync(code, { someone: 5 });
   postMessage(app, '!gg')
     .then(() => {
       expect(expectedCall.isDone()).toBe(false);
