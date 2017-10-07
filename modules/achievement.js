@@ -38,6 +38,8 @@ module.exports = (persist, showAchievement, getDisplayName) => {
     },
   ];
 
+  const codeToName = code => achievementsDefinitions.find(def => def.code === code).name;
+
   const achEquals = (stored, code, username) =>
     stored.username === username && stored.achievement === code;
 
@@ -70,7 +72,7 @@ module.exports = (persist, showAchievement, getDisplayName) => {
     return stored
       .filter(a => a.username === username)
       .map(a => a.achievement)
-      .map(code => achievementsDefinitions.find(def => def.code === code).name);
+      .map(codeToName);
   };
 
   const getLasts = () => {
@@ -78,7 +80,11 @@ module.exports = (persist, showAchievement, getDisplayName) => {
     return stored
       .slice(-5)
       .reverse()
-      .map(ach => ({ achievement: ach.achievement, username: getDisplayName(ach.username) }));
+      .map(ach => (
+        {
+          username: getDisplayName(ach.username),
+          achievement: { code: ach.achievement, name: codeToName(ach.achievement) },
+        }));
   };
 
   return { received, get, getLasts };

@@ -32,8 +32,8 @@ test('GET /last_achievements returns the last 5 achievements', (done) => {
     .then((response) => {
       const list = response.body;
       expect(list.length).toBe(5);
-      expect(list[0]).toEqual({ username: 'Someone', achievement: 'entertainer' });
-      expect(list[4]).toEqual({ username: 'Someone', achievement: 'swedish' });
+      expect(list[0]).toEqual({ username: 'Someone', achievement: { code: 'entertainer', name: 'Ambianceuse' } });
+      expect(list[4]).toEqual({ username: 'Someone', achievement: { code: 'swedish', name: 'Suédois LV1' } });
       done();
     });
 });
@@ -45,7 +45,7 @@ test('GET /last_achievements returns all the achievements if less than 5', (done
     .then((response) => {
       const list = response.body;
       expect(list.length).toBe(1);
-      expect(list[0]).toEqual({ username: 'Someone', achievement: 'berzingue' });
+      expect(list[0]).toEqual({ username: 'Someone', achievement: { code: 'berzingue', name: 'Berzingos' } });
       done();
     });
 });
@@ -55,7 +55,7 @@ test('GET /last_achievements returns a lowercase username if not found in last v
     .then(() => request(app).get('/api/last_achievements').expect(200))
     .then((response) => {
       const list = response.body;
-      expect(list[0]).toEqual({ username: 'someone', achievement: 'berzingue' });
+      expect(list[0]).toEqual({ username: 'someone', achievement: { code: 'berzingue', name: 'Berzingos' } });
       done();
     });
 });
