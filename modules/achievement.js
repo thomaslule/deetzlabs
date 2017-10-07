@@ -65,12 +65,12 @@ module.exports = (persist, showAchievement, getDisplayName) => {
     }
   };
 
-  const get = (username, callback) => {
+  const get = (username) => {
     const stored = persist.getItemSync(storeName) || [];
-    callback(null, stored
+    return stored
       .filter(a => a.username === username)
       .map(a => a.achievement)
-      .map(code => achievementsDefinitions.find(def => def.code === code).name));
+      .map(code => achievementsDefinitions.find(def => def.code === code).name);
   };
 
   const getLasts = () => {
