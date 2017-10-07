@@ -2,27 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const logger = require('./logger');
 const config = require('./config');
-const showAchievement = require('./showAchievement');
 const testAchievement = require('./testAchievement');
-const achievement = require('./achievement');
-const viewers = require('./viewers');
-const gravedigger = require('./gravedigger');
-const swedish = require('./swedish');
-const pompomgirl = require('./pompomgirl');
-const commands = require('./commands');
-const sendChatMessage = require('./sendChatMessage');
-const succes = require('./commandSucces');
-const countMessages = require('./countMessages');
 
-module.exports = (storage) => {
-  const ach = achievement(storage, showAchievement);
-  const view = viewers(storage);
-  const gd = gravedigger(storage, ach.received);
-  const sw = swedish(ach.received);
-  const ppg = pompomgirl(storage, ach.received);
-  const comm = commands(sendChatMessage);
-  const succ = succes(ach.get, sendChatMessage);
-  const count = countMessages(storage, ach.received);
+module.exports = (deetzlabs) => {
+  const {
+    achievement, viewers, gravedigger, swedish, pompomgirl, commands, succes, countMessages,
+  } = deetzlabs;
 
   const handleError = (error, res, next) => {
     if (error) {
@@ -58,7 +43,7 @@ module.exports = (storage) => {
         'display-name': req.body.user['display-name'],
       },
     };
-    ach.received(achievementObj, (error) => {
+    achievement.received(achievementObj, (error) => {
       handleError(error, res, () => {
         res.sendStatus(200);
       });
@@ -67,13 +52,21 @@ module.exports = (storage) => {
 
   app.get(`${config.root_server_path}/viewers`, (req, res) => {
     logger.info('received /viewers GET');
-    const viewersList = view.get();
+    const viewersList = viewers.get();
     res.send(viewersList);
   });
 
   app.post(`${config.root_server_path}/chat_message`, (req, res) => {
     const { user, message } = req.body;
-    [view, gd, sw, ppg, comm, succ, count].forEach(obj => obj.receiveMessage(user, message));
+    [
+      viewers,
+      gravedigger,
+      swedish,
+      pompomgirl,
+      commands,
+      succes,
+      countMessages,
+    ].forEach(obj => obj.receiveMessage(user, message));
     res.sendStatus(200);
   });
 

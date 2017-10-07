@@ -1,6 +1,5 @@
 const nock = require('nock');
-const httpServer = require('../httpServer');
-const initTestStorage = require('./util/initTestStorage');
+const initApp = require('./util/initApp');
 const postMessage = require('./util/postMessage');
 const mockSay = require('./util/mockSay');
 const mockAchievement = require('./util/mockAchievement');
@@ -9,8 +8,7 @@ let storage;
 let app;
 
 beforeEach(() => {
-  storage = initTestStorage();
-  app = httpServer(storage);
+  ({ storage, app } = initApp());
 });
 
 afterEach(() => {

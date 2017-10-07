@@ -1,16 +1,13 @@
 const request = require('supertest');
-const httpServer = require('../httpServer');
-const initTestStorage = require('./util/initTestStorage');
+const initApp = require('./util/initApp');
 const postMessage = require('./util/postMessage');
 
-let storage;
 let app;
 
 const getViewers = () => request(app).get('/api/viewers').expect(200);
 
 beforeEach(() => {
-  storage = initTestStorage();
-  app = httpServer(storage);
+  ({ app } = initApp());
 });
 
 test('remember viewer', (done) => {

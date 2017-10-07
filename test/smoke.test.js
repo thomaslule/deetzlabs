@@ -1,8 +1,8 @@
 const request = require('supertest');
-const httpServer = require('../httpServer');
+const initApp = require('./util/initApp');
 
 test('server responds to health check', () => {
-  const app = httpServer();
+  const { app } = initApp();
   return request(app)
     .get('/api/ping')
     .expect(200);

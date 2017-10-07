@@ -1,7 +1,5 @@
 const nock = require('nock');
-const request = require('supertest');
-const httpServer = require('../httpServer');
-const initTestStorage = require('./util/initTestStorage');
+const initApp = require('./util/initApp');
 const mockAchievement = require('./util/mockAchievement');
 const userHasAchievement = require('./util/userHasAchievement');
 const postAchievement = require('./util/postAchievement');
@@ -10,8 +8,7 @@ let storage;
 let app;
 
 beforeEach(() => {
-  storage = initTestStorage();
-  app = httpServer(storage);
+  ({ storage, app } = initApp());
 });
 
 afterEach(() => {

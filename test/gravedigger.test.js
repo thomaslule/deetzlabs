@@ -1,6 +1,5 @@
 const nock = require('nock');
-const httpServer = require('../httpServer');
-const initTestStorage = require('./util/initTestStorage');
+const initApp = require('./util/initApp');
 const postMessage = require('./util/postMessage');
 const mockAchievement = require('./util/mockAchievement');
 const userHasAchievement = require('./util/userHasAchievement');
@@ -10,8 +9,7 @@ let app;
 let expectedCall;
 
 beforeEach(() => {
-  storage = initTestStorage();
-  app = httpServer(storage);
+  ({ storage, app } = initApp());
   expectedCall = mockAchievement('Fossoyeuse', '%USER% est un peu sadique...');
 });
 
