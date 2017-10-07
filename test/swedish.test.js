@@ -15,6 +15,7 @@ beforeEach(() => {
 
 afterEach(() => {
   nock.cleanAll();
+  storage.clearSync();
 });
 
 test('give achievement when user says Hej', (done) => {

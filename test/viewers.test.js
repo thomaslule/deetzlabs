@@ -3,11 +3,16 @@ const initApp = require('./util/initApp');
 const postMessage = require('./util/postMessage');
 
 let app;
+let storage;
 
 const getViewers = () => request(app).get('/api/viewers').expect(200);
 
 beforeEach(() => {
-  ({ app } = initApp());
+  ({ app, storage } = initApp());
+});
+
+afterEach(() => {
+  storage.clearSync();
 });
 
 test('remember viewer', (done) => {

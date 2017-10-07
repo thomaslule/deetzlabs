@@ -13,6 +13,7 @@ beforeEach(() => {
 
 afterEach(() => {
   nock.cleanAll();
+  storage.clearSync();
 });
 
 test('!succès with 0 achievement', (done) => {

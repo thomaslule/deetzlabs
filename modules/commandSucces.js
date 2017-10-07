@@ -1,4 +1,4 @@
-const isCommand = require('./isCommand');
+const isCommand = require('../util/isCommand');
 
 const achievements = (getAchievements, sendMessage) => {
   const userRequestedAchievements = (user) => {

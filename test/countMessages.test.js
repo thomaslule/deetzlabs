@@ -15,6 +15,7 @@ beforeEach(() => {
 
 afterEach(() => {
   nock.cleanAll();
+  storage.clearSync();
 });
 
 test('counter goes up when user says something', (done) => {

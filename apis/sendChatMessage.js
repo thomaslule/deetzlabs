@@ -1,6 +1,6 @@
 const request = require('request');
-const config = require('./config');
-const logger = require('./logger');
+const config = require('../config');
+const logger = require('../logger');
 
 module.exports = (message) => {
   logger.info('send chat message command', message);

@@ -1,4 +1,4 @@
-const achievementTexts = require('./achievementTexts');
+const achievementTexts = require('../achievementTexts');
 
 module.exports = (persist, showAchievement) => {
   const storeName = 'achievements';

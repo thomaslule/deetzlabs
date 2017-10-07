@@ -1,4 +1,4 @@
-const isCommand = require('./isCommand');
+const isCommand = require('../util/isCommand');
 
 const swedish = (sendAchievement) => {
   const userSaidHej = (user) => {

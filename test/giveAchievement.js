@@ -13,6 +13,7 @@ beforeEach(() => {
 
 afterEach(() => {
   nock.cleanAll();
+  storage.clearSync();
 });
 
 test('post to /achievement gives it to user', (done) => {

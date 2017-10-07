@@ -2,11 +2,18 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const logger = require('./logger');
 const config = require('./config');
-const testAchievement = require('./testAchievement');
 
 module.exports = (deetzlabs) => {
   const {
-    achievement, viewers, gravedigger, swedish, pompomgirl, commands, succes, countMessages,
+    achievement,
+    viewers,
+    gravedigger,
+    swedish,
+    pompomgirl,
+    commands,
+    succes,
+    countMessages,
+    testAchievement,
   } = deetzlabs;
 
   const handleError = (error, res, next) => {

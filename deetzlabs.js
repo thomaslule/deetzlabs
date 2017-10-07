@@ -1,13 +1,14 @@
-const showAchievement = require('./showAchievement');
-const achievementModule = require('./achievement');
-const viewersModule = require('./viewers');
-const gravediggerModule = require('./gravedigger');
-const swedishModule = require('./swedish');
-const pompomgirlModule = require('./pompomgirl');
-const commandsModule = require('./commands');
-const sendChatMessageModule = require('./sendChatMessage');
-const succesModule = require('./commandSucces');
-const countMessagesModule = require('./countMessages');
+const showAchievement = require('./apis/showAchievement');
+const sendChatMessage = require('./apis/sendChatMessage');
+const achievementModule = require('./modules/achievement');
+const viewersModule = require('./modules/viewers');
+const gravediggerModule = require('./modules/gravedigger');
+const swedishModule = require('./modules/swedish');
+const pompomgirlModule = require('./modules/pompomgirl');
+const commandsModule = require('./modules/commands');
+const succesModule = require('./modules/commandSucces');
+const countMessagesModule = require('./modules/countMessages');
+const testAchievementModule = require('./modules/testAchievement');
 
 module.exports = (storage) => {
   const achievement = achievementModule(storage, showAchievement);
@@ -15,11 +16,20 @@ module.exports = (storage) => {
   const gravedigger = gravediggerModule(storage, achievement.received);
   const swedish = swedishModule(achievement.received);
   const pompomgirl = pompomgirlModule(storage, achievement.received);
-  const commands = commandsModule(sendChatMessageModule);
-  const succes = succesModule(achievement.get, sendChatMessageModule);
+  const commands = commandsModule(sendChatMessage);
+  const succes = succesModule(achievement.get, sendChatMessage);
   const countMessages = countMessagesModule(storage, achievement.received);
+  const testAchievement = testAchievementModule(showAchievement);
 
   return {
-    achievement, viewers, gravedigger, swedish, pompomgirl, commands, succes, countMessages,
+    achievement,
+    viewers,
+    gravedigger,
+    swedish,
+    pompomgirl,
+    commands,
+    succes,
+    countMessages,
+    testAchievement,
   };
 };

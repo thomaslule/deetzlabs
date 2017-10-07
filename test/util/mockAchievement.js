@@ -1,11 +1,11 @@
 const nock = require('nock');
 
-module.exports = (achievement, text) => (
+module.exports = (achievement, text, username = 'Someone') => (
   nock('http://localhost:3103')
     .post('/achievement', {
       achievement,
       text,
-      username: 'Someone',
+      username,
     })
     .reply(200)
 );

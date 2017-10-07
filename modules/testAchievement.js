@@ -1,6 +1,4 @@
-const showAchievement = require('./showAchievement');
-
-module.exports = (callback) => {
+module.exports = showAchievement => (callback) => {
   showAchievement({
     achievement: 'Testeuse',
     username: 'Berzingator2000',

@@ -1,6 +1,6 @@
 const request = require('request');
-const logger = require('./logger');
-const config = require('./config');
+const logger = require('../logger');
+const config = require('../config');
 
 const handleErrors = (error, response) => {
   if (error) {

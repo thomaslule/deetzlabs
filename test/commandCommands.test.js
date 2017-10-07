@@ -4,13 +4,15 @@ const postMessage = require('./util/postMessage');
 const mockSay = require('./util/mockSay');
 
 let app;
+let storage;
 
 beforeEach(() => {
-  ({ app } = initApp());
+  ({ app, storage } = initApp());
 });
 
 afterEach(() => {
   nock.cleanAll();
+  storage.clearSync();
 });
 
 test('send its commands if someone type !commands', (done) => {
