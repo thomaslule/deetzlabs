@@ -1,6 +1,6 @@
 const isCommand = require('../util/isCommand');
 
-const swedish = (sendAchievement) => {
+module.exports = (sendAchievement) => {
   const userSaidHej = (user) => {
     sendAchievement({
       achievement: 'swedish',
@@ -19,5 +19,3 @@ const swedish = (sendAchievement) => {
     },
   };
 };
-
-module.exports = swedish;

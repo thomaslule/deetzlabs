@@ -1,4 +1,4 @@
-const viewers = (persist) => {
+module.exports = (persist) => {
   const storeName = 'viewers';
   return {
     receiveMessage: (user) => {
@@ -10,5 +10,3 @@ const viewers = (persist) => {
     get: () => persist.getItemSync(storeName) || [],
   };
 };
-
-module.exports = viewers;

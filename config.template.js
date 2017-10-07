@@ -1,4 +1,4 @@
-const config = {
+module.exports = {
   twitch_achievements: {
     url: 'http://localhost:3101',
   },
@@ -8,5 +8,3 @@ const config = {
   root_server_path: '',
   server_port: 3100,
 };
-
-module.exports = config;

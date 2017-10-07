@@ -1,6 +1,6 @@
 const isCommand = require('../util/isCommand');
 
-const achievements = (getAchievements, sendMessage) => {
+module.exports = (getAchievements, sendMessage) => {
   const userRequestedAchievements = (user) => {
     getAchievements(user.username, (error, list) => {
       if (error) {
@@ -21,5 +21,3 @@ const achievements = (getAchievements, sendMessage) => {
     },
   };
 };
-
-module.exports = achievements;

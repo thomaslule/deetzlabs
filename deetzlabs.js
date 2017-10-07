@@ -4,8 +4,8 @@ const achievementModule = require('./modules/achievement');
 const viewersModule = require('./modules/viewers');
 const gravediggerModule = require('./modules/gravedigger');
 const swedishModule = require('./modules/swedish');
-const pompomgirlModule = require('./modules/pompomgirl');
-const commandsModule = require('./modules/commands');
+const cheerleaderModule = require('./modules/cheerleader');
+const commandsModule = require('./modules/commandCommands');
 const succesModule = require('./modules/commandSucces');
 const countMessagesModule = require('./modules/countMessages');
 const testAchievementModule = require('./modules/testAchievement');
@@ -15,7 +15,7 @@ module.exports = (storage) => {
   const viewers = viewersModule(storage);
   const gravedigger = gravediggerModule(storage, achievement.received);
   const swedish = swedishModule(achievement.received);
-  const pompomgirl = pompomgirlModule(storage, achievement.received);
+  const cheerleader = cheerleaderModule(storage, achievement.received);
   const commands = commandsModule(sendChatMessage);
   const succes = succesModule(achievement.get, sendChatMessage);
   const countMessages = countMessagesModule(storage, achievement.received);
@@ -26,7 +26,7 @@ module.exports = (storage) => {
     viewers,
     gravedigger,
     swedish,
-    pompomgirl,
+    cheerleader,
     commands,
     succes,
     countMessages,

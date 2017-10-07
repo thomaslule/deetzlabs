@@ -1,15 +1,15 @@
 const isCommand = require('../util/isCommand');
 
-const pompomgirl = (persist, sendAchievement) => {
-  const achievementName = 'Pom-pom girl';
+module.exports = (persist, sendAchievement) => {
+  const storeName = 'Pom-pom girl';
   const magicNumber = 5;
 
   const userSaidGg = (user) => {
-    const stored = persist.getItemSync(achievementName) || {};
+    const stored = persist.getItemSync(storeName) || {};
     const { username } = user;
     const currentNumber = stored[username] || 0;
     stored[username] = currentNumber + 1;
-    persist.setItemSync(achievementName, stored);
+    persist.setItemSync(storeName, stored);
     if (stored[username] === magicNumber) {
       sendAchievement({
         achievement: 'cheerleader',
@@ -29,5 +29,3 @@ const pompomgirl = (persist, sendAchievement) => {
     },
   };
 };
-
-module.exports = pompomgirl;

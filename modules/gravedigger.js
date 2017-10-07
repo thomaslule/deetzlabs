@@ -1,9 +1,8 @@
 const isCommand = require('../util/isCommand');
 
-const magicNumber = 5;
-
-const gravedigger = (persist, sendAchievement) => {
+module.exports = (persist, sendAchievement) => {
   const storeName = 'gravedigger';
+  const magicNumber = 5;
 
   const userSaidRip = (user) => {
     const stored = persist.getItemSync(storeName) || {};
@@ -30,5 +29,3 @@ const gravedigger = (persist, sendAchievement) => {
     },
   };
 };
-
-module.exports = gravedigger;

@@ -2,7 +2,7 @@ const winston = require('winston');
 
 const tsFormat = () => (new Date()).toLocaleString();
 
-const logger = new (winston.Logger)({
+module.exports = new (winston.Logger)({
   transports: [
     new (winston.transports.Console)({
       timestamp: tsFormat,
@@ -13,5 +13,3 @@ const logger = new (winston.Logger)({
     }),
   ],
 });
-
-module.exports = logger;

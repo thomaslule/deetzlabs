@@ -1,3 +1,1 @@
-const isCommand = (command, message) => message === command || message.startsWith(`${command} `);
-
-module.exports = isCommand;
+module.exports = (command, message) => message === command || message.startsWith(`${command} `);
