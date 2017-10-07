@@ -74,6 +74,10 @@ module.exports = (deetzlabs) => {
     });
   });
 
+  app.get(`${config.root_server_path}/last_achievements`, (req, res) => {
+    res.send(achievement.getLasts());
+  });
+
   app.get(`${config.root_server_path}/viewers`, (req, res) => {
     logger.info('received /viewers GET');
     const viewersList = viewers.get();

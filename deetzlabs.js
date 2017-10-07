@@ -10,9 +10,9 @@ const sayNthTimes = require('./modules/sayNthTimes');
 const isCommand = require('./util/isCommand');
 
 module.exports = (storage) => {
-  const achievementAlert = achievementAlertModule(storage, showAchievement);
-  const achievement = achievementModule(storage, achievementAlert.display);
   const viewers = viewersModule(storage);
+  const achievementAlert = achievementAlertModule(storage, showAchievement);
+  const achievement = achievementModule(storage, achievementAlert.display, viewers.getDisplayName);
   const commands = commandsModule(sendChatMessage);
   const succes = succesModule(achievement.get, sendChatMessage);
   const countMessages = countMessagesModule(storage, achievement.received);

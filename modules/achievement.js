@@ -1,4 +1,4 @@
-module.exports = (persist, showAchievement) => {
+module.exports = (persist, showAchievement, getDisplayName) => {
   const storeName = 'achievements';
   const achievementsDefinitions = [
     {
@@ -73,5 +73,13 @@ module.exports = (persist, showAchievement) => {
       .map(code => achievementsDefinitions.find(def => def.code === code).name));
   };
 
-  return { received, get };
+  const getLasts = () => {
+    const stored = persist.getItemSync(storeName) || [];
+    return stored
+      .slice(-5)
+      .reverse()
+      .map(ach => ({ achievement: ach.achievement, username: getDisplayName(ach.username) }));
+  };
+
+  return { received, get, getLasts };
 };
