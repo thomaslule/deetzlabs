@@ -6,6 +6,8 @@ const mockAchievement = require('./util/mockAchievement');
 let storage;
 let app;
 
+const getVolume = () => request(app).get('/api/alert_volume').expect(200);
+
 beforeEach(() => {
   ({ storage, app } = initApp());
 });
@@ -33,6 +35,19 @@ test('if never set volume is 0.5', (done) => {
   request(app).post('/api/test').expect(200)
     .then(() => {
       expectedCall.done();
+      done();
+    });
+});
+
+test('GET /alert_volume works', (done) => {
+  getVolume()
+    .then((response) => {
+      expect(response.body.volume).toBe('0.5');
+      return request(app).post('/api/alert_volume').send({ volume: '0.8' });
+    })
+    .then(getVolume)
+    .then((response) => {
+      expect(response.body.volume).toBe('0.8');
       done();
     });
 });

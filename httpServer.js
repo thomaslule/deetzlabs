@@ -42,9 +42,15 @@ module.exports = (deetzlabs) => {
   });
 
   app.post(`${config.root_server_path}/alert_volume`, (req, res) => {
-    logger.info('received /alert_volume POST with volume=%s', req.body.volume);
+    logger.info('received POST /alert_volume with volume=%s', req.body.volume);
     achievementAlert.setVolume(req.body.volume);
     res.sendStatus(200);
+  });
+
+  app.get(`${config.root_server_path}/alert_volume`, (req, res) => {
+    logger.info('received GET /alert_volume');
+    const volume = achievementAlert.getVolume();
+    res.send({ volume });
   });
 
   app.post(`${config.root_server_path}/achievement`, (req, res) => {
