@@ -14,6 +14,7 @@ module.exports = (deetzlabs) => {
     succes,
     countMessages,
     achievementAlert,
+    berzingue,
   } = deetzlabs;
 
   const handleError = (error, res, next) => {
@@ -89,6 +90,7 @@ module.exports = (deetzlabs) => {
       commands,
       succes,
       countMessages,
+      berzingue,
     ].forEach(obj => obj.receiveMessage(user, message));
     res.sendStatus(200);
   });

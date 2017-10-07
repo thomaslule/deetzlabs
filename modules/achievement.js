@@ -31,6 +31,11 @@ module.exports = (persist, showAchievement) => {
       name: 'Ambianceuse',
       text: 'Bim plein de messages dans le chat, gg %USER%',
     },
+    {
+      code: 'berzingue',
+      name: 'Berzingos',
+      text: 'L\'esprit de la berzingue est avec %USER% !',
+    },
   ];
 
   const achEquals = (stored, code, username) =>

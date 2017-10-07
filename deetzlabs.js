@@ -9,6 +9,7 @@ const cheerleaderModule = require('./modules/cheerleader');
 const commandsModule = require('./modules/commandCommands');
 const succesModule = require('./modules/commandSucces');
 const countMessagesModule = require('./modules/countMessages');
+const berzingueModule = require('./modules/berzingue');
 
 module.exports = (storage) => {
   const achievementAlert = achievementAlertModule(storage, showAchievement);
@@ -20,6 +21,7 @@ module.exports = (storage) => {
   const commands = commandsModule(sendChatMessage);
   const succes = succesModule(achievement.get, sendChatMessage);
   const countMessages = countMessagesModule(storage, achievement.received);
+  const berzingue = berzingueModule(storage, achievement.received);
 
   return {
     achievement,
@@ -31,5 +33,6 @@ module.exports = (storage) => {
     succes,
     countMessages,
     achievementAlert,
+    berzingue,
   };
 };
