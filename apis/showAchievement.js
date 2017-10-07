@@ -13,7 +13,7 @@ const handleErrors = (error, response) => {
   return null;
 };
 
-module.exports = (achievement, callback) => {
+module.exports = (achievement, callback = () => {}) => {
   logger.info('send show achievement command', achievement);
   request({
     uri: `${config.twitch_achievements.url}/achievement`,

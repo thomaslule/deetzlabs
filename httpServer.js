@@ -13,7 +13,7 @@ module.exports = (deetzlabs) => {
     commands,
     succes,
     countMessages,
-    testAchievement,
+    achievementAlert,
   } = deetzlabs;
 
   const handleError = (error, res, next) => {
@@ -34,11 +34,17 @@ module.exports = (deetzlabs) => {
 
   app.post(`${config.root_server_path}/test`, (req, res) => {
     logger.info('received /test POST');
-    testAchievement((error) => {
+    achievementAlert.test((error) => {
       handleError(error, res, () => {
         res.sendStatus(200);
       });
     });
+  });
+
+  app.post(`${config.root_server_path}/alert_volume`, (req, res) => {
+    logger.info('received /alert_volume POST with volume=%s', req.body.volume);
+    achievementAlert.setVolume(req.body.volume);
+    res.sendStatus(200);
   });
 
   app.post(`${config.root_server_path}/achievement`, (req, res) => {
