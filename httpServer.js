@@ -24,23 +24,6 @@ module.exports = (storage) => {
   const succ = succes(ach.get, sendChatMessage);
   const count = countMessages(storage, ach.received);
 
-  const onRequest = {
-    onPostTest: testAchievement,
-    onPostAchievement: ach.received,
-    onGetAchievements: ach.get,
-    onPostViewer: view.received,
-    onGetViewers: view.get,
-    onPostChatMessage: (user, message) => {
-      view.received(user['display-name']);
-      gd.receiveMessage(user, message);
-      sw.receiveMessage(user, message);
-      ppg.receiveMessage(user, message);
-      comm.receiveMessage(user, message);
-      succ.receiveMessage(user, message);
-      count.receiveMessage(user);
-    },
-  };
-
   const handleError = (error, res, next) => {
     if (error) {
       res.status(500).send(`${error.name}: ${error.message}`);
@@ -53,12 +36,13 @@ module.exports = (storage) => {
   app.use(bodyParser.json());
 
   app.get(`${config.root_server_path}/ping`, (req, res) => {
+    logger.info('received /ping');
     res.sendStatus(200);
   });
 
   app.post(`${config.root_server_path}/test`, (req, res) => {
     logger.info('received /test POST');
-    onRequest.onPostTest((error) => {
+    testAchievement((error) => {
       handleError(error, res, () => {
         res.sendStatus(200);
       });
@@ -74,30 +58,22 @@ module.exports = (storage) => {
         'display-name': req.body.user['display-name'],
       },
     };
-    onRequest.onPostAchievement(achievementObj, (error) => {
+    ach.received(achievementObj, (error) => {
       handleError(error, res, () => {
         res.sendStatus(200);
       });
     });
   });
 
-  app.get(`${config.root_server_path}/achievements/:username`, (req, res) => {
-    logger.info(`received /achievements GET for ${req.params.username}`);
-    onRequest.onGetAchievements(req.params.username, (error, achievements) => {
-      handleError(error, res, () => {
-        res.send(achievements);
-      });
-    });
-  });
-
   app.get(`${config.root_server_path}/viewers`, (req, res) => {
     logger.info('received /viewers GET');
-    const viewersList = onRequest.onGetViewers();
+    const viewersList = view.get();
     res.send(viewersList);
   });
 
   app.post(`${config.root_server_path}/chat_message`, (req, res) => {
-    onRequest.onPostChatMessage(req.body.user, req.body.message);
+    const { user, message } = req.body;
+    [view, gd, sw, ppg, comm, succ, count].forEach(obj => obj.receiveMessage(user, message));
     res.sendStatus(200);
   });
 

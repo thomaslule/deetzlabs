@@ -1,12 +1,11 @@
 const viewers = (persist) => {
   const storeName = 'viewers';
   return {
-    received: (name, callback = () => {}) => {
+    receiveMessage: (user) => {
       const stored = persist.getItemSync(storeName) || [];
-      const newStore = stored.filter(n => n.toLowerCase() !== name.toLowerCase());
-      newStore.push(name);
+      const newStore = stored.filter(n => n.toLowerCase() !== user['display-name'].toLowerCase());
+      newStore.push(user['display-name']);
       persist.setItemSync(storeName, newStore);
-      callback();
     },
     get: () => persist.getItemSync(storeName) || [],
   };
