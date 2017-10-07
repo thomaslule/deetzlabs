@@ -3,7 +3,7 @@ const isCommand = require('../util/isCommand');
 const swedish = (sendAchievement) => {
   const userSaidHej = (user) => {
     sendAchievement({
-      achievement: 'Suédois LV1',
+      achievement: 'swedish',
       user: {
         username: user.username,
         'display-name': user['display-name'],

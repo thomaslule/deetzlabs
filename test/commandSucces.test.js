@@ -26,7 +26,7 @@ test('!succès with 0 achievement', (done) => {
 });
 
 test('!succès with 1 achievement', (done) => {
-  storage.setItem('achievements', [{ username: 'someone', achievement: 'Fossoyeuse' }]);
+  storage.setItem('achievements', [{ username: 'someone', achievement: 'gravedigger' }]);
   const expectedCall = mockSay('Bravo Someone pour tes succès : Fossoyeuse !');
   postMessage(app, '!succès')
     .then(() => {
@@ -36,7 +36,7 @@ test('!succès with 1 achievement', (done) => {
 });
 
 test('!succès with 2 achievement', (done) => {
-  storage.setItem('achievements', [{ username: 'someone', achievement: 'Fossoyeuse' }, { username: 'someone', achievement: 'Suédois LV1' }]);
+  storage.setItem('achievements', [{ username: 'someone', achievement: 'gravedigger' }, { username: 'someone', achievement: 'swedish' }]);
   const expectedCall = mockSay('Bravo Someone pour tes succès : Fossoyeuse, Suédois LV1 !');
   postMessage(app, '!succès')
     .then(() => {
@@ -46,7 +46,7 @@ test('!succès with 2 achievement', (done) => {
 });
 
 test('!succès reads only caller achievements', (done) => {
-  storage.setItem('achievements', [{ username: 'someone', achievement: 'Fossoyeuse' }, { username: 'other', achievement: 'Suédois LV1' }]);
+  storage.setItem('achievements', [{ username: 'someone', achievement: 'gravedigger' }, { username: 'other', achievement: 'swedish' }]);
   const expectedCall = mockSay('Bravo Someone pour tes succès : Fossoyeuse !');
   postMessage(app, '!succès')
     .then(() => {

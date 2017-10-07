@@ -22,7 +22,7 @@ test('give achievement when user says Hej', (done) => {
   postMessage(app, 'Hej !')
     .then(() => {
       expectedCall.done();
-      expect(userHasAchievement(storage, 'Suédois LV1')).toBeTruthy();
+      expect(userHasAchievement(storage, 'swedish')).toBeTruthy();
       done();
     });
 });
@@ -41,7 +41,7 @@ test('dont give achievement twice when user says Hej twice', (done) => {
 });
 
 test('dont give achievement if user already has it', (done) => {
-  storage.setItemSync('achievements', [{ username: 'someone', achievement: 'Suédois LV1' }]);
+  storage.setItemSync('achievements', [{ username: 'someone', achievement: 'swedish' }]);
   postMessage(app, 'Hej !')
     .then(() => {
       expect(expectedCall.isDone()).toBe(false);

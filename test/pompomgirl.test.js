@@ -27,7 +27,7 @@ test('counter goes up when user says !gg', (done) => {
     .then(() => {
       expect(storage.getItemSync('Pom-pom girl')).toEqual({ someone: 2 });
       expect(expectedCall.isDone()).toBe(false);
-      expect(userHasAchievement(storage, 'Pom-pom girl')).toBeFalsy();
+      expect(userHasAchievement(storage, 'cheerleader')).toBeFalsy();
       done();
     });
 });
@@ -37,7 +37,7 @@ test('achievement showed on 5th !gg', (done) => {
   postMessage(app, '!gg')
     .then(() => {
       expectedCall.done();
-      expect(userHasAchievement(storage, 'Pom-pom girl')).toBeTruthy();
+      expect(userHasAchievement(storage, 'cheerleader')).toBeTruthy();
       done();
     });
 });

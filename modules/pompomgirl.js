@@ -12,7 +12,7 @@ const pompomgirl = (persist, sendAchievement) => {
     persist.setItemSync(achievementName, stored);
     if (stored[username] === magicNumber) {
       sendAchievement({
-        achievement: achievementName,
+        achievement: 'cheerleader',
         user: {
           username: user.username,
           'display-name': user['display-name'],

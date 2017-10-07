@@ -13,7 +13,7 @@ const gravedigger = (persist, sendAchievement) => {
     persist.setItemSync(storeName, stored);
     if (stored[username] === magicNumber) {
       sendAchievement({
-        achievement: 'Fossoyeuse',
+        achievement: 'gravedigger',
         user: {
           username: user.username,
           'display-name': user['display-name'],

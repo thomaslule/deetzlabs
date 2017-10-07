@@ -51,9 +51,13 @@ module.exports = (deetzlabs) => {
       },
     };
     achievement.received(achievementObj, (error) => {
-      handleError(error, res, () => {
-        res.sendStatus(200);
-      });
+      if (error === 'unknown achievement') {
+        res.sendStatus(400);
+      } else {
+        handleError(error, res, () => {
+          res.sendStatus(200);
+        });
+      }
     });
   });
 

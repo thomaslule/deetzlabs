@@ -27,7 +27,7 @@ test('counter goes up when user says !rip', (done) => {
     .then(() => {
       expect(storage.getItemSync('gravedigger')).toEqual({ someone: 2 });
       expect(expectedCall.isDone()).toBe(false);
-      expect(userHasAchievement(storage, 'Fossoyeuse')).toBeFalsy();
+      expect(userHasAchievement(storage, 'gravedigger')).toBeFalsy();
       done();
     });
 });
@@ -37,7 +37,7 @@ test('achievement showed on 5th !rip', (done) => {
   postMessage(app, '!rip')
     .then(() => {
       expectedCall.done();
-      expect(userHasAchievement(storage, 'Fossoyeuse')).toBeTruthy();
+      expect(userHasAchievement(storage, 'gravedigger')).toBeTruthy();
       done();
     });
 });

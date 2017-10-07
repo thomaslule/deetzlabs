@@ -18,10 +18,20 @@ afterEach(() => {
 
 test('post to /achievement gives it to user', (done) => {
   const expectedCall = mockAchievement('Mécène', 'Cool ! Merci pour ton soutien %USER%');
-  postAchievement(app, 'Mécène')
+  postAchievement(app, 'benefactor')
     .then(() => {
       expectedCall.done();
-      expect(userHasAchievement(storage, 'Mécène')).toBeTruthy();
+      expect(userHasAchievement(storage, 'benefactor')).toBeTruthy();
+      done();
+    });
+});
+
+test('post unknown achievement to /achievement gives error', (done) => {
+  const expectedCall = mockAchievement('Inconnu', 'Bravo %USER% !');
+  postAchievement(app, 'Inconnu', 400)
+    .then(() => {
+      expect(expectedCall.isDone()).toBeFalsy();
+      expect(userHasAchievement(storage, 'Inconnu')).toBeFalsy();
       done();
     });
 });

@@ -27,7 +27,7 @@ test('counter goes up when user says something', (done) => {
     .then(() => {
       expect(storage.getItemSync('count_messages')).toEqual({ someone: 2 });
       expect(expectedCall.isDone()).toBe(false);
-      expect(userHasAchievement(storage, 'Ambianceuse')).toBeFalsy();
+      expect(userHasAchievement(storage, 'entertainer')).toBeFalsy();
       done();
     });
 });
@@ -37,7 +37,7 @@ test('achievement showed on 300th message', (done) => {
   postMessage(app, 'bim')
     .then(() => {
       expectedCall.done();
-      expect(userHasAchievement(storage, 'Ambianceuse')).toBeTruthy();
+      expect(userHasAchievement(storage, 'entertainer')).toBeTruthy();
       done();
     });
 });

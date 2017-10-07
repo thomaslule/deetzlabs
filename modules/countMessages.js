@@ -10,7 +10,7 @@ module.exports = (persist, sendAchievement) => {
     persist.setItemSync(storeName, stored);
     if (stored[username] === magicNumber) {
       sendAchievement({
-        achievement: 'Ambianceuse',
+        achievement: 'entertainer',
         user: {
           username: user.username,
           'display-name': user['display-name'],
