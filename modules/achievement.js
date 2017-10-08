@@ -36,7 +36,7 @@ module.exports = (persist, showAchievement, getDisplayName) => {
     {
       code: 'berzingue',
       name: 'Berzingos',
-      text: 'L\'esprit de la berzingue est avec %USER% !',
+      text: '%USER% dépasse le mur du son !',
     },
   ];
 
