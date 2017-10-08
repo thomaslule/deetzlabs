@@ -80,7 +80,7 @@ module.exports = (deetzlabs) => {
 
   app.post(`${config.root_server_path}/replay_achievement`, (req, res) => {
     achievement.replay(req.body.achievement, req.body.username);
-    res.send(200);
+    res.sendStatus(200);
   });
 
   app.get(`${config.root_server_path}/viewers`, (req, res) => {
@@ -101,6 +101,32 @@ module.exports = (deetzlabs) => {
       countMessages,
       berzingue,
     ].forEach(obj => obj.receiveMessage(user, message));
+    res.sendStatus(200);
+  });
+
+  app.post(`${config.root_server_path}/cheer`, (req, res) => {
+    logger.info(`received POST /cheer by ${req.body.user.username}`);
+    const achievementObj = {
+      achievement: 'benefactor',
+      user: {
+        username: req.body.user.username,
+        'display-name': req.body.user['display-name'],
+      },
+    };
+    achievement.received(achievementObj);
+    res.sendStatus(200);
+  });
+
+  app.post(`${config.root_server_path}/subscription`, (req, res) => {
+    logger.info(`received POST /subscription by ${req.body.user.username}`);
+    const achievementObj = {
+      achievement: 'benefactor',
+      user: {
+        username: req.body.user.username,
+        'display-name': req.body.user['display-name'],
+      },
+    };
+    achievement.received(achievementObj);
     res.sendStatus(200);
   });
 
