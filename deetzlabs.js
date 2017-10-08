@@ -20,6 +20,7 @@ module.exports = (storage) => {
   const cheerleader = sayNthTimes(storage, achievement.received, message => isCommand('!gg', message), 5, 'cheerleader');
   const berzingue = sayNthTimes(storage, achievement.received, message => isCommand('!berzingue', message), 5, 'berzingue');
   const swedish = sayNthTimes(storage, achievement.received, message => isCommand('hej', message.toLowerCase()), 1, 'swedish');
+  const careful = sayNthTimes(storage, achievement.received, message => isCommand('!heal', message) || isCommand('!save', message), 5, 'careful');
 
   return {
     achievement,
@@ -32,5 +33,6 @@ module.exports = (storage) => {
     countMessages,
     achievementAlert,
     berzingue,
+    careful,
   };
 };

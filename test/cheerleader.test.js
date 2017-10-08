@@ -51,3 +51,13 @@ test('achievement not showed on 6th !gg', (done) => {
       done();
     });
 });
+
+test('counter doesnt move if user says something else', (done) => {
+  storage.setItemSync(code, { someone: 4 });
+  postMessage(app, 'something else')
+    .then(() => {
+      expect(storage.getItemSync(code)).toEqual({ someone: 4 });
+      expect(expectedCall.isDone()).toBe(false);
+      done();
+    });
+});

@@ -48,3 +48,11 @@ test('dont give achievement if user already has it', (done) => {
       done();
     });
 });
+
+test('dont give achievement if user says something else', (done) => {
+  postMessage(app, 'something else')
+    .then(() => {
+      expect(expectedCall.isDone()).toBe(false);
+      done();
+    });
+});

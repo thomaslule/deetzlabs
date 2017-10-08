@@ -38,6 +38,11 @@ module.exports = (persist, showAchievement, getDisplayName) => {
       name: 'Berzingos',
       text: '%USER% dépasse le mur du son !',
     },
+    {
+      code: 'careful',
+      name: 'Prudente',
+      text: '%USER% nous montre la voie de la sagesse',
+    },
   ];
 
   const codeToName = code => achievementsDefinitions.find(def => def.code === code).name;
