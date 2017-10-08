@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 module.exports = (persist, showAchievement, getDisplayName) => {
   const storeName = 'achievements';
   const achievementsDefinitions = [
@@ -52,6 +54,7 @@ module.exports = (persist, showAchievement, getDisplayName) => {
         stored.push({
           username,
           achievement: achDefinition.code,
+          date: moment().format('YYYY-MM-DD'),
         });
         persist.setItemSync(storeName, stored);
         showAchievement({

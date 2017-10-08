@@ -1,4 +1,5 @@
 const nock = require('nock');
+const moment = require('moment');
 const initApp = require('./util/initApp');
 const mockAchievement = require('./util/mockAchievement');
 const userHasAchievement = require('./util/userHasAchievement');
@@ -22,6 +23,7 @@ test('post to /achievement gives it to user', (done) => {
     .then(() => {
       expectedCall.done();
       expect(userHasAchievement(storage, 'benefactor')).toBeTruthy();
+      expect(storage.getItemSync('achievements')[0].date).toBe(moment().format('YYYY-MM-DD'));
       done();
     });
 });
