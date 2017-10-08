@@ -87,5 +87,16 @@ module.exports = (persist, showAchievement, getDisplayName) => {
         }));
   };
 
-  return { received, get, getLasts };
+  const replay = (achievement, username) => {
+    const definition = achievementsDefinitions.find(def => def.code === achievement);
+    showAchievement({
+      achievement: definition.name,
+      username,
+      text: definition.text,
+    });
+  };
+
+  return {
+    received, get, getLasts, replay,
+  };
 };

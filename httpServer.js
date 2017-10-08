@@ -78,6 +78,11 @@ module.exports = (deetzlabs) => {
     res.send(achievement.getLasts());
   });
 
+  app.post(`${config.root_server_path}/replay_achievement`, (req, res) => {
+    achievement.replay(req.body.achievement, req.body.username);
+    res.send(200);
+  });
+
   app.get(`${config.root_server_path}/viewers`, (req, res) => {
     logger.info('received /viewers GET');
     const viewersList = viewers.get();
