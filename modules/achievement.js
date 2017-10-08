@@ -90,6 +90,16 @@ module.exports = (persist, showAchievement, getDisplayName) => {
         }));
   };
 
+  const getAll = () => {
+    const stored = persist.getItemSync(storeName) || [];
+    return stored
+      .map(ach => (
+        {
+          username: getDisplayName(ach.username),
+          achievement: { code: ach.achievement, name: codeToName(ach.achievement) },
+        }));
+  };
+
   const replay = (achievement, username) => {
     const definition = achievementsDefinitions.find(def => def.code === achievement);
     showAchievement({
@@ -100,6 +110,6 @@ module.exports = (persist, showAchievement, getDisplayName) => {
   };
 
   return {
-    received, get, getLasts, replay,
+    received, get, getLasts, getAll, replay,
   };
 };
