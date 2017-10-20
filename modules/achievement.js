@@ -43,6 +43,11 @@ module.exports = (persist, showAchievement, getDisplayName) => {
       name: 'Prudente',
       text: '%USER% nous montre la voie de la sagesse',
     },
+    {
+      code: 'vigilante',
+      name: 'Vigilance constante',
+      text: '%USER% ne laisse rien passer !',
+    },
   ];
 
   const codeToName = code => achievementsDefinitions.find(def => def.code === code).name;
