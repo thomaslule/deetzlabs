@@ -55,6 +55,24 @@ test('!succès reads only caller achievements', (done) => {
     });
 });
 
+test('!succes works too', (done) => {
+  const expectedCall = mockSay('Someone n\'a pas encore de succès, déso.');
+  postMessage(app, '!succes')
+    .then(() => {
+      expectedCall.done();
+      done();
+    });
+});
+
+test('!success works too', (done) => {
+  const expectedCall = mockSay('Someone n\'a pas encore de succès, déso.');
+  postMessage(app, '!success')
+    .then(() => {
+      expectedCall.done();
+      done();
+    });
+});
+
 test('integration with swedish', (done) => {
   mockAchievement('Suédois LV1', 'Hej %USER% !');
   const expectedCall = mockSay('Bravo Someone pour tes succès : Suédois LV1 !');

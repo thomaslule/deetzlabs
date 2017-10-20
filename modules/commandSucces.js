@@ -11,7 +11,7 @@ module.exports = (getAchievements, sendMessage) => {
   };
 
   const receiveMessage = (user, message) => {
-    if (isCommand('!succès', message)) {
+    if (isCommand('!succès', message) || isCommand('!succes', message) || isCommand('!success', message)) {
       userRequestedAchievements(user);
     }
   };
