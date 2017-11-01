@@ -7,6 +7,7 @@ const commandsModule = require('./modules/commandCommands');
 const succesModule = require('./modules/commandSucces');
 const countMessagesModule = require('./modules/countMessages');
 const sayNthTimes = require('./modules/sayNthTimes');
+const costumeModule = require('./modules/costume');
 const isCommand = require('./util/isCommand');
 
 module.exports = (storage) => {
@@ -22,6 +23,7 @@ module.exports = (storage) => {
   const swedish = sayNthTimes(storage, achievement.received, message => isCommand('hej', message.toLowerCase()), 1, 'swedish');
   const careful = sayNthTimes(storage, achievement.received, message => isCommand('!heal', message) || isCommand('!save', message), 5, 'careful');
   const vigilante = sayNthTimes(storage, achievement.received, message => isCommand('!putain', message), 5, 'vigilante');
+  const costume = costumeModule(storage, sendChatMessage);
 
   return {
     achievement,
@@ -36,5 +38,6 @@ module.exports = (storage) => {
     berzingue,
     careful,
     vigilante,
+    costume,
   };
 };

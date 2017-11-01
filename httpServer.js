@@ -17,6 +17,7 @@ module.exports = (deetzlabs) => {
     berzingue,
     careful,
     vigilante,
+    costume,
   } = deetzlabs;
 
   const handleError = (error, res, next) => {
@@ -84,6 +85,10 @@ module.exports = (deetzlabs) => {
     res.send(achievement.getAll());
   });
 
+  app.get(`${config.root_server_path}/all_achievements`, (req, res) => {
+    res.send(achievement.getList());
+  });
+
   app.post(`${config.root_server_path}/replay_achievement`, (req, res) => {
     achievement.replay(req.body.achievement, req.body.username);
     res.sendStatus(200);
@@ -108,6 +113,7 @@ module.exports = (deetzlabs) => {
       berzingue,
       careful,
       vigilante,
+      costume,
     ].forEach(obj => obj.receiveMessage(user, message));
     res.sendStatus(200);
   });

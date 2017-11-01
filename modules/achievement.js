@@ -110,6 +110,8 @@ module.exports = (persist, showAchievement, getDisplayName) => {
         }));
   };
 
+  const getList = () => achievementsDefinitions.map(def => ({ code: def.code, name: def.name }));
+
   const replay = (achievement, username) => {
     const definition = achievementsDefinitions.find(def => def.code === achievement);
     showAchievement({
@@ -120,6 +122,6 @@ module.exports = (persist, showAchievement, getDisplayName) => {
   };
 
   return {
-    received, get, getLasts, getAll, replay,
+    received, get, getLasts, getAll, getList, replay,
   };
 };
