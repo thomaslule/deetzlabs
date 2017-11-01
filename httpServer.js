@@ -80,7 +80,7 @@ module.exports = (deetzlabs) => {
     res.send(achievement.getLasts());
   });
 
-  app.get(`${config.root_server_path}/all_achievements`, (req, res) => {
+  app.get(`${config.root_server_path}/viewers_achievements`, (req, res) => {
     res.send(achievement.getAll());
   });
 
