@@ -21,10 +21,7 @@ test('achievement benefactor on sub', (done) => {
   request(app)
     .post('/api/subscription')
     .send({
-      user: {
-        username: 'someone',
-        'display-name': 'Someone',
-      },
+      user: 'Someone',
     })
     .expect(200)
     .then(() => {

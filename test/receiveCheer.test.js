@@ -21,10 +21,7 @@ test('achievement benefactor on first cheer', (done) => {
   request(app)
     .post('/api/cheer')
     .send({
-      user: {
-        username: 'someone',
-        'display-name': 'Someone',
-      },
+      user: 'Someone',
     })
     .expect(200)
     .then(() => {
@@ -40,10 +37,7 @@ test('no achievement if not first cheer', (done) => {
   request(app)
     .post('/api/cheer')
     .send({
-      user: {
-        username: 'someone',
-        'display-name': 'Someone',
-      },
+      user: 'Someone',
     })
     .expect(200)
     .then(() => {

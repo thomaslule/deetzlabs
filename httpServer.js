@@ -119,12 +119,12 @@ module.exports = (deetzlabs) => {
   });
 
   app.post(`${config.root_server_path}/cheer`, (req, res) => {
-    logger.info(`received POST /cheer by ${req.body.user.username}`);
+    logger.info(`received POST /cheer by ${req.body.user}`);
     const achievementObj = {
       achievement: 'benefactor',
       user: {
-        username: req.body.user.username,
-        'display-name': req.body.user['display-name'],
+        username: req.body.user.toLowerCase(),
+        'display-name': req.body.user,
       },
     };
     achievement.received(achievementObj);
@@ -132,12 +132,12 @@ module.exports = (deetzlabs) => {
   });
 
   app.post(`${config.root_server_path}/subscription`, (req, res) => {
-    logger.info(`received POST /subscription by ${req.body.user.username}`);
+    logger.info(`received POST /subscription by ${req.body.user}`);
     const achievementObj = {
       achievement: 'benefactor',
       user: {
-        username: req.body.user.username,
-        'display-name': req.body.user['display-name'],
+        username: req.body.user.toLowerCase(),
+        'display-name': req.body.user,
       },
     };
     achievement.received(achievementObj);
