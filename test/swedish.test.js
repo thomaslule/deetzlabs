@@ -22,7 +22,10 @@ test('give achievement when user says Hej', (done) => {
   postMessage(app, 'Hej !')
     .then(() => {
       expectedCall.done();
-      expect(userHasAchievement(storage, 'swedish')).toBeTruthy();
+      return userHasAchievement(app, 'swedish');
+    })
+    .then((hasAchievement) => {
+      expect(hasAchievement).toBeTruthy();
       done();
     });
 });

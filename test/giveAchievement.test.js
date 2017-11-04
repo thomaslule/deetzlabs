@@ -22,8 +22,11 @@ test('post to /achievement gives it to user', (done) => {
   postAchievement(app, 'benefactor')
     .then(() => {
       expectedCall.done();
-      expect(userHasAchievement(storage, 'benefactor')).toBeTruthy();
       expect(storage.getItemSync('achievements')[0].date).toBe(moment().format('YYYY-MM-DD'));
+      return userHasAchievement(app, 'benefactor');
+    })
+    .then((hasAchievement) => {
+      expect(hasAchievement).toBeTruthy();
       done();
     });
 });
@@ -33,7 +36,10 @@ test('post unknown achievement to /achievement gives error', (done) => {
   postAchievement(app, 'Inconnu', 400)
     .then(() => {
       expect(expectedCall.isDone()).toBeFalsy();
-      expect(userHasAchievement(storage, 'Inconnu')).toBeFalsy();
+      return userHasAchievement(app, 'Inconnu');
+    })
+    .then((hasAchievement) => {
+      expect(hasAchievement).toBeFalsy();
       done();
     });
 });

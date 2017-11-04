@@ -1,4 +1,7 @@
-module.exports = (storage, achievement) =>
-  (storage.getItemSync('achievements') || [])
-    .filter(a => a.username === 'someone' && a.achievement === achievement)
-    .length > 0;
+const request = require('supertest');
+
+module.exports = (app, achievement) =>
+  request(app).get('/api/viewers_achievements')
+    .then(res => res.body
+      .filter(item => item.username.toLowerCase() === 'someone' && item.achievement.code === achievement)
+      .length > 0);

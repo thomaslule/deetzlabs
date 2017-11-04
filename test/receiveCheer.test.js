@@ -26,7 +26,10 @@ test('achievement benefactor on first cheer', (done) => {
     .expect(200)
     .then(() => {
       expectedCall.done();
-      expect(userHasAchievement(storage, 'benefactor')).toBeTruthy();
+      return userHasAchievement(app, 'benefactor');
+    })
+    .then((hasAchievement) => {
+      expect(hasAchievement).toBeTruthy();
       done();
     });
 });

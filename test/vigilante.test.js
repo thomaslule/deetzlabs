@@ -28,7 +28,10 @@ test('counter goes up when user says !putain', (done) => {
     .then(() => {
       expect(storage.getItemSync(code)).toEqual({ someone: 2 });
       expect(expectedCall.isDone()).toBe(false);
-      expect(userHasAchievement(storage, code)).toBeFalsy();
+      return userHasAchievement(app, code);
+    })
+    .then((hasAchievement) => {
+      expect(hasAchievement).toBeFalsy();
       done();
     });
 });
@@ -38,7 +41,10 @@ test('achievement showed on 5th !putain', (done) => {
   postMessage(app, '!putain')
     .then(() => {
       expectedCall.done();
-      expect(userHasAchievement(storage, code)).toBeTruthy();
+      return userHasAchievement(app, code);
+    })
+    .then((hasAchievement) => {
+      expect(hasAchievement).toBeTruthy();
       done();
     });
 });
