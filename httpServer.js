@@ -17,7 +17,6 @@ module.exports = (deetzlabs) => {
     berzingue,
     careful,
     vigilante,
-    costume,
   } = deetzlabs;
 
   const handleError = (error, res, next) => {
@@ -113,7 +112,6 @@ module.exports = (deetzlabs) => {
       berzingue,
       careful,
       vigilante,
-      costume,
     ].forEach(obj => obj.receiveMessage(user, message));
     res.sendStatus(200);
   });
