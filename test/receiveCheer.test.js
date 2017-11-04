@@ -33,18 +33,3 @@ test('achievement benefactor on first cheer', (done) => {
       done();
     });
 });
-
-test('no achievement if not first cheer', (done) => {
-  const expectedCall = mockAchievement('Mécène', 'Cool ! Merci pour ton soutien %USER%');
-  storage.setItemSync('achievements', [{ username: 'someone', achievement: 'benefactor' }]);
-  request(app)
-    .post('/api/cheer')
-    .send({
-      user: 'Someone',
-    })
-    .expect(200)
-    .then(() => {
-      expect(expectedCall.isDone()).toBe(false);
-      done();
-    });
-});

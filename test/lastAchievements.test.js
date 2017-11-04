@@ -3,16 +3,14 @@ const request = require('supertest');
 const initApp = require('./util/initApp');
 const postAchievement = require('./util/postAchievement');
 const postMessage = require('./util/postMessage');
+const mockAllShowAchievements = require('./util/mockAllShowAchievements');
 
 let storage;
 let app;
 
 beforeEach(() => {
   ({ storage, app } = initApp());
-  nock('http://localhost:3103')
-    .post('/achievement')
-    .reply(200)
-    .persist();
+  mockAllShowAchievements();
 });
 
 afterEach(() => {
