@@ -17,6 +17,7 @@ module.exports = (deetzlabs) => {
     berzingue,
     careful,
     vigilante,
+    db,
   } = deetzlabs;
 
   const handleError = (error, res, next) => {
@@ -32,7 +33,14 @@ module.exports = (deetzlabs) => {
 
   app.get(`${config.root_server_path}/ping`, (req, res) => {
     logger.info('received /ping');
-    res.sendStatus(200);
+    db.stats((err) => {
+      if (err) {
+        logger.error(err);
+        res.sendStatus(500);
+      } else {
+        res.sendStatus(200);
+      }
+    });
   });
 
   app.post(`${config.root_server_path}/test`, (req, res) => {

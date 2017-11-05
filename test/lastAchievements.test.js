@@ -1,22 +1,29 @@
 const nock = require('nock');
 const request = require('supertest');
-const initApp = require('./util/initApp');
 const postAchievement = require('./util/postAchievement');
 const postMessage = require('./util/postMessage');
 const mockAllShowAchievements = require('./util/mockAllShowAchievements');
+const connectToDb = require('./util/connectToDb');
+const initApp = require('./util/initApp');
 
 let storage;
 let app;
+let db;
+
+beforeAll(() => connectToDb().then((res) => { db = res; }));
 
 beforeEach(() => {
-  ({ storage, app } = initApp());
+  ({ app, storage } = initApp(db));
   mockAllShowAchievements();
 });
 
 afterEach(() => {
   nock.cleanAll();
   storage.clearSync();
+  return db.dropDatabase();
 });
+
+afterAll(() => db.close(true));
 
 test('GET /last_achievements returns the last 5 achievements', (done) => {
   postMessage(app, 'something magic')

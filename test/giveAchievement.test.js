@@ -1,20 +1,27 @@
 const nock = require('nock');
-const initApp = require('./util/initApp');
 const mockAchievement = require('./util/mockAchievement');
 const userHasAchievement = require('./util/userHasAchievement');
 const postAchievement = require('./util/postAchievement');
+const connectToDb = require('./util/connectToDb');
+const initApp = require('./util/initApp');
 
 let storage;
 let app;
+let db;
+
+beforeAll(() => connectToDb().then((res) => { db = res; }));
 
 beforeEach(() => {
-  ({ storage, app } = initApp());
+  ({ app, storage } = initApp(db));
 });
 
 afterEach(() => {
   nock.cleanAll();
   storage.clearSync();
+  return db.dropDatabase();
 });
+
+afterAll(() => db.close(true));
 
 test('post to /achievement gives it to user', (done) => {
   const expectedCall = mockAchievement('Mécène', 'Cool ! Merci pour ton soutien %USER%');

@@ -1,11 +1,27 @@
 const nock = require('nock');
-const initApp = require('./util/initApp');
 const postMessage = require('./util/postMessage');
 const mockAchievement = require('./util/mockAchievement');
 const userHasAchievement = require('./util/userHasAchievement');
+const connectToDb = require('./util/connectToDb');
+const initApp = require('./util/initApp');
 
 let storage;
 let app;
+let db;
+
+beforeAll(() => connectToDb().then((res) => { db = res; }));
+
+beforeEach(() => {
+  ({ app, storage } = initApp(db));
+});
+
+afterEach(() => {
+  nock.cleanAll();
+  storage.clearSync();
+  return db.dropDatabase();
+});
+
+afterAll(() => db.close(true));
 
 const repeat = (func, times) => {
   let promise = Promise.resolve();
@@ -38,15 +54,6 @@ const testSayNthTimes = ({
       expect(result).toBeTruthy();
     });
 };
-
-beforeEach(() => {
-  ({ storage, app } = initApp());
-});
-
-afterEach(() => {
-  nock.cleanAll();
-  storage.clearSync();
-});
 
 test('say n times !berzingue', () => testSayNthTimes({
   command: '!berzingue',

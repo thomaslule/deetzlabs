@@ -9,7 +9,7 @@ const countMessagesModule = require('./modules/countMessages');
 const sayNthTimes = require('./modules/sayNthTimes');
 const isCommand = require('./util/isCommand');
 
-module.exports = (storage) => {
+module.exports = (storage, db) => {
   const viewers = viewersModule(storage);
   const achievementAlert = achievementAlertModule(storage, showAchievement);
   const achievement = achievementModule(storage, achievementAlert.display, viewers.getDisplayName);
@@ -36,5 +36,6 @@ module.exports = (storage) => {
     berzingue,
     careful,
     vigilante,
+    db,
   };
 };

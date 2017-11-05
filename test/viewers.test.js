@@ -1,19 +1,26 @@
 const request = require('supertest');
-const initApp = require('./util/initApp');
 const postMessage = require('./util/postMessage');
+const connectToDb = require('./util/connectToDb');
+const initApp = require('./util/initApp');
 
-let app;
 let storage;
+let app;
+let db;
 
-const getViewers = () => request(app).get('/api/viewers').expect(200);
+beforeAll(() => connectToDb().then((res) => { db = res; }));
 
 beforeEach(() => {
-  ({ app, storage } = initApp());
+  ({ app, storage } = initApp(db));
 });
 
 afterEach(() => {
   storage.clearSync();
+  return db.dropDatabase();
 });
+
+afterAll(() => db.close(true));
+
+const getViewers = () => request(app).get('/api/viewers').expect(200);
 
 test('remember viewer', (done) => {
   postMessage(app, 'yo', 'Machin')

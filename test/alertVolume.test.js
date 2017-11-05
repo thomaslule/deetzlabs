@@ -1,21 +1,28 @@
 const nock = require('nock');
 const request = require('supertest');
-const initApp = require('./util/initApp');
 const mockAchievement = require('./util/mockAchievement');
+const connectToDb = require('./util/connectToDb');
+const initApp = require('./util/initApp');
 
 let storage;
 let app;
+let db;
 
-const getVolume = () => request(app).get('/api/alert_volume').expect(200);
+beforeAll(() => connectToDb().then((res) => { db = res; }));
 
 beforeEach(() => {
-  ({ storage, app } = initApp());
+  ({ app, storage } = initApp(db));
 });
 
 afterEach(() => {
   nock.cleanAll();
   storage.clearSync();
+  return db.dropDatabase();
 });
+
+afterAll(() => db.close(true));
+
+const getVolume = () => request(app).get('/api/alert_volume').expect(200);
 
 test('volume modified on POST /alert_volume', (done) => {
   const expectedCall = mockAchievement('Testeuse', '%USER% bidouille des trucs', 'Berzingator2000', '0.8');

@@ -4,11 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "concurrently --kill-others \"npm run server\" \"npm run test\"",
-    "server": "nodemon index.js",
-    "test": "jest --watch",
-    "test_once": "jest"
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "test": "cross-env NODE_ENV=test jest --runInBand",
+    "test_w": "cross-env NODE_ENV=test jest --watch --runInBand"
   },
   "repository": {
     "type": "git",
@@ -34,8 +33,11 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "clone": "^2.1.1",
+    "config": "^1.27.0",
+    "cross-env": "^5.1.1",
     "express": "^4.15.5",
     "moment": "^2.18.1",
+    "mongodb": "^2.2.33",
     "node-persist": "^2.1.0",
     "request": "^2.83.0",
     "winston": "^2.3.1"
