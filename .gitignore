@@ -1,6 +1,6 @@
 node_modules
 npm-debug.log
-log.log
+deetzlabs.log
 .vscode
 .node-persist
 config.js
