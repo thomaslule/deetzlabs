@@ -28,18 +28,16 @@ afterAll(() => db.close(true));
 
 test('GET /viewers_achievements returns the achievements', (done) => {
   postMessage(app, 'something magic')
-    .then(() => postAchievement(app, 'berzingue'))
-    .then(() => postAchievement(app, 'swedish'))
-    .then(() => postAchievement(app, 'gravedigger'))
-    .then(() => postAchievement(app, 'cheerleader'))
-    .then(() => postAchievement(app, 'benefactor'))
-    .then(() => postAchievement(app, 'entertainer'))
+    .then(() => postAchievement(app, 'Berzingos'))
+    .then(() => postAchievement(app, 'Suédois LV1'))
+    .then(() => postAchievement(app, 'Fossoyeuse'))
+    .then(() => postAchievement(app, 'Pom-pom girl'))
+    .then(() => postAchievement(app, 'Mécène'))
+    .then(() => postAchievement(app, 'Ambianceuse'))
     .then(() => request(app).get('/api/viewers_achievements').expect(200))
     .then((response) => {
-      const list = response.body;
-      expect(list.length).toBe(6);
-      expect(list[0]).toEqual({ username: 'Someone', achievement: { code: 'berzingue', name: 'Berzingos' } });
-      expect(list[5]).toEqual({ username: 'Someone', achievement: { code: 'entertainer', name: 'Ambianceuse' } });
+      const viewers = response.body;
+      expect(viewers.someone).toEqual(['Berzingos', 'Suédois LV1', 'Fossoyeuse', 'Pom-pom girl', 'Mécène', 'Ambianceuse']);
       done();
     });
 });

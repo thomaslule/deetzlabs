@@ -67,7 +67,7 @@ module.exports = (deetzlabs) => {
     store.get(id)
       .then((events) => {
         const v = viewer(id, events);
-        return v.receiveAchievement(bus, req.body.achievement);
+        return v.receiveAchievement(bus, req.body.achievement, req.body.user['display-name']);
       })
       .then(() => { res.sendStatus(200); })
       .catch((e) => {
@@ -117,16 +117,19 @@ module.exports = (deetzlabs) => {
   });
 
   app.post(`${config.root_server_path}/cheer`, (req, res) => {
-    logger.info(`received POST /cheer by ${req.body.user}`);
-    const achievementObj = {
-      achievement: 'benefactor',
-      user: {
-        username: req.body.user.toLowerCase(),
-        'display-name': req.body.user,
-      },
-    };
-    achievement.received(achievementObj);
-    res.sendStatus(200);
+    logger.info(`received POST /cheer by ${req.body.displayName}`);
+    const { displayName, message, amount } = req.body;
+    const id = displayName.toLowerCase();
+    store.get(id)
+      .then((events) => {
+        const v = viewer(id, events);
+        return v.cheer(bus, displayName, message, amount);
+      })
+      .then(() => { res.sendStatus(200); })
+      .catch((e) => {
+        logger.error(e);
+        res.sendStatus(400);
+      });
   });
 
   app.post(`${config.root_server_path}/subscription`, (req, res) => {
@@ -135,7 +138,7 @@ module.exports = (deetzlabs) => {
     store.get(id)
       .then((events) => {
         const v = viewer(id, events);
-        return v.subscribe(bus);
+        return v.subscribe(bus, req.body.method, req.body.message, req.body.user);
       })
       .then(() => { res.sendStatus(200); })
       .catch((e) => {

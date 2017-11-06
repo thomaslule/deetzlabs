@@ -25,7 +25,7 @@ afterEach(() => {
 afterAll(() => db.close(true));
 
 test('post to /achievement gives it to user', (done) => {
-  const expectedCall = mockAchievement('Mécène', 'Cool ! Merci pour ton soutien %USER%', 'someone');
+  const expectedCall = mockAchievement('Mécène', 'Cool ! Merci pour ton soutien %USER%');
   postAchievement(app, 'Mécène')
     .then(() => {
       expectedCall.done();
@@ -38,7 +38,7 @@ test('post to /achievement gives it to user', (done) => {
 });
 
 test('post unknown achievement to /achievement gives error', (done) => {
-  const expectedCall = mockAchievement('Inconnu', 'Bravo %USER% !', 'someone');
+  const expectedCall = mockAchievement('Inconnu', 'Bravo %USER% !');
   postAchievement(app, 'Inconnu', 400)
     .then(() => {
       expect(expectedCall.isDone()).toBeFalsy();

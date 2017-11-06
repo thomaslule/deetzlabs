@@ -3,6 +3,7 @@ const eventsTypes = {
   sentChatMessage: 'sent-chat-message',
   gotAchievement: 'got-achievement',
   subscribed: 'subscribed',
+  cheered: 'cheered',
 };
 
 const baseEvent = {
@@ -31,12 +32,25 @@ const gotAchievement = (id, achievement) => ({
   achievement,
 });
 
-const subscribed = id => ({
+const subscribed = (id, method) => ({
   ...baseEvent,
   type: eventsTypes.subscribed,
   id,
+  method,
+});
+
+const cheered = (id, amount) => ({
+  ...baseEvent,
+  type: eventsTypes.cheered,
+  id,
+  amount,
 });
 
 module.exports = {
-  changedDisplayName, eventsTypes, sentChatMessage, gotAchievement, subscribed,
+  eventsTypes,
+  changedDisplayName,
+  sentChatMessage,
+  gotAchievement,
+  subscribed,
+  cheered,
 };

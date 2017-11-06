@@ -34,7 +34,7 @@ test('achievement benefactor on sub', (done) => {
     .expect(200)
     .then(() => {
       expectedCall.done();
-      return userHasAchievement(app, 'benefactor');
+      return userHasAchievement(app, 'Mécène');
     })
     .then((hasAchievement) => {
       expect(hasAchievement).toBeTruthy();

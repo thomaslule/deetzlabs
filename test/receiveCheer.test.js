@@ -29,12 +29,14 @@ test('achievement benefactor on first cheer', (done) => {
   request(app)
     .post('/api/cheer')
     .send({
-      user: 'Someone',
+      displayName: 'Someone',
+      amount: 100,
+      message: 'hop cheer100',
     })
     .expect(200)
     .then(() => {
       expectedCall.done();
-      return userHasAchievement(app, 'benefactor');
+      return userHasAchievement(app, 'Mécène');
     })
     .then((hasAchievement) => {
       expect(hasAchievement).toBeTruthy();
