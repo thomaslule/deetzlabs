@@ -77,7 +77,7 @@ module.exports = (deetzlabs) => {
   });
 
   app.get(`${config.root_server_path}/last_achievements`, (req, res) => {
-    res.send(achievement.getLasts());
+    res.send(viewersAchievements.getLasts());
   });
 
   app.get(`${config.root_server_path}/viewers_achievements`, (req, res) => {

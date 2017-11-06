@@ -36,8 +36,10 @@ test('GET /viewers_achievements returns the achievements', (done) => {
     .then(() => postAchievement(app, 'Ambianceuse'))
     .then(() => request(app).get('/api/viewers_achievements').expect(200))
     .then((response) => {
-      const viewers = response.body;
-      expect(viewers.someone).toEqual(['Berzingos', 'Suédois LV1', 'Fossoyeuse', 'Pom-pom girl', 'Mécène', 'Ambianceuse']);
+      const list = response.body;
+      expect(list.length).toBe(6);
+      expect(list[0]).toEqual({ viewer: 'someone', achievement: 'Berzingos' });
+      expect(list[5]).toEqual({ viewer: 'someone', achievement: 'Ambianceuse' });
       done();
     });
 });
