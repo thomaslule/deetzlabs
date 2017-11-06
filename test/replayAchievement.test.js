@@ -28,7 +28,7 @@ test('post to /replay_achievement shows achievement', (done) => {
   request(app)
     .post('/api/replay_achievement')
     .send({
-      achievement: 'swedish',
+      achievement: 'Suédois LV1',
       username: 'Someone',
     })
     .expect(200)
