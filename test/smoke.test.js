@@ -8,9 +8,10 @@ let db;
 
 beforeAll(() => connectToDb().then((res) => { db = res; }));
 
-beforeEach(() => {
-  ({ app, storage } = initApp(db));
-});
+beforeEach(() => initApp(db)
+  .then((res) => {
+    ({ app, storage } = res);
+  }));
 
 afterEach(() => {
   storage.clearSync();

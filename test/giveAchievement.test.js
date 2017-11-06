@@ -11,9 +11,10 @@ let db;
 
 beforeAll(() => connectToDb().then((res) => { db = res; }));
 
-beforeEach(() => {
-  ({ app, storage } = initApp(db));
-});
+beforeEach(() => initApp(db)
+  .then((res) => {
+    ({ app, storage } = res);
+  }));
 
 afterEach(() => {
   nock.cleanAll();
@@ -24,11 +25,11 @@ afterEach(() => {
 afterAll(() => db.close(true));
 
 test('post to /achievement gives it to user', (done) => {
-  const expectedCall = mockAchievement('Mécène', 'Cool ! Merci pour ton soutien %USER%');
-  postAchievement(app, 'benefactor')
+  const expectedCall = mockAchievement('Mécène', 'Cool ! Merci pour ton soutien %USER%', 'someone');
+  postAchievement(app, 'Mécène')
     .then(() => {
       expectedCall.done();
-      return userHasAchievement(app, 'benefactor');
+      return userHasAchievement(app, 'Mécène');
     })
     .then((hasAchievement) => {
       expect(hasAchievement).toBeTruthy();
@@ -37,7 +38,7 @@ test('post to /achievement gives it to user', (done) => {
 });
 
 test('post unknown achievement to /achievement gives error', (done) => {
-  const expectedCall = mockAchievement('Inconnu', 'Bravo %USER% !');
+  const expectedCall = mockAchievement('Inconnu', 'Bravo %USER% !', 'someone');
   postAchievement(app, 'Inconnu', 400)
     .then(() => {
       expect(expectedCall.isDone()).toBeFalsy();

@@ -2,22 +2,19 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const logger = require('./logger');
 const config = require('./config');
+const viewer = require('./viewer/viewer');
 
 module.exports = (deetzlabs) => {
   const {
     achievement,
     viewers,
-    gravedigger,
-    swedish,
-    cheerleader,
     commands,
     succes,
-    countMessages,
     achievementAlert,
-    berzingue,
-    careful,
-    vigilante,
     db,
+    store,
+    bus,
+    viewersAchievements,
   } = deetzlabs;
 
   const handleError = (error, res, next) => {
@@ -66,22 +63,17 @@ module.exports = (deetzlabs) => {
 
   app.post(`${config.root_server_path}/achievement`, (req, res) => {
     logger.info(`received /achievement POST for ${req.body.achievement} ${req.body.user.username}`);
-    const achievementObj = {
-      achievement: req.body.achievement,
-      user: {
-        username: req.body.user.username,
-        'display-name': req.body.user['display-name'],
-      },
-    };
-    achievement.received(achievementObj, (error) => {
-      if (error === 'unknown achievement') {
+    const id = req.body.user['display-name'].toLowerCase();
+    store.get(id)
+      .then((events) => {
+        const v = viewer(id, events);
+        return v.receiveAchievement(bus, req.body.achievement);
+      })
+      .then(() => { res.sendStatus(200); })
+      .catch((e) => {
+        logger.error(e);
         res.sendStatus(400);
-      } else {
-        handleError(error, res, () => {
-          res.sendStatus(200);
-        });
-      }
-    });
+      });
   });
 
   app.get(`${config.root_server_path}/last_achievements`, (req, res) => {
@@ -89,7 +81,7 @@ module.exports = (deetzlabs) => {
   });
 
   app.get(`${config.root_server_path}/viewers_achievements`, (req, res) => {
-    res.send(achievement.getAll());
+    res.send(viewersAchievements.getAll());
   });
 
   app.get(`${config.root_server_path}/all_achievements`, (req, res) => {
@@ -111,17 +103,17 @@ module.exports = (deetzlabs) => {
     const { user, message } = req.body;
     [
       viewers,
-      gravedigger,
-      swedish,
-      cheerleader,
       commands,
       succes,
-      countMessages,
-      berzingue,
-      careful,
-      vigilante,
     ].forEach(obj => obj.receiveMessage(user, message));
-    res.sendStatus(200);
+    const id = user['display-name'].toLowerCase();
+    store.get('viewer', id)
+      .then((events) => {
+        const v = viewer(id, events);
+        return v.chatMessage(bus, user['display-name'], message);
+      }).then(() => {
+        res.sendStatus(200);
+      });
   });
 
   app.post(`${config.root_server_path}/cheer`, (req, res) => {
@@ -139,15 +131,17 @@ module.exports = (deetzlabs) => {
 
   app.post(`${config.root_server_path}/subscription`, (req, res) => {
     logger.info(`received POST /subscription by ${req.body.user}`);
-    const achievementObj = {
-      achievement: 'benefactor',
-      user: {
-        username: req.body.user.toLowerCase(),
-        'display-name': req.body.user,
-      },
-    };
-    achievement.received(achievementObj);
-    res.sendStatus(200);
+    const id = req.body.user.toLowerCase();
+    store.get(id)
+      .then((events) => {
+        const v = viewer(id, events);
+        return v.subscribe(bus);
+      })
+      .then(() => { res.sendStatus(200); })
+      .catch((e) => {
+        logger.error(e);
+        res.sendStatus(400);
+      });
   });
 
   return app;

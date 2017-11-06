@@ -12,10 +12,11 @@ let db;
 
 beforeAll(() => connectToDb().then((res) => { db = res; }));
 
-beforeEach(() => {
-  ({ app, storage } = initApp(db));
-  mockAllShowAchievements();
-});
+beforeEach(() => initApp(db)
+  .then((res) => {
+    ({ app, storage } = res);
+    mockAllShowAchievements();
+  }));
 
 afterEach(() => {
   nock.cleanAll();

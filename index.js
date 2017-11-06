@@ -10,8 +10,16 @@ storage.initSync({
   stringify: output => JSON.stringify(output, null, 2),
 });
 
+let app;
+let db;
+
 MongoClient.connect(config.get('db_url'), {})
-  .then((db) => {
+  .then((db2) => {
+    db = db2;
+    app = deetzlabs(storage, db);
+    return app.init();
+  })
+  .then(() => {
     const server = httpServer(deetzlabs(storage, db));
 
     server.listen(config2.server_port, () => {

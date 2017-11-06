@@ -4,62 +4,62 @@ module.exports = (persist, showAchievement, getDisplayName) => {
   const storeName = 'achievements';
   const achievementsDefinitions = [
     {
-      code: 'test',
+      code: 'Testeuse',
       name: 'Testeuse',
       text: '%USER% bidouille des trucs',
     },
     {
-      code: 'swedish',
+      code: 'Suédois LV1',
       name: 'Suédois LV1',
       text: 'Hej %USER% !',
     },
     {
-      code: 'gravedigger',
+      code: 'Fossoyeuse',
       name: 'Fossoyeuse',
       text: '%USER% est un peu sadique...',
     },
     {
-      code: 'cheerleader',
+      code: 'Pom-pom girl',
       name: 'Pom-pom girl',
       text: 'Merci pour tes encouragements %USER% !',
     },
     {
-      code: 'benefactor',
+      code: 'Mécène',
       name: 'Mécène',
       text: 'Cool ! Merci pour ton soutien %USER%',
     },
     {
-      code: 'entertainer',
+      code: 'Ambianceuse',
       name: 'Ambianceuse',
       text: 'Bim plein de messages dans le chat, gg %USER%',
     },
     {
-      code: 'berzingue',
+      code: 'Berzingos',
       name: 'Berzingos',
       text: '%USER% dépasse le mur du son !',
     },
     {
-      code: 'careful',
+      code: 'Prudente',
       name: 'Prudente',
       text: '%USER% nous montre la voie de la sagesse',
     },
     {
-      code: 'vigilante',
+      code: 'Vigilance constante',
       name: 'Vigilance constante',
       text: '%USER% ne laisse rien passer !',
     },
     {
-      code: 'hallowinneuse',
+      code: 'Hallowinneuse',
       name: 'Hallowinneuse',
       text: '%USER% a l\'oreille absolue !',
     },
     {
-      code: 'despacitrouille',
+      code: 'Despacitrouille',
       name: 'Despacitrouille',
       text: '%USER% connaît ses classiques !',
     },
     {
-      code: 'hercule_poirette',
+      code: 'Hercule Poirette',
       name: 'Hercule Poirette',
       text: '%USER% mène l\'enquête !',
     },
@@ -125,7 +125,7 @@ module.exports = (persist, showAchievement, getDisplayName) => {
         }));
   };
 
-  const getList = () => achievementsDefinitions.map(def => ({ code: def.code, name: def.name }));
+  const getList = () => achievementsDefinitions;
 
   const replay = (achievement, username) => {
     const definition = achievementsDefinitions.find(def => def.code === achievement);
