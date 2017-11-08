@@ -98,17 +98,16 @@ module.exports = (id, eventsHistory) => {
 
   const chatMessage = (bus, displayName, message) =>
     maybeChangeName(bus, displayName)
-      .then(() =>
-        dispatchAndApply(bus, sentChatMessage(id, message))
-          .then(() => {
-            const promises = [];
-            Object.keys(counters).forEach((achievement) => {
-              if (decProj.getState().counters[achievement] >= counters[achievement].magicNumber) {
-                promises.push(maybeSendAchievement(bus, achievement));
-              }
-            });
-            return Promise.all(promises);
-          }));
+      .then(() => dispatchAndApply(bus, sentChatMessage(id, message)))
+      .then(() => {
+        const promises = [];
+        Object.keys(counters).forEach((achievement) => {
+          if (decProj.getState().counters[achievement] >= counters[achievement].magicNumber) {
+            promises.push(maybeSendAchievement(bus, achievement));
+          }
+        });
+        return Promise.all(promises);
+      });
 
   const receiveAchievement = (bus, achievement, displayName) =>
     maybeChangeName(bus, displayName)
