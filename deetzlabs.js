@@ -53,7 +53,7 @@ module.exports = (storage, db) => {
     if (
       !isReplay
       && event.type === 'sent-chat-message'
-      && (event.message.trim() === '!commands')) {
+      && (event.message.trim().toLowerCase() === '!commands')) {
       sendChatMessage('Moi j\'ai qu\'une commande c\'est !succès');
     }
     return Promise.resolve();
