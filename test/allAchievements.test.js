@@ -24,8 +24,8 @@ test('GET /all_achievements returns all the possible achievements', (done) => {
   request(app).get('/api/all_achievements').expect(200)
     .then((response) => {
       const list = response.body;
-      expect(list[0]).toEqual({ code: 'Testeuse', name: 'Testeuse', text: '%USER% bidouille des trucs' });
-      expect(list[4]).toEqual({ code: 'Mécène', name: 'Mécène', text: 'Cool ! Merci pour ton soutien %USER%' });
+      expect(list).toContain('Testeuse');
+      expect(list).toContain('Mécène');
       done();
     });
 });

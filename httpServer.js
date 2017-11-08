@@ -83,8 +83,7 @@ module.exports = (deetzlabs) => {
   });
 
   app.get(`${config.root_server_path}/all_achievements`, (req, res) => {
-    // res.send(achievement.getList());
-    res.sendStatus(200);
+    res.send(Object.keys(achievementDefinitions));
   });
 
   app.post(`${config.root_server_path}/replay_achievement`, (req, res) => {
