@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const logger = require('./logger');
 const config = require('./config');
 const viewer = require('./viewer/viewer');
+const achievementDefinitions = require('./achievementDefinitions');
 
 module.exports = (deetzlabs) => {
   const {
@@ -11,6 +12,7 @@ module.exports = (deetzlabs) => {
     store,
     bus,
     viewersAchievements,
+    displayNames,
   } = deetzlabs;
 
   const handleError = (error, res, next) => {
@@ -86,7 +88,13 @@ module.exports = (deetzlabs) => {
   });
 
   app.post(`${config.root_server_path}/replay_achievement`, (req, res) => {
-    // achievement.replay(req.body.achievement, req.body.username);
+    const { achievement } = req.body;
+    const v = req.body.viewer;
+    achievementAlert.display({
+      achievement,
+      text: achievementDefinitions[achievement],
+      username: displayNames.get(v),
+    });
     res.sendStatus(200);
   });
 

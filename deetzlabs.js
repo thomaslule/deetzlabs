@@ -66,5 +66,6 @@ module.exports = (storage, db) => {
     store,
     bus,
     viewersAchievements,
+    displayNames,
   };
 };

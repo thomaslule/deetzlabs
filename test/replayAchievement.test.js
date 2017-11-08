@@ -24,12 +24,12 @@ afterEach(() => {
 afterAll(() => db.close(true));
 
 test('post to /replay_achievement shows achievement', (done) => {
-  const expectedCall = mockAchievement('Suédois LV1', 'Hej %USER% !', 'Someone');
+  const expectedCall = mockAchievement('Suédois LV1', 'Hej %USER% !', 'someone');
   request(app)
     .post('/api/replay_achievement')
     .send({
       achievement: 'Suédois LV1',
-      username: 'Someone',
+      viewer: 'someone',
     })
     .expect(200)
     .then(() => {
