@@ -1,22 +1,9 @@
 const clone = require('clone');
 
-module.exports = (storage, showAchievement) => {
-  const storageName = 'achievement_alert';
-
-  const getVolume = () => {
-    const stored = storage.getItemSync('achievement_alert') || {};
-    return stored.volume || '0.5';
-  };
-
-  const setVolume = (volume) => {
-    const stored = storage.getItemSync('achievement_alert') || {};
-    stored.volume = volume;
-    storage.setItemSync(storageName, stored);
-  };
-
+module.exports = (settings, showAchievement) => {
   const display = (achievement, callback) => {
     const body = clone(achievement);
-    body.volume = getVolume();
+    body.volume = settings.getAchievementVolume();
     showAchievement(body, callback);
   };
 
@@ -29,6 +16,6 @@ module.exports = (storage, showAchievement) => {
   };
 
   return {
-    display, test, setVolume, getVolume,
+    display, test,
   };
 };

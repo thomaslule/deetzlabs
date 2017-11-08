@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const logger = require('./logger');
 const config = require('./config');
 const viewer = require('./viewer/viewer');
+const settings = require('./settings/settings');
 const achievementDefinitions = require('./achievementDefinitions');
 
 module.exports = (deetzlabs) => {
@@ -13,6 +14,7 @@ module.exports = (deetzlabs) => {
     bus,
     viewersAchievements,
     displayNames,
+    settingsProjection,
   } = deetzlabs;
 
   const handleError = (error, res, next) => {
@@ -48,21 +50,29 @@ module.exports = (deetzlabs) => {
   });
 
   app.post(`${config.root_server_path}/alert_volume`, (req, res) => {
-    logger.info('received POST /alert_volume with volume=%s', req.body.volume);
-    achievementAlert.setVolume(req.body.volume);
-    res.sendStatus(200);
+    const { volume } = req.body;
+    logger.info('received POST /alert_volume with volume=%s', volume);
+    store.get('settings')
+      .then((events) => {
+        const s = settings(events);
+        return s.changeAchievementVolume(bus, volume);
+      })
+      .then(() => { res.sendStatus(200); })
+      .catch((e) => {
+        logger.error(e);
+        res.sendStatus(400);
+      });
   });
 
   app.get(`${config.root_server_path}/alert_volume`, (req, res) => {
     logger.info('received GET /alert_volume');
-    const volume = achievementAlert.getVolume();
-    res.send({ volume });
+    res.send({ volume: settingsProjection.getAchievementVolume() });
   });
 
   app.post(`${config.root_server_path}/achievement`, (req, res) => {
     logger.info(`received /achievement POST for ${req.body.achievement} ${req.body.user.username}`);
     const id = req.body.user['display-name'].toLowerCase();
-    store.get(id)
+    store.get('viewer', id)
       .then((events) => {
         const v = viewer(id, events);
         return v.receiveAchievement(bus, req.body.achievement, req.body.user['display-name']);
@@ -118,7 +128,7 @@ module.exports = (deetzlabs) => {
     logger.info(`received POST /cheer by ${req.body.displayName}`);
     const { displayName, message, amount } = req.body;
     const id = displayName.toLowerCase();
-    store.get(id)
+    store.get('viewer', id)
       .then((events) => {
         const v = viewer(id, events);
         return v.cheer(bus, displayName, message, amount);
@@ -133,7 +143,7 @@ module.exports = (deetzlabs) => {
   app.post(`${config.root_server_path}/subscription`, (req, res) => {
     logger.info(`received POST /subscription by ${req.body.user}`);
     const id = req.body.user.toLowerCase();
-    store.get(id)
+    store.get('viewer', id)
       .then((events) => {
         const v = viewer(id, events);
         return v.subscribe(bus, req.body.method, req.body.message, req.body.user);

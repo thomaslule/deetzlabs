@@ -5,13 +5,15 @@ const sendChatMessage = require('./apis/sendChatMessage');
 const achievementAlertModule = require('./modules/achievementAlert');
 const DisplayNames = require('./viewer/projections/displayName');
 const ViewersAchievements = require('./viewer/projections/achievements');
+const Settings = require('./settings/projections/settings');
 const achievementDefinitions = require('./achievementDefinitions');
 const isCommand = require('./util/isCommand');
 
 module.exports = (storage, db) => {
   const store = EventStore(db);
   const bus = Bus(store);
-  const achievementAlert = achievementAlertModule(storage, showAchievement);
+  const settingsProjection = Settings(bus);
+  const achievementAlert = achievementAlertModule(settingsProjection, showAchievement);
   const displayNames = DisplayNames(bus);
   const viewersAchievements = ViewersAchievements(bus);
 
@@ -67,5 +69,6 @@ module.exports = (storage, db) => {
     bus,
     viewersAchievements,
     displayNames,
+    settingsProjection,
   };
 };
