@@ -3,22 +3,15 @@ const Bus = require('./bus');
 const showAchievement = require('./apis/showAchievement');
 const sendChatMessage = require('./apis/sendChatMessage');
 const achievementAlertModule = require('./modules/achievementAlert');
-const achievementModule = require('./modules/achievement');
-const viewersModule = require('./modules/viewers');
-const commandsModule = require('./modules/commandCommands');
-const succesModule = require('./modules/commandSucces');
 const DisplayNames = require('./viewer/projections/displayName');
 const ViewersAchievements = require('./viewer/projections/achievements');
 const achievementDefinitions = require('./achievementDefinitions');
+const isCommand = require('./util/isCommand');
 
 module.exports = (storage, db) => {
   const store = EventStore(db);
   const bus = Bus(store);
-  const viewers = viewersModule(storage);
   const achievementAlert = achievementAlertModule(storage, showAchievement);
-  const achievement = achievementModule(storage, achievementAlert.display, viewers.getDisplayName);
-  const commands = commandsModule(sendChatMessage);
-  const succes = succesModule(achievement.get, sendChatMessage);
   const displayNames = DisplayNames(bus);
   const viewersAchievements = ViewersAchievements(bus);
 
@@ -28,7 +21,7 @@ module.exports = (storage, db) => {
   });
 
   bus.subscribe('viewer', (event, isReplay) => {
-    if (event.type === 'got-achievement' && !isReplay) {
+    if (!isReplay && event.type === 'got-achievement') {
       return new Promise((resolve) => {
         achievementAlert.display({
           achievement: event.achievement,
@@ -40,12 +33,34 @@ module.exports = (storage, db) => {
     return Promise.resolve();
   });
 
+  bus.subscribe('viewer', (event, isReplay) => {
+    if (
+      !isReplay
+      && event.type === 'sent-chat-message'
+      && (isCommand('!succès', event.message) || isCommand('!succes', event.message) || isCommand('!success', event.message))) {
+      const displayName = displayNames.get(event.id);
+      const achievements = viewersAchievements
+        .getForViewer(event.id);
+      const message = achievements.length > 0 ?
+        `Bravo ${displayName} pour tes succès : ${achievements.join(', ')} !`
+        : `${displayName} n'a pas encore de succès, déso.`;
+      sendChatMessage(message);
+    }
+    return Promise.resolve();
+  });
+
+  bus.subscribe('viewer', (event, isReplay) => {
+    if (
+      !isReplay
+      && event.type === 'sent-chat-message'
+      && (event.message.trim() === '!commands')) {
+      sendChatMessage('Moi j\'ai qu\'une commande c\'est !succès');
+    }
+    return Promise.resolve();
+  });
+
   return {
     init,
-    achievement,
-    viewers,
-    commands,
-    succes,
     achievementAlert,
     db,
     store,

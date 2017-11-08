@@ -6,10 +6,6 @@ const viewer = require('./viewer/viewer');
 
 module.exports = (deetzlabs) => {
   const {
-    achievement,
-    viewers,
-    commands,
-    succes,
     achievementAlert,
     db,
     store,
@@ -85,27 +81,24 @@ module.exports = (deetzlabs) => {
   });
 
   app.get(`${config.root_server_path}/all_achievements`, (req, res) => {
-    res.send(achievement.getList());
+    // res.send(achievement.getList());
+    res.sendStatus(200);
   });
 
   app.post(`${config.root_server_path}/replay_achievement`, (req, res) => {
-    achievement.replay(req.body.achievement, req.body.username);
+    // achievement.replay(req.body.achievement, req.body.username);
     res.sendStatus(200);
   });
 
   app.get(`${config.root_server_path}/viewers`, (req, res) => {
     logger.info('received /viewers GET');
-    const viewersList = viewers.get();
-    res.send(viewersList);
+    // const viewersList = viewers.get();
+    // res.send(viewersList);
+    res.sendStatus(200);
   });
 
   app.post(`${config.root_server_path}/chat_message`, (req, res) => {
     const { user, message } = req.body;
-    [
-      viewers,
-      commands,
-      succes,
-    ].forEach(obj => obj.receiveMessage(user, message));
     const id = user['display-name'].toLowerCase();
     store.get('viewer', id)
       .then((events) => {

@@ -27,5 +27,9 @@ module.exports = (bus) => {
 
   const getLasts = () => p.getState().slice(-5).reverse();
 
-  return { getAll, getLasts };
+  const getForViewer = viewer => p.getState()
+    .filter(av => av.viewer === viewer)
+    .map(av => av.achievement);
+
+  return { getAll, getLasts, getForViewer };
 };
