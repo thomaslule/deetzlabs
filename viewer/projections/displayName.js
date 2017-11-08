@@ -25,5 +25,7 @@ module.exports = (bus) => {
 
   const get = viewer => p.getState()[viewer] || viewer;
 
-  return { get };
+  const getAll = () => p.getState();
+
+  return { get, getAll };
 };

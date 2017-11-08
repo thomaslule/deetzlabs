@@ -99,9 +99,7 @@ module.exports = (deetzlabs) => {
 
   app.get(`${config.root_server_path}/viewers`, (req, res) => {
     logger.info('received /viewers GET');
-    // const viewersList = viewers.get();
-    // res.send(viewersList);
-    res.sendStatus(200);
+    res.send(Object.values(displayNames.getAll()));
   });
 
   app.post(`${config.root_server_path}/chat_message`, (req, res) => {
