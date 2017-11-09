@@ -1,18 +1,18 @@
 const request = require('request');
 const config = require('config');
-const logger = require('../logger');
+const { log } = require('../logger');
 
 module.exports = (message) => {
-  logger.info('send chat message command', message);
+  log.info('send chat message command', message);
   request({
     uri: config.get('bot_url'),
     method: 'POST',
     json: { message },
   }, (error, response) => {
     if (error) {
-      logger.error(error);
+      log.error(error);
     } else if (!(`${response.statusCode}`).startsWith('2')) {
-      logger.error('got a status code %s when sending chat message request', response.statusCode);
+      log.error('got a status code %s when sending chat message request', response.statusCode);
     }
   });
 };

@@ -1,23 +1,42 @@
-const winston = require('winston');
 const config = require('config');
+const winston = require('winston');
+require('winston-mongodb');
 
-const tsFormat = () => (new Date()).toLocaleString();
+winston.remove(winston.transports.Console);
+let logger = winston;
 
-const transports = [];
+const log = {
+  debug: (...args) => logger.debug(...args),
+  verbose: (...args) => logger.verbose(...args),
+  info: (...args) => logger.info(...args),
+  warn: (...args) => logger.warn(...args),
+  error: (...args) => logger.error(...args),
+};
 
-if (config.get('log_to_console')) {
-  transports.push(new (winston.transports.Console)({
-    timestamp: tsFormat,
-  }));
-}
+const configureLogger = (db) => {
+  const tsFormat = () => (new Date()).toLocaleString();
 
-if (config.get('log_to_file')) {
-  transports.push(new (winston.transports.File)({
-    timestamp: tsFormat,
-    filename: 'deetzlabs.log',
-  }));
-}
+  logger = new (winston.Logger)();
 
-module.exports = new (winston.Logger)({
-  transports,
-});
+  if (config.get('log_to_console')) {
+    logger.add(winston.transports.Console, {
+      timestamp: tsFormat,
+    });
+  }
+
+  if (config.get('log_to_file')) {
+    logger.add(winston.transports.File, {
+      json: false,
+      timestamp: tsFormat,
+      filename: 'deetzlabs.log',
+    });
+  }
+
+  if (config.get('log_to_db')) {
+    logger.add(winston.transports.MongoDB, {
+      db,
+    });
+  }
+};
+
+module.exports = { configureLogger, log };

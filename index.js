@@ -1,6 +1,6 @@
 const { MongoClient } = require('mongodb');
 const config = require('config');
-const logger = require('./logger');
+const { log } = require('./logger');
 const httpServer = require('./httpServer');
 const deetzlabs = require('./deetzlabs');
 
@@ -15,11 +15,11 @@ MongoClient.connect(config.get('db_url'), {})
     const server = httpServer(app);
 
     server.listen(config.get('port'), () => {
-      logger.info(`listening on ${config.get('port')}`);
+      log.info(`listening on ${config.get('port')}`);
     });
   })
   .catch((err) => {
     console.error(err);
-    logger.error(err);
+    log.error(err);
     process.exit(1);
   });

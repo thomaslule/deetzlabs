@@ -2,7 +2,8 @@ const express = require('express');
 const { Router } = require('express');
 const bodyParser = require('body-parser');
 const config = require('config');
-const logger = require('./logger');
+const morgan = require('morgan');
+const { log } = require('./logger');
 const viewer = require('./viewer/viewer');
 const settings = require('./settings/settings');
 const achievementDefinitions = require('./achievementDefinitions');
@@ -21,10 +22,9 @@ module.exports = (deetzlabs) => {
   const router = Router();
 
   router.get('/ping', (req, res) => {
-    logger.info('received /ping');
     db.stats((err) => {
       if (err) {
-        logger.error(err);
+        log.error(err);
         res.sendStatus(500);
       } else {
         res.sendStatus(200);
@@ -33,18 +33,16 @@ module.exports = (deetzlabs) => {
   });
 
   router.post('/test', (req, res) => {
-    logger.info('received /test POST');
     achievementAlert.test()
       .then(() => res.sendStatus(200))
       .catch((e) => {
-        logger.error(e);
+        log.error(e);
         res.status(500).send(`${e.name}: ${e.message}`);
       });
   });
 
   router.post('/alert_volume', (req, res) => {
     const { volume } = req.body;
-    logger.info('received POST /alert_volume with volume=%s', volume);
     store.get('settings')
       .then((events) => {
         const s = settings(events);
@@ -52,18 +50,16 @@ module.exports = (deetzlabs) => {
       })
       .then(() => { res.sendStatus(200); })
       .catch((e) => {
-        logger.error(e);
+        log.error(e);
         res.sendStatus(400);
       });
   });
 
   router.get('/alert_volume', (req, res) => {
-    logger.info('received GET /alert_volume');
     res.send({ volume: settingsProjection.getAchievementVolume() });
   });
 
   router.post('/achievement', (req, res) => {
-    logger.info(`received /achievement POST for ${req.body.achievement} ${req.body.user.username}`);
     const id = req.body.user['display-name'].toLowerCase();
     store.get('viewer', id)
       .then((events) => {
@@ -72,7 +68,7 @@ module.exports = (deetzlabs) => {
       })
       .then(() => { res.sendStatus(200); })
       .catch((e) => {
-        logger.error(e);
+        log.error(e);
         res.sendStatus(400);
       });
   });
@@ -95,13 +91,12 @@ module.exports = (deetzlabs) => {
     achievementAlert.display(v, achievement)
       .then(() => { res.sendStatus(200); })
       .catch((e) => {
-        logger.error(e);
+        log.error(e);
         res.status(500).send(`${e.name}: ${e.message}`);
       });
   });
 
   router.get('/viewers', (req, res) => {
-    logger.info('received /viewers GET');
     res.send(Object.values(displayNames.getAll()));
   });
 
@@ -118,7 +113,6 @@ module.exports = (deetzlabs) => {
   });
 
   router.post('/cheer', (req, res) => {
-    logger.info(`received POST /cheer by ${req.body.displayName}`);
     const { displayName, message, amount } = req.body;
     const id = displayName.toLowerCase();
     store.get('viewer', id)
@@ -128,13 +122,12 @@ module.exports = (deetzlabs) => {
       })
       .then(() => { res.sendStatus(200); })
       .catch((e) => {
-        logger.error(e);
+        log.error(e);
         res.sendStatus(400);
       });
   });
 
   router.post('/subscription', (req, res) => {
-    logger.info(`received POST /subscription by ${req.body.user}`);
     const id = req.body.user.toLowerCase();
     store.get('viewer', id)
       .then((events) => {
@@ -143,13 +136,15 @@ module.exports = (deetzlabs) => {
       })
       .then(() => { res.sendStatus(200); })
       .catch((e) => {
-        logger.error(e);
+        log.error(e);
         res.sendStatus(400);
       });
   });
 
   const app = express();
   app.use(bodyParser.json());
+  const stream = { write: message => log.info(message.slice(0, -1)) };
+  app.use(morgan(':remote-addr ":method :url" - :status - :response-time ms', { stream }));
   app.use(config.get('base_path'), router);
 
   return app;

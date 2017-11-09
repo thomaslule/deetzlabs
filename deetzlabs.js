@@ -1,3 +1,4 @@
+const { configureLogger } = require('./logger');
 const EventStore = require('./eventStore');
 const Bus = require('./bus');
 const AchievementAlert = require('./modules/achievementAlert');
@@ -8,6 +9,7 @@ const succesCommand = require('./modules/succesCommand');
 const commandsCommand = require('./modules/commandsCommand');
 
 module.exports = (db) => {
+  configureLogger(db);
   const store = EventStore(db);
   const bus = Bus(store);
   const settingsProjection = Settings(bus);

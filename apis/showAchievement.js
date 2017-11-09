@@ -1,9 +1,9 @@
 const request = require('request-promise-native');
 const config = require('config');
-const logger = require('../logger');
+const { log } = require('../logger');
 
 module.exports = (viewerName, achievementName, achievementText, volume) => {
-  logger.info('show achievement %s for %s', achievementName, viewerName);
+  log.info('show achievement %s for %s', achievementName, viewerName);
   return request({
     method: 'POST',
     uri: config.get('show_achievement_url'),
@@ -13,7 +13,6 @@ module.exports = (viewerName, achievementName, achievementText, volume) => {
       achievementName,
       achievementText,
       volume,
-
     },
   });
 };

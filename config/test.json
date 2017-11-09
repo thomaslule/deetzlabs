@@ -1,3 +1,4 @@
 {
-  "db_url": "mongodb://localhost:27017/deetzlabs-test"
+  "db_url": "mongodb://localhost:27017/deetzlabs-test",
+  "log_to_db": false
 }
