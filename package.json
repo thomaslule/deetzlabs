@@ -31,6 +31,7 @@
     "supertest": "^3.0.0"
   },
   "dependencies": {
+    "axios": "^0.17.0",
     "body-parser": "^1.18.2",
     "clone": "^2.1.1",
     "config": "^1.27.0",
@@ -39,6 +40,7 @@
     "moment": "^2.18.1",
     "mongodb": "^2.2.33",
     "request": "^2.83.0",
+    "request-promise-native": "^1.0.5",
     "winston": "^2.3.1"
   }
 }

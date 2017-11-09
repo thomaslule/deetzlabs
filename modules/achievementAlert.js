@@ -1,19 +1,16 @@
-const clone = require('clone');
+const showAchievement = require('../apis/showAchievement');
+const achievementDefinitions = require('../achievementDefinitions');
 
-module.exports = (settings, showAchievement) => {
-  const display = (achievement, callback) => {
-    const body = clone(achievement);
-    body.volume = settings.getAchievementVolume();
-    showAchievement(body, callback);
-  };
+module.exports = (settings, displayNames) => {
+  const display = (viewer, achievement) =>
+    showAchievement(
+      displayNames.get(viewer),
+      achievement,
+      achievementDefinitions[achievement],
+      settings.getAchievementVolume(),
+    );
 
-  const test = (callback) => {
-    display({
-      achievement: 'Testeuse',
-      username: 'Berzingator2000',
-      text: '%USER% bidouille des trucs',
-    }, callback);
-  };
+  const test = () => display('Berzingator2000', 'Testeuse');
 
   return {
     display, test,

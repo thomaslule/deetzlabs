@@ -1,20 +1,18 @@
 const EventStore = require('./eventStore');
 const Bus = require('./bus');
-const showAchievement = require('./apis/showAchievement');
 const sendChatMessage = require('./apis/sendChatMessage');
 const achievementAlertModule = require('./modules/achievementAlert');
 const DisplayNames = require('./viewer/projections/displayName');
 const ViewersAchievements = require('./viewer/projections/achievements');
 const Settings = require('./settings/projections/settings');
-const achievementDefinitions = require('./achievementDefinitions');
 const isCommand = require('./util/isCommand');
 
 module.exports = (db) => {
   const store = EventStore(db);
   const bus = Bus(store);
   const settingsProjection = Settings(bus);
-  const achievementAlert = achievementAlertModule(settingsProjection, showAchievement);
   const displayNames = DisplayNames(bus);
+  const achievementAlert = achievementAlertModule(settingsProjection, displayNames);
   const viewersAchievements = ViewersAchievements(bus);
 
   const init = () => store.getAll().then((eventsHistory) => {
@@ -24,13 +22,7 @@ module.exports = (db) => {
 
   bus.subscribe('viewer', (event, isReplay) => {
     if (!isReplay && event.type === 'got-achievement') {
-      return new Promise((resolve) => {
-        achievementAlert.display({
-          achievement: event.achievement,
-          text: achievementDefinitions[event.achievement],
-          username: displayNames.get(event.id),
-        }, () => resolve());
-      });
+      return achievementAlert.display(event.id, event.achievement);
     }
     return Promise.resolve();
   });

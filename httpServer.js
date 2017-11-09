@@ -17,14 +17,6 @@ module.exports = (deetzlabs) => {
     settingsProjection,
   } = deetzlabs;
 
-  const handleError = (error, res, next) => {
-    if (error) {
-      res.status(500).send(`${error.name}: ${error.message}`);
-    } else {
-      next();
-    }
-  };
-
   const app = express();
   app.use(bodyParser.json());
 
@@ -42,11 +34,12 @@ module.exports = (deetzlabs) => {
 
   app.post(`${config.root_server_path}/test`, (req, res) => {
     logger.info('received /test POST');
-    achievementAlert.test((error) => {
-      handleError(error, res, () => {
-        res.sendStatus(200);
+    achievementAlert.test()
+      .then(() => res.sendStatus(200))
+      .catch((e) => {
+        logger.error(e);
+        res.status(500).send(`${e.name}: ${e.message}`);
       });
-    });
   });
 
   app.post(`${config.root_server_path}/alert_volume`, (req, res) => {
@@ -99,12 +92,12 @@ module.exports = (deetzlabs) => {
   app.post(`${config.root_server_path}/replay_achievement`, (req, res) => {
     const { achievement } = req.body;
     const v = req.body.viewer;
-    achievementAlert.display({
-      achievement,
-      text: achievementDefinitions[achievement],
-      username: displayNames.get(v),
-    });
-    res.sendStatus(200);
+    achievementAlert.display(v, achievement)
+      .then(() => { res.sendStatus(200); })
+      .catch((e) => {
+        logger.error(e);
+        res.status(500).send(`${e.name}: ${e.message}`);
+      });
   });
 
   app.get(`${config.root_server_path}/viewers`, (req, res) => {
