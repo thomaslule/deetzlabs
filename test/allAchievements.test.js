@@ -1,20 +1,17 @@
 const request = require('supertest');
+const nock = require('nock');
 const connectToDb = require('./util/connectToDb');
 const initApp = require('./util/initApp');
 
-let storage;
 let app;
 let db;
 
 beforeAll(() => connectToDb().then((res) => { db = res; }));
 
-beforeEach(() => initApp(db)
-  .then((res) => {
-    ({ app, storage } = res);
-  }));
+beforeEach(() => initApp(db).then((res) => { app = res; }));
 
 afterEach(() => {
-  storage.clearSync();
+  nock.cleanAll();
   return db.dropDatabase();
 });
 

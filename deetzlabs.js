@@ -9,7 +9,7 @@ const Settings = require('./settings/projections/settings');
 const achievementDefinitions = require('./achievementDefinitions');
 const isCommand = require('./util/isCommand');
 
-module.exports = (storage, db) => {
+module.exports = (db) => {
   const store = EventStore(db);
   const bus = Bus(store);
   const settingsProjection = Settings(bus);
