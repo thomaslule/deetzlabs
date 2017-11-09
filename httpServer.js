@@ -4,73 +4,59 @@ const bodyParser = require('body-parser');
 const config = require('config');
 const morgan = require('morgan');
 const { log } = require('./logger');
-const viewer = require('./viewer/viewer');
-const settings = require('./settings/settings');
+const Viewer = require('./viewer/viewer');
+const Settings = require('./settings/settings');
 const achievementDefinitions = require('./achievementDefinitions');
 
-module.exports = (deetzlabs) => {
-  const {
-    achievementAlert,
-    db,
-    store,
-    bus,
-    viewersAchievements,
-    displayNames,
-    settingsProjection,
-  } = deetzlabs;
+const okCallback = res => () => { res.sendStatus(200); };
 
+module.exports = ({
+  db,
+  store,
+  bus,
+  achievementAlert,
+  viewersAchievements,
+  displayNames,
+  settings,
+}) => {
   const router = Router();
 
-  router.get('/ping', (req, res) => {
-    db.stats((err) => {
-      if (err) {
-        log.error(err);
-        res.sendStatus(500);
-      } else {
-        res.sendStatus(200);
-      }
-    });
+  router.get('/ping', (req, res, next) => {
+    db.stats()
+      .then(okCallback(res))
+      .catch(next);
   });
 
-  router.post('/test', (req, res) => {
+  router.post('/test', (req, res, next) => {
     achievementAlert.test()
-      .then(() => res.sendStatus(200))
-      .catch((e) => {
-        log.error(e);
-        res.status(500).send(`${e.name}: ${e.message}`);
-      });
+      .then(okCallback(res))
+      .catch(next);
   });
 
-  router.post('/alert_volume', (req, res) => {
+  router.post('/alert_volume', (req, res, next) => {
     const { volume } = req.body;
     store.get('settings')
       .then((events) => {
-        const s = settings(events);
+        const s = Settings(events);
         return s.changeAchievementVolume(bus, volume);
       })
-      .then(() => { res.sendStatus(200); })
-      .catch((e) => {
-        log.error(e);
-        res.sendStatus(400);
-      });
+      .then(okCallback(res))
+      .catch(next);
   });
 
   router.get('/alert_volume', (req, res) => {
-    res.send({ volume: settingsProjection.getAchievementVolume() });
+    res.send({ volume: settings.getAchievementVolume() });
   });
 
-  router.post('/achievement', (req, res) => {
+  router.post('/achievement', (req, res, next) => {
     const id = req.body.user['display-name'].toLowerCase();
     store.get('viewer', id)
       .then((events) => {
-        const v = viewer(id, events);
-        return v.receiveAchievement(bus, req.body.achievement, req.body.user['display-name']);
+        const viewer = Viewer(id, events);
+        return viewer.receiveAchievement(bus, req.body.achievement, req.body.user['display-name']);
       })
-      .then(() => { res.sendStatus(200); })
-      .catch((e) => {
-        log.error(e);
-        res.sendStatus(400);
-      });
+      .then(okCallback(res))
+      .catch(next);
   });
 
   router.get('/last_achievements', (req, res) => {
@@ -85,60 +71,51 @@ module.exports = (deetzlabs) => {
     res.send(Object.keys(achievementDefinitions));
   });
 
-  router.post('/replay_achievement', (req, res) => {
+  router.post('/replay_achievement', (req, res, next) => {
     const { achievement } = req.body;
     const v = req.body.viewer;
     achievementAlert.display(v, achievement)
-      .then(() => { res.sendStatus(200); })
-      .catch((e) => {
-        log.error(e);
-        res.status(500).send(`${e.name}: ${e.message}`);
-      });
+      .then(okCallback(res))
+      .catch(next);
   });
 
   router.get('/viewers', (req, res) => {
     res.send(Object.values(displayNames.getAll()));
   });
 
-  router.post('/chat_message', (req, res) => {
+  router.post('/chat_message', (req, res, next) => {
     const { user, message } = req.body;
     const id = user['display-name'].toLowerCase();
     store.get('viewer', id)
       .then((events) => {
-        const v = viewer(id, events);
-        return v.chatMessage(bus, user['display-name'], message);
-      }).then(() => {
-        res.sendStatus(200);
-      });
+        const viewer = Viewer(id, events);
+        return viewer.chatMessage(bus, user['display-name'], message);
+      })
+      .then(okCallback(res))
+      .catch(next);
   });
 
-  router.post('/cheer', (req, res) => {
+  router.post('/cheer', (req, res, next) => {
     const { displayName, message, amount } = req.body;
     const id = displayName.toLowerCase();
     store.get('viewer', id)
       .then((events) => {
-        const v = viewer(id, events);
-        return v.cheer(bus, displayName, message, amount);
+        const viewer = Viewer(id, events);
+        return viewer.cheer(bus, displayName, message, amount);
       })
-      .then(() => { res.sendStatus(200); })
-      .catch((e) => {
-        log.error(e);
-        res.sendStatus(400);
-      });
+      .then(okCallback(res))
+      .catch(next);
   });
 
-  router.post('/subscription', (req, res) => {
+  router.post('/subscription', (req, res, next) => {
     const id = req.body.user.toLowerCase();
     store.get('viewer', id)
       .then((events) => {
-        const v = viewer(id, events);
-        return v.subscribe(bus, req.body.method, req.body.message, req.body.user);
+        const viewer = Viewer(id, events);
+        return viewer.subscribe(bus, req.body.method, req.body.message, req.body.user);
       })
-      .then(() => { res.sendStatus(200); })
-      .catch((e) => {
-        log.error(e);
-        res.sendStatus(400);
-      });
+      .then(okCallback(res))
+      .catch(next);
   });
 
   const app = express();
@@ -146,6 +123,16 @@ module.exports = (deetzlabs) => {
   const stream = { write: message => log.info(message.slice(0, -1)) };
   app.use(morgan(':remote-addr ":method :url" - :status - :response-time ms', { stream }));
   app.use(config.get('base_path'), router);
+
+  app.use((err, req, res, next) => {
+    log.error(err);
+    if (err.message.startsWith('bad_request')) {
+      res.status(400).send({ error: err.message });
+    } else {
+      res.sendStatus(500);
+    }
+    next();
+  });
 
   return app;
 };

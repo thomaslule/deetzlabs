@@ -35,7 +35,8 @@ test('post to /achievement gives it to user', (done) => {
 test('post unknown achievement to /achievement gives error', (done) => {
   const expectedCall = mockAchievement('Inconnu', 'Bravo %USER% !');
   postAchievement(app, 'Inconnu', 400)
-    .then(() => {
+    .then((res) => {
+      expect(res.body).toEqual({ error: 'bad_request achievement doesnt exist' });
       expect(expectedCall.isDone()).toBeFalsy();
       return userHasAchievement(app, 'Inconnu');
     })

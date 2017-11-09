@@ -12,9 +12,9 @@ module.exports = (db) => {
   configureLogger(db);
   const store = EventStore(db);
   const bus = Bus(store);
-  const settingsProjection = Settings(bus);
+  const settings = Settings(bus);
   const displayNames = DisplayNames(bus);
-  const achievementAlert = AchievementAlert(bus, settingsProjection, displayNames);
+  const achievementAlert = AchievementAlert(bus, settings, displayNames);
   const viewersAchievements = ViewersAchievements(bus);
   succesCommand(bus, displayNames, viewersAchievements);
   commandsCommand(bus);
@@ -28,12 +28,12 @@ module.exports = (db) => {
 
   return {
     init,
-    achievementAlert,
     db,
     store,
     bus,
+    achievementAlert,
     viewersAchievements,
     displayNames,
-    settingsProjection,
+    settings,
   };
 };

@@ -113,10 +113,10 @@ module.exports = (id, eventsHistory) => {
     maybeChangeName(bus, displayName)
       .then(() => {
         if (decProj.getState().achievements.includes(achievement)) {
-          return Promise.reject(new Error('user already has achievement'));
+          return Promise.reject(new Error('bad_request user already has achievement'));
         }
         if (!achievementDefinitions[achievement]) {
-          return Promise.reject(new Error('achievement doesnt exist'));
+          return Promise.reject(new Error('bad_request achievement doesnt exist'));
         }
         return dispatchAndApply(bus, gotAchievement(id, achievement));
       });
