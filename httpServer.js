@@ -1,7 +1,8 @@
 const express = require('express');
+const { Router } = require('express');
 const bodyParser = require('body-parser');
+const config = require('config');
 const logger = require('./logger');
-const config = require('./config');
 const viewer = require('./viewer/viewer');
 const settings = require('./settings/settings');
 const achievementDefinitions = require('./achievementDefinitions');
@@ -17,10 +18,9 @@ module.exports = (deetzlabs) => {
     settingsProjection,
   } = deetzlabs;
 
-  const app = express();
-  app.use(bodyParser.json());
+  const router = Router();
 
-  app.get(`${config.root_server_path}/ping`, (req, res) => {
+  router.get('/ping', (req, res) => {
     logger.info('received /ping');
     db.stats((err) => {
       if (err) {
@@ -32,7 +32,7 @@ module.exports = (deetzlabs) => {
     });
   });
 
-  app.post(`${config.root_server_path}/test`, (req, res) => {
+  router.post('/test', (req, res) => {
     logger.info('received /test POST');
     achievementAlert.test()
       .then(() => res.sendStatus(200))
@@ -42,7 +42,7 @@ module.exports = (deetzlabs) => {
       });
   });
 
-  app.post(`${config.root_server_path}/alert_volume`, (req, res) => {
+  router.post('/alert_volume', (req, res) => {
     const { volume } = req.body;
     logger.info('received POST /alert_volume with volume=%s', volume);
     store.get('settings')
@@ -57,12 +57,12 @@ module.exports = (deetzlabs) => {
       });
   });
 
-  app.get(`${config.root_server_path}/alert_volume`, (req, res) => {
+  router.get('/alert_volume', (req, res) => {
     logger.info('received GET /alert_volume');
     res.send({ volume: settingsProjection.getAchievementVolume() });
   });
 
-  app.post(`${config.root_server_path}/achievement`, (req, res) => {
+  router.post('/achievement', (req, res) => {
     logger.info(`received /achievement POST for ${req.body.achievement} ${req.body.user.username}`);
     const id = req.body.user['display-name'].toLowerCase();
     store.get('viewer', id)
@@ -77,19 +77,19 @@ module.exports = (deetzlabs) => {
       });
   });
 
-  app.get(`${config.root_server_path}/last_achievements`, (req, res) => {
+  router.get('/last_achievements', (req, res) => {
     res.send(viewersAchievements.getLasts());
   });
 
-  app.get(`${config.root_server_path}/viewers_achievements`, (req, res) => {
+  router.get('/viewers_achievements', (req, res) => {
     res.send(viewersAchievements.getAll());
   });
 
-  app.get(`${config.root_server_path}/all_achievements`, (req, res) => {
+  router.get('/all_achievements', (req, res) => {
     res.send(Object.keys(achievementDefinitions));
   });
 
-  app.post(`${config.root_server_path}/replay_achievement`, (req, res) => {
+  router.post('/replay_achievement', (req, res) => {
     const { achievement } = req.body;
     const v = req.body.viewer;
     achievementAlert.display(v, achievement)
@@ -100,12 +100,12 @@ module.exports = (deetzlabs) => {
       });
   });
 
-  app.get(`${config.root_server_path}/viewers`, (req, res) => {
+  router.get('/viewers', (req, res) => {
     logger.info('received /viewers GET');
     res.send(Object.values(displayNames.getAll()));
   });
 
-  app.post(`${config.root_server_path}/chat_message`, (req, res) => {
+  router.post('/chat_message', (req, res) => {
     const { user, message } = req.body;
     const id = user['display-name'].toLowerCase();
     store.get('viewer', id)
@@ -117,7 +117,7 @@ module.exports = (deetzlabs) => {
       });
   });
 
-  app.post(`${config.root_server_path}/cheer`, (req, res) => {
+  router.post('/cheer', (req, res) => {
     logger.info(`received POST /cheer by ${req.body.displayName}`);
     const { displayName, message, amount } = req.body;
     const id = displayName.toLowerCase();
@@ -133,7 +133,7 @@ module.exports = (deetzlabs) => {
       });
   });
 
-  app.post(`${config.root_server_path}/subscription`, (req, res) => {
+  router.post('/subscription', (req, res) => {
     logger.info(`received POST /subscription by ${req.body.user}`);
     const id = req.body.user.toLowerCase();
     store.get('viewer', id)
@@ -147,6 +147,10 @@ module.exports = (deetzlabs) => {
         res.sendStatus(400);
       });
   });
+
+  const app = express();
+  app.use(bodyParser.json());
+  app.use(config.get('base_path'), router);
 
   return app;
 };

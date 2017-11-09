@@ -1,11 +1,11 @@
 const request = require('request');
-const config = require('../config');
+const config = require('config');
 const logger = require('../logger');
 
 module.exports = (message) => {
   logger.info('send chat message command', message);
   request({
-    uri: `${config.twitch_bot.url}/send_message`,
+    uri: config.get('bot_url'),
     method: 'POST',
     json: { message },
   }, (error, response) => {
