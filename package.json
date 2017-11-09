@@ -31,7 +31,6 @@
     "supertest": "^3.0.0"
   },
   "dependencies": {
-    "axios": "^0.17.0",
     "body-parser": "^1.18.2",
     "clone": "^2.1.1",
     "config": "^1.27.0",
