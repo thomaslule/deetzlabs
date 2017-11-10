@@ -71,12 +71,12 @@ module.exports = {
     reducer: nopeReducer,
   },
   despacitrouille: {
-    name: 'Hallowinneuse',
+    name: 'Despacitrouille',
     text: '%USER% connaît ses classiques !',
     reducer: nopeReducer,
   },
-  herculepoirette: {
-    name: 'Hallowinneuse',
+  hercule_poirette: {
+    name: 'Hercule Poirette',
     text: '%USER% mène l\'enquête !',
     reducer: nopeReducer,
   },
