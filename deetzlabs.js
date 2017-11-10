@@ -20,11 +20,14 @@ module.exports = (db) => {
   commandsCommand(bus);
 
   const init = () =>
-    store.getAll()
-      .then(eventsHistory =>
-        eventsHistory
-          .map(bus.replay)
-          .reduce((prev, cur) => prev.then(cur), Promise.resolve()));
+    store.getAllForAllAggregates()
+      .then((eventsHistory) => {
+        let promise = Promise.resolve();
+        eventsHistory.forEach((e) => {
+          promise = promise.then(() => bus.replay(e));
+        });
+        return promise;
+      });
 
   return {
     init,

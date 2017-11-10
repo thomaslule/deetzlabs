@@ -13,6 +13,12 @@ module.exports = (db) => {
       .sort({ insert_date: 1 })
       .toArray();
 
+  const getAllForAllAggregates = () =>
+    db.collection(collection)
+      .find({})
+      .sort({ insert_date: 1 })
+      .toArray();
+
   const storeEvent = (event) => {
     const eventEntry = {
       ...event,
@@ -21,5 +27,7 @@ module.exports = (db) => {
     return db.collection(collection).insertOne(eventEntry);
   };
 
-  return { storeEvent, get, getAll };
+  return {
+    storeEvent, get, getAll, getAllForAllAggregates,
+  };
 };

@@ -3,6 +3,6 @@ const httpServer = require('../../httpServer');
 
 module.exports = (db) => {
   const dl = deetzlabs(db);
-  return deetzlabs(db).init()
+  return dl.init()
     .then(() => httpServer(dl));
 };

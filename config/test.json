@@ -1,5 +1,6 @@
 {
   "db_url": "mongodb://localhost:27017/deetzlabs-test",
   "log_to_file": true,
-  "log_to_db": false
+  "log_to_db": false,
+  "log_to_console": false
 }
