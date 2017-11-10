@@ -174,7 +174,7 @@ module.exports = ({
         const id = displayName.toLowerCase();
         const achs = getStorage('achievements')
           .filter(a => a.username === id)
-          .map(a => a.achievement);
+          .map(a => ({ achievement: a.achievement, date: a.date }));
         const entertainer = Number(getStorage('count_messages')[id] || 0);
         const vigilante = Number(getStorage('vigilante')[id] || 0);
         const cheerleader = Number(getStorage('cheerleader')[id] || 0);

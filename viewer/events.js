@@ -6,49 +6,40 @@ const eventsTypes = {
   cheered: 'cheered',
 };
 
-const baseEvent = {
+const createEvent = (type, id, content) => ({
   aggregate: 'viewer',
   version: 1,
-};
-
-const migratedData = (id, data) => ({
-  ...baseEvent,
-  type: eventsTypes.migratedData,
+  insert_date: (new Date()).toISOString(),
+  type,
   id,
-  ...data,
+  ...content,
 });
 
-const sentChatMessage = (id, displayName, message) => ({
-  ...baseEvent,
-  type: eventsTypes.sentChatMessage,
-  id,
-  displayName,
-  message,
-});
+const migratedData = (id, data) => createEvent(eventsTypes.migratedData, id, data);
 
-const gotAchievement = (id, displayName, achievement) => ({
-  ...baseEvent,
-  type: eventsTypes.gotAchievement,
-  id,
-  displayName,
-  achievement,
-});
+const sentChatMessage = (id, displayName, message) =>
+  createEvent(eventsTypes.sentChatMessage, id, {
+    displayName,
+    message,
+  });
 
-const subscribed = (id, displayName, method) => ({
-  ...baseEvent,
-  type: eventsTypes.subscribed,
-  id,
-  displayName,
-  method,
-});
+const gotAchievement = (id, displayName, achievement) =>
+  createEvent(eventsTypes.gotAchievement, id, {
+    displayName,
+    achievement,
+  });
 
-const cheered = (id, displayName, amount) => ({
-  ...baseEvent,
-  type: eventsTypes.cheered,
-  id,
-  displayName,
-  amount,
-});
+const subscribed = (id, displayName, method) =>
+  createEvent(eventsTypes.subscribed, id, {
+    displayName,
+    method,
+  });
+
+const cheered = (id, displayName, amount) =>
+  createEvent(eventsTypes.cheered, id, {
+    displayName,
+    amount,
+  });
 
 module.exports = {
   eventsTypes,

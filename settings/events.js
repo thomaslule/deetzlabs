@@ -2,17 +2,19 @@ const eventsTypes = {
   achievementVolumeChanged: 'achievement-volume-changed',
 };
 
-const baseEvent = {
+const createEvent = (type, content) => ({
   aggregate: 'settings',
   id: 'settings',
   version: 1,
-};
-
-const achievementVolumeChanged = volume => ({
-  ...baseEvent,
-  type: eventsTypes.achievementVolumeChanged,
-  volume,
+  insert_date: (new Date()).toISOString(),
+  type,
+  ...content,
 });
+
+const achievementVolumeChanged = volume =>
+  createEvent(eventsTypes.achievementVolumeChanged, {
+    volume,
+  });
 
 module.exports = {
   eventsTypes,

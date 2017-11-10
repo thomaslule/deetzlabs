@@ -19,13 +19,7 @@ module.exports = (db) => {
       .sort({ insert_date: 1 })
       .toArray();
 
-  const storeEvent = (event) => {
-    const eventEntry = {
-      ...event,
-      insert_date: new Date(),
-    };
-    return db.collection(collection).insertOne(eventEntry);
-  };
+  const storeEvent = event => db.collection(collection).insertOne(event);
 
   return {
     storeEvent, get, getAll, getAllForAllAggregates,
