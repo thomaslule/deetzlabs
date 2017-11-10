@@ -5,10 +5,11 @@ const config = require('config');
 const morgan = require('morgan');
 const { check } = require('express-validator/check');
 const { sanitize } = require('express-validator/filter');
+const mapValues = require('lodash/mapValues');
 const { log } = require('./logger');
 const Viewer = require('./viewer/viewer');
+const achievements = require('./achievements');
 const Settings = require('./settings/settings');
-const achievementDefinitions = require('./achievementDefinitions');
 const validationMiddleware = require('./util/validationMiddleware');
 
 const okCallback = res => () => { res.sendStatus(200); };
@@ -59,15 +60,16 @@ module.exports = ({
 
   router.post(
     '/give_achievement',
+    check('achievement').not().isEmpty(),
     check('viewer').not().isEmpty(),
     check('displayName'),
     validationMiddleware,
     (req, res, next) => {
-      const { viewer, displayName } = req.validParams;
+      const { achievement, viewer, displayName } = req.validParams;
       store.get('viewer', viewer)
         .then((events) => {
           const v = Viewer(viewer, events);
-          return v.receiveAchievement(bus, req.body.achievement, displayName);
+          return v.receiveAchievement(bus, achievement, displayName);
         })
         .then(okCallback(res))
         .catch(next);
@@ -83,7 +85,7 @@ module.exports = ({
   });
 
   router.get('/all_achievements', (req, res) => {
-    res.send(Object.keys(achievementDefinitions));
+    res.send(mapValues(achievements, a => ({ name: a.name })));
   });
 
   router.post(

@@ -35,7 +35,7 @@ test('!succès with 0 achievement', (done) => {
 
 test('!succès with 1 achievement', (done) => {
   const expectedCall = mockSay('Bravo Someone pour tes succès : Fossoyeuse !');
-  postAchievement(app, 'Fossoyeuse')
+  postAchievement(app, 'gravedigger')
     .then(() => postMessage(app, '!succès'))
     .then(() => {
       expectedCall.done();
@@ -45,8 +45,8 @@ test('!succès with 1 achievement', (done) => {
 
 test('!succès with 2 achievement', (done) => {
   const expectedCall = mockSay('Bravo Someone pour tes succès : Fossoyeuse, Suédois LV1 !');
-  postAchievement(app, 'Fossoyeuse')
-    .then(() => postAchievement(app, 'Suédois LV1'))
+  postAchievement(app, 'gravedigger')
+    .then(() => postAchievement(app, 'swedish'))
     .then(() => postMessage(app, '!succès'))
     .then(() => {
       expectedCall.done();
@@ -56,8 +56,8 @@ test('!succès with 2 achievement', (done) => {
 
 test('!succès reads only caller achievements', (done) => {
   const expectedCall = mockSay('Bravo Someone pour tes succès : Fossoyeuse !');
-  postAchievement(app, 'Fossoyeuse')
-    .then(() => postAchievement(app, 'Suédois LV1', 200, 'other', 'Other'))
+  postAchievement(app, 'gravedigger')
+    .then(() => postAchievement(app, 'swedish', 200, 'other', 'Other'))
     .then(() => postMessage(app, '!succès'))
     .then(() => {
       expectedCall.done();

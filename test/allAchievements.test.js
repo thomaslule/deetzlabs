@@ -20,9 +20,8 @@ afterAll(() => db.close(true));
 test('GET /all_achievements returns all the possible achievements', (done) => {
   request(app).get('/api/all_achievements').expect(200)
     .then((response) => {
-      const list = response.body;
-      expect(list).toContain('Testeuse');
-      expect(list).toContain('Mécène');
+      const achievements = response.body;
+      expect(achievements.benefactor.name).toBe('Mécène');
       done();
     });
 });

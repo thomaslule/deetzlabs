@@ -1,16 +1,16 @@
 const showAchievement = require('../apis/showAchievement');
-const achievementDefinitions = require('../achievementDefinitions');
+const achievements = require('../achievements');
 
 module.exports = (bus, settings, displayNames) => {
   const display = (viewer, achievement) =>
     showAchievement(
       displayNames.get(viewer),
-      achievement,
-      achievementDefinitions[achievement],
+      achievements[achievement].name,
+      achievements[achievement].text,
       settings.getAchievementVolume(),
     );
 
-  const test = () => display('Berzingator2000', 'Testeuse');
+  const test = () => display('Berzingator2000', 'testing');
 
   bus.subscribe('viewer', (event, isReplay) => {
     if (!isReplay && event.type === 'got-achievement') {

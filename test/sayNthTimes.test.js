@@ -54,7 +54,7 @@ const testSayNthTimes = ({
 test('say n times !berzingue', () => testSayNthTimes({
   command: '!berzingue',
   n: 5,
-  achievementCode: 'Berzingos',
+  achievementCode: 'berzingue',
   achievementTitle: 'Berzingos',
   achievementText: '%USER% dépasse le mur du son !',
 }));
@@ -62,7 +62,7 @@ test('say n times !berzingue', () => testSayNthTimes({
 test('say n times !heal', () => testSayNthTimes({
   command: '!heal',
   n: 5,
-  achievementCode: 'Prudente',
+  achievementCode: 'careful',
   achievementTitle: 'Prudente',
   achievementText: '%USER% nous montre la voie de la sagesse',
 }));
@@ -70,7 +70,7 @@ test('say n times !heal', () => testSayNthTimes({
 test('say n times !save', () => testSayNthTimes({
   command: '!save',
   n: 5,
-  achievementCode: 'Prudente',
+  achievementCode: 'careful',
   achievementTitle: 'Prudente',
   achievementText: '%USER% nous montre la voie de la sagesse',
 }));
@@ -78,7 +78,7 @@ test('say n times !save', () => testSayNthTimes({
 test('say n times !gg', () => testSayNthTimes({
   command: '!gg',
   n: 5,
-  achievementCode: 'Pom-pom girl',
+  achievementCode: 'cheerleader',
   achievementTitle: 'Pom-pom girl',
   achievementText: 'Merci pour tes encouragements %USER% !',
 }));
@@ -86,23 +86,23 @@ test('say n times !gg', () => testSayNthTimes({
 test('say n times !rip', () => testSayNthTimes({
   command: '!rip',
   n: 5,
-  achievementCode: 'Fossoyeuse',
+  achievementCode: 'gravedigger',
   achievementTitle: 'Fossoyeuse',
   achievementText: '%USER% est un peu sadique...',
 }));
 
-test('say n times hej', () => testSayNthTimes({
+test('say hej', () => testSayNthTimes({
   command: 'hej',
   n: 1,
-  achievementCode: 'Suédois LV1',
+  achievementCode: 'swedish',
   achievementTitle: 'Suédois LV1',
   achievementText: 'Hej %USER% !',
 }));
 
-test('say n times Hej !', () => testSayNthTimes({
+test('say Hej !', () => testSayNthTimes({
   command: 'Hej !',
   n: 1,
-  achievementCode: 'Suédois LV1',
+  achievementCode: 'swedish',
   achievementTitle: 'Suédois LV1',
   achievementText: 'Hej %USER% !',
 }));
@@ -110,7 +110,7 @@ test('say n times Hej !', () => testSayNthTimes({
 test('say n times !putain', () => testSayNthTimes({
   command: '!putain',
   n: 5,
-  achievementCode: 'Vigilance constante',
+  achievementCode: 'vigilante',
   achievementTitle: 'Vigilance constante',
   achievementText: '%USER% ne laisse rien passer !',
 }));
@@ -118,7 +118,7 @@ test('say n times !putain', () => testSayNthTimes({
 test('say anything 300 times', () => {
   const command = 'anything';
   const n = 300;
-  const achievementCode = 'Ambianceuse';
+  const achievementCode = 'entertainer';
   const achievementTitle = 'Ambianceuse';
   const achievementText = 'Bim plein de messages dans le chat, gg %USER%';
   const expectedCall = mockAchievement(achievementTitle, achievementText);
