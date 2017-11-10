@@ -16,7 +16,7 @@ const counters = {
   },
   'Suédois LV1': {
     magicNumber: 1,
-    condition: message => isCommand('hej', message.toLowerCase()),
+    condition: message => isCommand('hej', message),
   },
   Fossoyeuse: {
     magicNumber: 5,

@@ -3,10 +3,13 @@ const { Router } = require('express');
 const bodyParser = require('body-parser');
 const config = require('config');
 const morgan = require('morgan');
+const { check } = require('express-validator/check');
+const { sanitize } = require('express-validator/filter');
 const { log } = require('./logger');
 const Viewer = require('./viewer/viewer');
 const Settings = require('./settings/settings');
 const achievementDefinitions = require('./achievementDefinitions');
+const validationMiddleware = require('./util/validationMiddleware');
 
 const okCallback = res => () => { res.sendStatus(200); };
 
@@ -27,43 +30,55 @@ module.exports = ({
       .catch(next);
   });
 
-  router.post('/test', (req, res, next) => {
+  router.post('/show_test_achievement', (req, res, next) => {
     achievementAlert.test()
       .then(okCallback(res))
       .catch(next);
   });
 
-  router.post('/alert_volume', (req, res, next) => {
-    const { volume } = req.body;
-    store.get('settings')
-      .then((events) => {
-        const s = Settings(events);
-        return s.changeAchievementVolume(bus, volume);
-      })
-      .then(okCallback(res))
-      .catch(next);
-  });
+  router.post(
+    '/change_achievement_volume',
+    check('volume').isFloat({ min: 0.1, max: 1 }),
+    sanitize('volume').toFloat(),
+    validationMiddleware,
+    (req, res, next) => {
+      const { volume } = req.validParams;
+      store.get('settings')
+        .then((events) => {
+          const s = Settings(events);
+          return s.changeAchievementVolume(bus, volume);
+        })
+        .then(okCallback(res))
+        .catch(next);
+    },
+  );
 
-  router.get('/alert_volume', (req, res) => {
+  router.get('/achievement_volume', (req, res) => {
     res.send({ volume: settings.getAchievementVolume() });
   });
 
-  router.post('/achievement', (req, res, next) => {
-    const id = req.body.user['display-name'].toLowerCase();
-    store.get('viewer', id)
-      .then((events) => {
-        const viewer = Viewer(id, events);
-        return viewer.receiveAchievement(bus, req.body.achievement, req.body.user['display-name']);
-      })
-      .then(okCallback(res))
-      .catch(next);
-  });
+  router.post(
+    '/give_achievement',
+    check('viewer').not().isEmpty(),
+    check('displayName'),
+    validationMiddleware,
+    (req, res, next) => {
+      const { viewer, displayName } = req.validParams;
+      store.get('viewer', viewer)
+        .then((events) => {
+          const v = Viewer(viewer, events);
+          return v.receiveAchievement(bus, req.body.achievement, displayName);
+        })
+        .then(okCallback(res))
+        .catch(next);
+    },
+  );
 
-  router.get('/last_achievements', (req, res) => {
+  router.get('/last_viewer_achievements', (req, res) => {
     res.send(viewersAchievements.getLasts());
   });
 
-  router.get('/viewers_achievements', (req, res) => {
+  router.get('/all_viewer_achievements', (req, res) => {
     res.send(viewersAchievements.getAll());
   });
 
@@ -71,52 +86,83 @@ module.exports = ({
     res.send(Object.keys(achievementDefinitions));
   });
 
-  router.post('/replay_achievement', (req, res, next) => {
-    const { achievement } = req.body;
-    const v = req.body.viewer;
-    achievementAlert.display(v, achievement)
-      .then(okCallback(res))
-      .catch(next);
-  });
+  router.post(
+    '/replay_achievement',
+    check('achievement').not().isEmpty(),
+    check('viewer').not().isEmpty(),
+    validationMiddleware,
+    (req, res, next) => {
+      const { achievement, viewer } = req.validParams;
+      achievementAlert.display(viewer, achievement)
+        .then(okCallback(res))
+        .catch(next);
+    },
+  );
+
+  router.post(
+    '/send_chat_message',
+    check('viewer').not().isEmpty(),
+    check('displayName'),
+    check('message').not().isEmpty(),
+    validationMiddleware,
+    (req, res, next) => {
+      const { viewer, displayName, message } = req.validParams;
+      store.get('viewer', viewer)
+        .then((events) => {
+          const v = Viewer(viewer, events);
+          return v.chatMessage(bus, displayName, message);
+        })
+        .then(okCallback(res))
+        .catch(next);
+    },
+  );
 
   router.get('/viewers', (req, res) => {
-    res.send(Object.values(displayNames.getAll()));
+    res.send(displayNames.getAll());
   });
 
-  router.post('/chat_message', (req, res, next) => {
-    const { user, message } = req.body;
-    const id = user['display-name'].toLowerCase();
-    store.get('viewer', id)
-      .then((events) => {
-        const viewer = Viewer(id, events);
-        return viewer.chatMessage(bus, user['display-name'], message);
-      })
-      .then(okCallback(res))
-      .catch(next);
-  });
+  router.post(
+    '/send_cheer',
+    check('viewer').not().isEmpty(),
+    check('displayName'),
+    check('message').not().isEmpty(),
+    check('amount').isInt(),
+    sanitize('amount').toInt(),
+    validationMiddleware,
+    (req, res, next) => {
+      const {
+        viewer, displayName, message, amount,
+      } = req.validParams;
+      store.get('viewer', viewer)
+        .then((events) => {
+          const v = Viewer(viewer, events);
+          return v.cheer(bus, displayName, message, amount);
+        })
+        .then(okCallback(res))
+        .catch(next);
+    },
+  );
 
-  router.post('/cheer', (req, res, next) => {
-    const { displayName, message, amount } = req.body;
-    const id = displayName.toLowerCase();
-    store.get('viewer', id)
-      .then((events) => {
-        const viewer = Viewer(id, events);
-        return viewer.cheer(bus, displayName, message, amount);
-      })
-      .then(okCallback(res))
-      .catch(next);
-  });
-
-  router.post('/subscription', (req, res, next) => {
-    const id = req.body.user.toLowerCase();
-    store.get('viewer', id)
-      .then((events) => {
-        const viewer = Viewer(id, events);
-        return viewer.subscribe(bus, req.body.method, req.body.message, req.body.user);
-      })
-      .then(okCallback(res))
-      .catch(next);
-  });
+  router.post(
+    '/send_subscription',
+    check('viewer').not().isEmpty(),
+    check('displayName'),
+    check('message'),
+    check('method'),
+    validationMiddleware,
+    (req, res, next) => {
+      const {
+        viewer, displayName, message, method,
+      } = req.validParams;
+      store.get('viewer', viewer)
+        .then((events) => {
+          const v = Viewer(viewer, events);
+          return v.subscribe(bus, method, message, displayName);
+        })
+        .then(okCallback(res))
+        .catch(next);
+    },
+  );
 
   const app = express();
   app.use(bodyParser.json());

@@ -57,7 +57,7 @@ test('!succès with 2 achievement', (done) => {
 test('!succès reads only caller achievements', (done) => {
   const expectedCall = mockSay('Bravo Someone pour tes succès : Fossoyeuse !');
   postAchievement(app, 'Fossoyeuse')
-    .then(() => postAchievement(app, 'Suédois LV1', 200, { username: 'other', 'display-name': 'other' }))
+    .then(() => postAchievement(app, 'Suédois LV1', 200, 'other', 'Other'))
     .then(() => postMessage(app, '!succès'))
     .then(() => {
       expectedCall.done();

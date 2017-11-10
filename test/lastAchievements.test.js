@@ -24,7 +24,7 @@ afterEach(() => {
 
 afterAll(() => db.close(true));
 
-test('GET /last_achievements returns the last 5 achievements', (done) => {
+test('GET /last_viewer_achievements returns the last 5 achievements', (done) => {
   postMessage(app, 'something magic')
     .then(() => postAchievement(app, 'Berzingos'))
     .then(() => postAchievement(app, 'Suédois LV1'))
@@ -32,7 +32,7 @@ test('GET /last_achievements returns the last 5 achievements', (done) => {
     .then(() => postAchievement(app, 'Pom-pom girl'))
     .then(() => postAchievement(app, 'Mécène'))
     .then(() => postAchievement(app, 'Ambianceuse'))
-    .then(() => request(app).get('/api/last_achievements').expect(200))
+    .then(() => request(app).get('/api/last_viewer_achievements').expect(200))
     .then((response) => {
       const list = response.body;
       expect(list.length).toBe(5);
@@ -42,10 +42,10 @@ test('GET /last_achievements returns the last 5 achievements', (done) => {
     });
 });
 
-test('GET /last_achievements returns all the achievements if less than 5', (done) => {
+test('GET /last_viewer_achievements returns all the achievements if less than 5', (done) => {
   postMessage(app, '!berzingue')
     .then(() => postAchievement(app, 'Berzingos'))
-    .then(() => request(app).get('/api/last_achievements').expect(200))
+    .then(() => request(app).get('/api/last_viewer_achievements').expect(200))
     .then((response) => {
       const list = response.body;
       expect(list.length).toBe(1);

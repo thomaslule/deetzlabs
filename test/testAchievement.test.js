@@ -1,8 +1,8 @@
 const nock = require('nock');
-const request = require('supertest');
 const mockAchievement = require('./util/mockAchievement');
 const connectToDb = require('./util/connectToDb');
 const initApp = require('./util/initApp');
+const showTestAchievement = require('./util/showTestAchievement');
 
 let app;
 let db;
@@ -18,10 +18,9 @@ afterEach(() => {
 
 afterAll(() => db.close(true));
 
-test('post to /test shows achievement', (done) => {
+test('post to /show_test_achievement shows achievement', (done) => {
   const expectedCall = mockAchievement('Testeuse', '%USER% bidouille des trucs', 'Berzingator2000');
-  request(app)
-    .post('/api/test')
+  showTestAchievement(app)
     .expect(200)
     .then(() => {
       expectedCall.done();

@@ -22,9 +22,10 @@ afterAll(() => db.close(true));
 test('achievement benefactor on sub', (done) => {
   const expectedCall = mockAchievement('Mécène', 'Cool ! Merci pour ton soutien %USER%');
   request(app)
-    .post('/api/subscription')
+    .post('/api/send_subscription')
     .send({
-      user: 'Someone',
+      viewer: 'someone',
+      displayName: 'Someone',
     })
     .expect(200)
     .then(() => {

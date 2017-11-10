@@ -19,7 +19,7 @@ afterEach(() => {
 
 afterAll(() => db.close(true));
 
-test('post to /achievement gives it to user', (done) => {
+test('post to /give_achievement gives it to user', (done) => {
   const expectedCall = mockAchievement('Mécène', 'Cool ! Merci pour ton soutien %USER%');
   postAchievement(app, 'Mécène')
     .then(() => {
@@ -32,7 +32,7 @@ test('post to /achievement gives it to user', (done) => {
     });
 });
 
-test('post unknown achievement to /achievement gives error', (done) => {
+test('post unknown achievement to /give_achievement gives error', (done) => {
   const expectedCall = mockAchievement('Inconnu', 'Bravo %USER% !');
   postAchievement(app, 'Inconnu', 400)
     .then((res) => {
@@ -42,6 +42,19 @@ test('post unknown achievement to /achievement gives error', (done) => {
     })
     .then((hasAchievement) => {
       expect(hasAchievement).toBeFalsy();
+      done();
+    });
+});
+
+test('post to /give_achievement without displayName gives it to user', (done) => {
+  const expectedCall = mockAchievement('Mécène', 'Cool ! Merci pour ton soutien %USER%', 'someone');
+  postAchievement(app, 'Mécène', 200, 'someone', null)
+    .then(() => {
+      expectedCall.done();
+      return userHasAchievement(app, 'Mécène');
+    })
+    .then((hasAchievement) => {
+      expect(hasAchievement).toBeTruthy();
       done();
     });
 });

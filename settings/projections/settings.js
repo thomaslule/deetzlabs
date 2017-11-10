@@ -8,7 +8,7 @@ const projection = (eventsHistory) => {
     return currentState;
   };
 
-  let state = eventsHistory.reduce(reducer, { achievementVolume: '0.5' });
+  let state = eventsHistory.reduce(reducer, { achievementVolume: 0.5 });
 
   const apply = (event) => {
     state = reducer(state, event);

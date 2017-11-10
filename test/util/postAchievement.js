@@ -4,15 +4,14 @@ module.exports = (
   app,
   achievement,
   expectedCode = 200,
-  user = {
-    username: 'someone',
-    'display-name': 'Someone',
-  },
+  viewer = 'someone',
+  displayName = 'Someone',
 ) =>
   request(app)
-    .post('/api/achievement')
+    .post('/api/give_achievement')
     .send({
-      user,
+      viewer,
+      displayName,
       achievement,
     })
     .expect(expectedCode);
