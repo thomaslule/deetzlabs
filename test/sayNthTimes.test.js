@@ -1,3 +1,4 @@
+const request = require('supertest');
 const nock = require('nock');
 const postMessage = require('./util/postMessage');
 const mockAchievement = require('./util/mockAchievement');
@@ -116,14 +117,28 @@ test('say n times !putain', () => testSayNthTimes({
 }));
 
 test('say anything 300 times', () => {
-  const command = 'anything';
-  const n = 300;
   const achievementCode = 'entertainer';
   const achievementTitle = 'Ambianceuse';
   const achievementText = 'Bim plein de messages dans le chat, gg %USER%';
   const expectedCall = mockAchievement(achievementTitle, achievementText);
-  return repeat(() => postMessage(app, command), n - 1)
-    .then(() => {
+  return request(app)
+    .post('/api/migrate_data')
+    .send([
+      {
+        key: 'count_messages',
+        value: {
+          someone: 299,
+        },
+      },
+      { key: 'vigilante', value: {} },
+      { key: 'viewers', value: ['Someone'] },
+      { key: 'cheerleader', value: {} },
+      { key: 'achievements', value: [] },
+      { key: 'gravedigger', value: {} },
+      { key: 'careful', value: {} },
+      { key: 'swedish', value: {} },
+      { key: 'berzingue', value: {} },
+    ]).then(() => {
       expect(expectedCall.isDone()).toBeFalsy();
       return postMessage(app, '300 !');
     })
