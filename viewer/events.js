@@ -1,4 +1,5 @@
 const eventsTypes = {
+  migratedData: 'migrated-data',
   sentChatMessage: 'sent-chat-message',
   gotAchievement: 'got-achievement',
   subscribed: 'subscribed',
@@ -9,6 +10,13 @@ const baseEvent = {
   aggregate: 'viewer',
   version: 1,
 };
+
+const migratedData = (id, data) => ({
+  ...baseEvent,
+  type: eventsTypes.migratedData,
+  id,
+  ...data,
+});
 
 const sentChatMessage = (id, displayName, message) => ({
   ...baseEvent,
@@ -44,6 +52,7 @@ const cheered = (id, displayName, amount) => ({
 
 module.exports = {
   eventsTypes,
+  migratedData,
   sentChatMessage,
   gotAchievement,
   subscribed,

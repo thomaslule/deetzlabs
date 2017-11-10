@@ -5,6 +5,10 @@ const projection = (eventsHistory) => {
     if (event.type === eventsTypes.gotAchievement) {
       return currentState.concat({ viewer: event.id, achievement: event.achievement });
     }
+    if (event.type === eventsTypes.migratedData) {
+      const oldAchievements = event.achievements.map(a => ({ viewer: event.id, achievement: a }));
+      return currentState.concat(oldAchievements);
+    }
     return currentState;
   };
 

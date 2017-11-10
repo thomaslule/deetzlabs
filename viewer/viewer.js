@@ -3,6 +3,7 @@ const pickBy = require('lodash/pickBy');
 const achievements = require('../achievements');
 const {
   eventsTypes,
+  migratedData,
   sentChatMessage,
   gotAchievement,
   subscribed,
@@ -59,6 +60,8 @@ module.exports = (id, eventsHistory) => {
     Promise.all(Object.keys(pickBy(decProj.getState().achievements, a => a.deserved))
       .map(a => maybeSendAchievement(bus, a)));
 
+  const migrateData = (bus, data) => dispatchAndApply(bus, migratedData(id, data));
+
   const chatMessage = (bus, displayName, message) =>
     dispatchAndApply(bus, sentChatMessage(id, displayName, message))
       .then(() => distributeAchievements(bus));
@@ -83,6 +86,7 @@ module.exports = (id, eventsHistory) => {
       .then(() => distributeAchievements(bus));
 
   return {
+    migrateData,
     chatMessage,
     receiveAchievement,
     subscribe,

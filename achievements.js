@@ -1,11 +1,17 @@
 const { eventsTypes } = require('./viewer/events');
 const isCommand = require('./util/isCommand');
 
-const messageCounter = (numberToReach, condition) =>
+const messageCounter = (numberToReach, condition, achievement) =>
   (state = { deserved: false, count: 0 }, event) => {
     if (event.type === eventsTypes.sentChatMessage && condition(event.message)) {
       return {
         count: state.count + 1,
+        deserved: state.count + 1 >= numberToReach,
+      };
+    }
+    if (event.type === eventsTypes.migratedData) {
+      return {
+        count: state.count + event[achievement],
         deserved: state.count + 1 >= numberToReach,
       };
     }
@@ -23,37 +29,37 @@ module.exports = {
   gravedigger: {
     name: 'Fossoyeuse',
     text: '%USER% est un peu sadique...',
-    reducer: messageCounter(5, message => isCommand('!rip', message)),
+    reducer: messageCounter(5, message => isCommand('!rip', message), 'gravedigger'),
   },
   entertainer: {
     name: 'Ambianceuse',
     text: 'Bim plein de messages dans le chat, gg %USER%',
-    reducer: messageCounter(300, () => true),
+    reducer: messageCounter(300, () => true, 'entertainer'),
   },
   swedish: {
     name: 'Suédois LV1',
     text: 'Hej %USER% !',
-    reducer: messageCounter(1, message => isCommand('hej', message)),
+    reducer: messageCounter(1, message => isCommand('hej', message), 'swedish'),
   },
   cheerleader: {
     name: 'Pom-pom girl',
     text: 'Merci pour tes encouragements %USER% !',
-    reducer: messageCounter(5, message => isCommand('!gg', message)),
+    reducer: messageCounter(5, message => isCommand('!gg', message), 'cheerleader'),
   },
   berzingue: {
     name: 'Berzingos',
     text: '%USER% dépasse le mur du son !',
-    reducer: messageCounter(5, message => isCommand('!berzingue', message)),
+    reducer: messageCounter(5, message => isCommand('!berzingue', message), 'berzingue'),
   },
   careful: {
     name: 'Prudente',
     text: '%USER% nous montre la voie de la sagesse',
-    reducer: messageCounter(5, message => isCommand('!heal', message) || isCommand('!save', message)),
+    reducer: messageCounter(5, message => isCommand('!heal', message) || isCommand('!save', message), 'careful'),
   },
   vigilante: {
     name: 'Vigilance constante',
     text: '%USER% ne laisse rien passer !',
-    reducer: messageCounter(5, message => isCommand('!putain', message)),
+    reducer: messageCounter(5, message => isCommand('!putain', message), 'vigilante'),
   },
   benefactor: {
     name: 'Mécène',
