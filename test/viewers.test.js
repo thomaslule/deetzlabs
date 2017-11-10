@@ -2,13 +2,17 @@ const request = require('supertest');
 const postMessage = require('./util/postMessage');
 const connectToDb = require('./util/connectToDb');
 const initApp = require('./util/initApp');
+const mockAllShowAchievements = require('./util/mockAllShowAchievements');
 
 let app;
 let db;
 
 beforeAll(() => connectToDb().then((res) => { db = res; }));
 
-beforeEach(() => initApp(db).then((res) => { app = res; }));
+beforeEach(() => initApp(db).then((res) => {
+  mockAllShowAchievements();
+  app = res;
+}));
 
 afterEach(() => db.dropDatabase());
 
@@ -51,6 +55,15 @@ test('works with special display name', (done) => {
     .then(getViewers)
     .then((response) => {
       expect(response.body.machin).toBe('$$$special$$$');
+      done();
+    });
+});
+
+test('works when id = display name', (done) => {
+  postMessage(app, 'yo', 'machin', 'machin')
+    .then(getViewers)
+    .then((response) => {
+      expect(response.body.machin).toBe('machin');
       done();
     });
 });

@@ -1,3 +1,4 @@
+const mapValues = require('lodash/mapValues');
 const { eventsTypes } = require('../events');
 
 const projection = (eventsHistory) => {
@@ -23,9 +24,9 @@ module.exports = (bus) => {
   const p = projection([]);
   bus.subscribe('viewer', p.apply);
 
-  const get = viewer => p.getState()[viewer] || viewer;
+  const get = id => p.getState()[id] || id;
 
-  const getAll = () => p.getState();
+  const getAll = () => mapValues(p.getState(), (displayName, id) => displayName || id);
 
   return { get, getAll };
 };

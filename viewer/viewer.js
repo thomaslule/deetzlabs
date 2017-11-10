@@ -10,7 +10,7 @@ const {
   cheered,
 } = require('./events');
 
-const decisionProjection = (eventsHistory, id) => {
+const decisionProjection = (eventsHistory) => {
   const reducer = (currentState, event) => {
     const newState = clone(currentState);
     Object.keys(achievements).forEach((achievement) => {
@@ -32,7 +32,7 @@ const decisionProjection = (eventsHistory, id) => {
   let state = eventsHistory.reduce(
     reducer,
     {
-      displayName: id, achievementsReceived: [], achievements: {},
+      achievementsReceived: [], achievements: {},
     },
   );
 
@@ -46,7 +46,7 @@ const decisionProjection = (eventsHistory, id) => {
 };
 
 module.exports = (id, eventsHistory) => {
-  const decProj = decisionProjection(eventsHistory, id);
+  const decProj = decisionProjection(eventsHistory);
 
   const dispatchAndApply = (bus, event) =>
     bus.dispatch(event)
