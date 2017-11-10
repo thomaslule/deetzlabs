@@ -3,7 +3,6 @@ const pickBy = require('lodash/pickBy');
 const achievements = require('../achievements');
 const {
   eventsTypes,
-  changedDisplayName,
   sentChatMessage,
   gotAchievement,
   subscribed,
@@ -17,9 +16,6 @@ const decisionProjection = (eventsHistory) => {
       newState.achievements[achievement] = achievements[achievement]
         .reducer(newState.achievements[achievement], event);
     });
-    if (event.type === eventsTypes.changedDisplayName) {
-      return { ...newState, displayName: event.displayName };
-    }
     if (event.type === eventsTypes.gotAchievement) {
       return {
         ...newState,
@@ -54,46 +50,36 @@ module.exports = (id, eventsHistory) => {
         decProj.apply(event);
       });
 
-  const maybeChangeName = (bus, displayName) => (
-    (displayName && decProj.getState().displayName !== displayName)
-      ? dispatchAndApply(bus, changedDisplayName(id, displayName))
-      : Promise.resolve()
-  );
-
   const maybeSendAchievement = (bus, achievement) =>
     (decProj.getState().achievementsReceived.includes(achievement)
       ? Promise.resolve()
-      : dispatchAndApply(bus, gotAchievement(id, achievement)));
+      : dispatchAndApply(bus, gotAchievement(id, null, achievement)));
 
   const distributeAchievements = bus =>
     Promise.all(Object.keys(pickBy(decProj.getState().achievements, a => a.deserved))
       .map(a => maybeSendAchievement(bus, a)));
 
   const chatMessage = (bus, displayName, message) =>
-    maybeChangeName(bus, displayName)
-      .then(() => dispatchAndApply(bus, sentChatMessage(id, message)))
+    dispatchAndApply(bus, sentChatMessage(id, displayName, message))
       .then(() => distributeAchievements(bus));
 
-  const receiveAchievement = (bus, achievement, displayName) =>
-    maybeChangeName(bus, displayName)
-      .then(() => {
-        if (decProj.getState().achievementsReceived.includes(achievement)) {
-          return Promise.reject(new Error('bad_request user already has achievement'));
-        }
-        if (!achievements[achievement]) {
-          return Promise.reject(new Error('bad_request achievement doesnt exist'));
-        }
-        return dispatchAndApply(bus, gotAchievement(id, achievement));
-      });
+  const receiveAchievement = (bus, achievement, displayName) => {
+    if (decProj.getState().achievementsReceived.includes(achievement)) {
+      return Promise.reject(new Error('bad_request user already has achievement'));
+    }
+    if (!achievements[achievement]) {
+      return Promise.reject(new Error('bad_request achievement doesnt exist'));
+    }
+    return dispatchAndApply(bus, gotAchievement(id, displayName, achievement));
+  };
 
   const subscribe = (bus, method, message, displayName) =>
-    maybeChangeName(bus, displayName)
-      .then(() => dispatchAndApply(bus, subscribed(id, method, message)))
+    dispatchAndApply(bus, subscribed(id, displayName, method, message))
       .then(() => distributeAchievements(bus));
 
   const cheer = (bus, displayName, message, amount) =>
     chatMessage(bus, displayName, message)
-      .then(() => dispatchAndApply(bus, cheered(id, amount)))
+      .then(() => dispatchAndApply(bus, cheered(id, displayName, amount)))
       .then(() => distributeAchievements(bus));
 
   return {

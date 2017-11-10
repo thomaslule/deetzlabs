@@ -1,10 +1,10 @@
-const mapValues = require('lodash/mapValues');
-const { eventsTypes } = require('../events');
-
 const projection = (eventsHistory) => {
   const reducer = (currentState, event) => {
-    if (event.type === eventsTypes.changedDisplayName) {
+    if (event.displayName) {
       return { ...currentState, [event.id]: event.displayName };
+    }
+    if (!currentState[event.id]) {
+      return { ...currentState, [event.id]: event.id };
     }
     return currentState;
   };
@@ -26,7 +26,7 @@ module.exports = (bus) => {
 
   const get = id => p.getState()[id] || id;
 
-  const getAll = () => mapValues(p.getState(), (displayName, id) => displayName || id);
+  const getAll = () => p.getState();
 
   return { get, getAll };
 };

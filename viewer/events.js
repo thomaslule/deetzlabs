@@ -1,5 +1,4 @@
 const eventsTypes = {
-  changedDisplayName: 'changed-display-name',
   sentChatMessage: 'sent-chat-message',
   gotAchievement: 'got-achievement',
   subscribed: 'subscribed',
@@ -11,44 +10,40 @@ const baseEvent = {
   version: 1,
 };
 
-const changedDisplayName = (id, displayName) => ({
-  ...baseEvent,
-  id,
-  type: eventsTypes.changedDisplayName,
-  displayName,
-});
-
-const sentChatMessage = (id, message) => ({
+const sentChatMessage = (id, displayName, message) => ({
   ...baseEvent,
   type: eventsTypes.sentChatMessage,
   id,
+  displayName,
   message,
 });
 
-const gotAchievement = (id, achievement) => ({
+const gotAchievement = (id, displayName, achievement) => ({
   ...baseEvent,
   type: eventsTypes.gotAchievement,
   id,
+  displayName,
   achievement,
 });
 
-const subscribed = (id, method) => ({
+const subscribed = (id, displayName, method) => ({
   ...baseEvent,
   type: eventsTypes.subscribed,
   id,
+  displayName,
   method,
 });
 
-const cheered = (id, amount) => ({
+const cheered = (id, displayName, amount) => ({
   ...baseEvent,
   type: eventsTypes.cheered,
   id,
+  displayName,
   amount,
 });
 
 module.exports = {
   eventsTypes,
-  changedDisplayName,
   sentChatMessage,
   gotAchievement,
   subscribed,
