@@ -13,10 +13,7 @@ module.exports = (eventStore) => {
   const sendEventToListeners = (event, isReplay) => {
     const interestedListeners = listeners[event.aggregate] || [];
     const promises = interestedListeners.map(listener => listener(event, isReplay));
-    return Promise.all(promises).catch((err) => {
-      log.error(err);
-      return Promise.resolve();
-    });
+    return Promise.all(promises);
   };
 
   const dispatch = event => eventStore.storeEvent(event)
