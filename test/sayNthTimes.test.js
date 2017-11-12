@@ -5,6 +5,8 @@ const mockAchievement = require('./util/mockAchievement');
 const userHasAchievement = require('./util/userHasAchievement');
 const connectToDb = require('./util/connectToDb');
 const initApp = require('./util/initApp');
+const deleteData = require('./util/deleteData');
+const closeDbConnection = require('./util/closeDbConnection');
 
 let app;
 let db;
@@ -15,10 +17,10 @@ beforeEach(() => initApp(db).then((res) => { app = res; }));
 
 afterEach(() => {
   nock.cleanAll();
-  return db.dropDatabase();
+  return deleteData(db);
 });
 
-afterAll(() => db.close(true));
+afterAll(() => closeDbConnection(db));
 
 const repeat = (func, times) => {
   let promise = Promise.resolve();

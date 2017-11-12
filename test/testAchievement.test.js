@@ -3,6 +3,8 @@ const mockAchievement = require('./util/mockAchievement');
 const connectToDb = require('./util/connectToDb');
 const initApp = require('./util/initApp');
 const showTestAchievement = require('./util/showTestAchievement');
+const deleteData = require('./util/deleteData');
+const closeDbConnection = require('./util/closeDbConnection');
 
 let app;
 let db;
@@ -13,10 +15,10 @@ beforeEach(() => initApp(db).then((res) => { app = res; }));
 
 afterEach(() => {
   nock.cleanAll();
-  return db.dropDatabase();
+  return deleteData(db);
 });
 
-afterAll(() => db.close(true));
+afterAll(() => closeDbConnection(db));
 
 test('post to /show_test_achievement shows achievement', (done) => {
   const expectedCall = mockAchievement('Testeuse', '%USER% bidouille des trucs', 'Berzingator2000');

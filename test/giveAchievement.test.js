@@ -4,6 +4,8 @@ const userHasAchievement = require('./util/userHasAchievement');
 const postAchievement = require('./util/postAchievement');
 const connectToDb = require('./util/connectToDb');
 const initApp = require('./util/initApp');
+const deleteData = require('./util/deleteData');
+const closeDbConnection = require('./util/closeDbConnection');
 
 let app;
 let db;
@@ -14,10 +16,10 @@ beforeEach(() => initApp(db).then((res) => { app = res; }));
 
 afterEach(() => {
   nock.cleanAll();
-  return db.dropDatabase();
+  return deleteData(db);
 });
 
-afterAll(() => db.close(true));
+afterAll(() => closeDbConnection(db));
 
 test('post to /give_achievement gives it to user', (done) => {
   const expectedCall = mockAchievement('Mécène', 'Cool ! Merci pour ton soutien %USER%');

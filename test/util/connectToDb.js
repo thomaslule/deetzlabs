@@ -1,4 +1,4 @@
-const { MongoClient } = require('mongodb');
+const { Pool } = require('pg');
 const config = require('config');
 
-module.exports = () => MongoClient.connect(config.get('db_url'), {});
+module.exports = () => Promise.resolve(new Pool({ connectionString: config.get('db_url') }));

@@ -26,7 +26,7 @@ module.exports = ({
   const router = Router();
 
   router.get('/ping', (req, res, next) => {
-    db.stats()
+    db.query('SELECT $1::text as message', ['Hello world!'])
       .then(okCallback(res))
       .catch(next);
   });

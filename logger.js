@@ -1,6 +1,6 @@
 const config = require('config');
 const winston = require('winston');
-require('winston-mongodb');
+require('winston-daily-rotate-file');
 
 winston.remove(winston.transports.Console);
 let logger = winston;
@@ -13,7 +13,7 @@ const log = {
   error: (...args) => logger.error(...args),
 };
 
-const configureLogger = (db) => {
+const configureLogger = () => {
   const tsFormat = () => (new Date()).toLocaleString();
 
   logger = new (winston.Logger)();
@@ -25,16 +25,10 @@ const configureLogger = (db) => {
   }
 
   if (config.get('log_to_file')) {
-    logger.add(winston.transports.File, {
+    logger.add(winston.transports.DailyRotateFile, {
       json: false,
       timestamp: tsFormat,
-      filename: 'deetzlabs.log',
-    });
-  }
-
-  if (config.get('log_to_db')) {
-    logger.add(winston.transports.MongoDB, {
-      db,
+      filename: './log/deetzlabs',
     });
   }
 };

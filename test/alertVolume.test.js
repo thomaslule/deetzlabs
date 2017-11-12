@@ -4,6 +4,8 @@ const mockAchievement = require('./util/mockAchievement');
 const connectToDb = require('./util/connectToDb');
 const initApp = require('./util/initApp');
 const showTestAchievement = require('./util/showTestAchievement');
+const deleteData = require('./util/deleteData');
+const closeDbConnection = require('./util/closeDbConnection');
 
 let app;
 let db;
@@ -14,10 +16,10 @@ beforeEach(() => initApp(db).then((res) => { app = res; }));
 
 afterEach(() => {
   nock.cleanAll();
-  return db.dropDatabase();
+  return deleteData(db);
 });
 
-afterAll(() => db.close(true));
+afterAll(() => closeDbConnection(db));
 
 const getVolume = () => request(app).get('/api/achievement_volume').expect(200);
 const postVolume = volume => request(app).post('/api/change_achievement_volume').send({ volume });

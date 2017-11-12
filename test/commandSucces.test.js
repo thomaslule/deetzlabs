@@ -5,6 +5,8 @@ const mockAllShowAchievements = require('./util/mockAllShowAchievements');
 const postAchievement = require('./util/postAchievement');
 const connectToDb = require('./util/connectToDb');
 const initApp = require('./util/initApp');
+const deleteData = require('./util/deleteData');
+const closeDbConnection = require('./util/closeDbConnection');
 
 let app;
 let db;
@@ -19,10 +21,10 @@ beforeEach(() => initApp(db)
 
 afterEach(() => {
   nock.cleanAll();
-  return db.dropDatabase();
+  return deleteData(db);
 });
 
-afterAll(() => db.close(true));
+afterAll(() => closeDbConnection(db));
 
 test('!succès with 0 achievement', (done) => {
   const expectedCall = mockSay('Someone n\'a pas encore de succès, déso.');

@@ -3,6 +3,8 @@ const postMessage = require('./util/postMessage');
 const connectToDb = require('./util/connectToDb');
 const initApp = require('./util/initApp');
 const mockAllShowAchievements = require('./util/mockAllShowAchievements');
+const closeDbConnection = require('./util/closeDbConnection');
+const deleteData = require('./util/deleteData');
 
 let app;
 let db;
@@ -14,9 +16,9 @@ beforeEach(() => initApp(db).then((res) => {
   app = res;
 }));
 
-afterEach(() => db.dropDatabase());
+afterEach(() => deleteData(db));
 
-afterAll(() => db.close(true));
+afterAll(() => closeDbConnection(db));
 
 const getViewers = () => request(app).get('/api/viewers').expect(200);
 

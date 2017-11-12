@@ -5,6 +5,8 @@ const postMessage = require('./util/postMessage');
 const mockAllShowAchievements = require('./util/mockAllShowAchievements');
 const connectToDb = require('./util/connectToDb');
 const initApp = require('./util/initApp');
+const deleteData = require('./util/deleteData');
+const closeDbConnection = require('./util/closeDbConnection');
 
 let app;
 let db;
@@ -19,10 +21,10 @@ beforeEach(() => initApp(db)
 
 afterEach(() => {
   nock.cleanAll();
-  return db.dropDatabase();
+  return deleteData(db);
 });
 
-afterAll(() => db.close(true));
+afterAll(() => closeDbConnection(db));
 
 test('GET /last_viewer_achievements returns the last 5 achievements', (done) => {
   postMessage(app, 'something magic')

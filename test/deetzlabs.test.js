@@ -5,6 +5,8 @@ const connectToDb = require('./util/connectToDb');
 const initApp = require('./util/initApp');
 const mockSay = require('./util/mockSay');
 const mockAchievement = require('./util/mockAchievement');
+const closeDbConnection = require('./util/closeDbConnection');
+const deleteData = require('./util/deleteData');
 
 test('projections are reloaded on app start', () => {
   let db;
@@ -14,7 +16,7 @@ test('projections are reloaded on app start', () => {
       return initApp(db);
     })
     .then(app => postMessage(app, 'coucou'))
-    .then(() => db.close(true))
+    .then(() => closeDbConnection(db))
     .then(() => connectToDb())
     .then((res) => {
       db = res;
@@ -24,8 +26,8 @@ test('projections are reloaded on app start', () => {
     .then((res) => {
       expect(res.body.someone).toBe('Someone');
     })
-    .then(() => db.dropDatabase())
-    .then(() => db.close(true));
+    .then(() => deleteData(db))
+    .then(() => closeDbConnection(db));
 });
 
 test('achievements and messages are not re-sent', () => {
@@ -46,13 +48,13 @@ test('achievements and messages are not re-sent', () => {
     .then(() => {
       expectedMessage.done();
       expectedAchievement.done();
-      return db.close(true);
+      return closeDbConnection(db);
     })
     .then(() => connectToDb())
     .then((res) => {
       db = res;
       return initApp(db);
     })
-    .then(() => db.dropDatabase())
-    .then(() => db.close(true));
+    .then(() => deleteData(db))
+    .then(() => closeDbConnection(db));
 });

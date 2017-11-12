@@ -1,16 +1,13 @@
-const { MongoClient } = require('mongodb');
+const { Pool } = require('pg');
 const config = require('config');
 const { log } = require('./logger');
 const httpServer = require('./httpServer');
 const deetzlabs = require('./deetzlabs');
 
-let app;
+const db = new Pool({ connectionString: config.get('db_url') });
 
-MongoClient.connect(config.get('db_url'), {})
-  .then((db) => {
-    app = deetzlabs(db);
-    return app.init();
-  })
+const app = deetzlabs(db);
+app.init()
   .then(() => {
     const server = httpServer(app);
 
@@ -21,5 +18,6 @@ MongoClient.connect(config.get('db_url'), {})
   .catch((err) => {
     console.error(err);
     log.error(err);
+    db.end();
     process.exit(1);
   });

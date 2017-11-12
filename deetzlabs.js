@@ -1,3 +1,4 @@
+const fs = require('fs');
 const { configureLogger } = require('./logger');
 const EventStore = require('./eventStore');
 const Bus = require('./bus');
@@ -9,7 +10,7 @@ const succesCommand = require('./modules/succesCommand');
 const commandsCommand = require('./modules/commandsCommand');
 
 module.exports = (db) => {
-  configureLogger(db);
+  configureLogger();
   const store = EventStore(db);
   const bus = Bus(store);
   const settings = Settings(bus);
@@ -19,8 +20,10 @@ module.exports = (db) => {
   succesCommand(bus, displayNames, viewersAchievements);
   commandsCommand(bus);
 
-  const init = () =>
-    store.getAllForAllAggregates()
+  const init = () => {
+    const query = fs.readFileSync('db/schema.sql').toString();
+    return db.query(query)
+      .then(() => store.getAllForAllAggregates())
       .then((eventsHistory) => {
         let promise = Promise.resolve();
         eventsHistory.forEach((e) => {
@@ -28,6 +31,8 @@ module.exports = (db) => {
         });
         return promise;
       });
+  };
+
 
   return {
     init,
