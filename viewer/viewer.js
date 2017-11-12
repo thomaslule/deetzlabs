@@ -23,6 +23,13 @@ const decisionProjection = (eventsHistory) => {
         achievementsReceived: newState.achievementsReceived.concat(event.achievement),
       };
     }
+    if (event.type === eventsTypes.migratedData) {
+      return {
+        ...newState,
+        achievementsReceived: newState.achievementsReceived
+          .concat(event.achievements.map(a => a.achievement)),
+      };
+    }
     return newState;
   };
 

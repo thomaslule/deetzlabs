@@ -48,11 +48,15 @@ test('post to /migrate_data', () => {
         value: [{
           username: 'someone',
           achievement: 'gravedigger',
+        },
+        {
+          username: 'someone',
+          achievement: 'swedish',
         }],
       },
       { key: 'gravedigger', value: { someone: 5 } },
       { key: 'careful', value: {} },
-      { key: 'swedish', value: {} },
+      { key: 'swedish', value: { someone: 5 } },
       { key: 'berzingue', value: {} },
     ])
     .expect(200)

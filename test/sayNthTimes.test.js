@@ -117,10 +117,7 @@ test('say n times !putain', () => testSayNthTimes({
 }));
 
 test('say anything 300 times', () => {
-  const achievementCode = 'entertainer';
-  const achievementTitle = 'Ambianceuse';
-  const achievementText = 'Bim plein de messages dans le chat, gg %USER%';
-  const expectedCall = mockAchievement(achievementTitle, achievementText);
+  const expectedCall = mockAchievement('Ambianceuse', 'Bim plein de messages dans le chat, gg %USER%');
   return request(app)
     .post('/api/migrate_data')
     .send([
@@ -144,7 +141,7 @@ test('say anything 300 times', () => {
     })
     .then(() => {
       expectedCall.done();
-      return userHasAchievement(app, achievementCode);
+      return userHasAchievement(app, 'entertainer');
     })
     .then((result) => {
       expect(result).toBeTruthy();
