@@ -29,6 +29,7 @@ const configureLogger = () => {
       json: false,
       timestamp: tsFormat,
       filename: './log/deetzlabs',
+      createTree: true,
     });
   }
 };
