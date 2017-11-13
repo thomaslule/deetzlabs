@@ -11,7 +11,7 @@ app.init()
   .then(() => {
     const server = httpServer(app);
 
-    server.listen(config.get('port'), () => {
+    server.listen(config.get('port'), 'localhost', () => {
       log.info(`listening on ${config.get('port')}`);
     });
   })
