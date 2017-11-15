@@ -26,6 +26,12 @@ const decisionProjection = (eventsHistory) => {
         achievementsReceived: newState.achievementsReceived.concat(event.achievement),
       };
     }
+    if (event.type === eventsTypes.joined) {
+      return { ...newState, connected: true };
+    }
+    if (event.type === eventsTypes.left) {
+      return { ...newState, connected: false };
+    }
     if (event.type === eventsTypes.migratedData) {
       return {
         ...newState,
@@ -99,13 +105,21 @@ module.exports = (id, eventsHistory) => {
       .then(() => dispatchAndApply(bus, cheered(id, displayName, amount)))
       .then(() => distributeAchievements(bus));
 
-  const join = (bus, displayName) =>
-    dispatchAndApply(bus, joined(id, displayName))
+  const join = (bus, displayName) => {
+    if (decProj.getState().connected) {
+      return Promise.reject(new Error('bad_request viewer already connected'));
+    }
+    return dispatchAndApply(bus, joined(id, displayName))
       .then(() => distributeAchievements(bus));
+  };
 
-  const leave = (bus, displayName) =>
-    dispatchAndApply(bus, left(id, displayName))
+  const leave = (bus, displayName) => {
+    if (!decProj.getState().connected) {
+      return Promise.reject(new Error('bad_request viewer not connected'));
+    }
+    return dispatchAndApply(bus, left(id, displayName))
       .then(() => distributeAchievements(bus));
+  };
 
   return {
     migrateData,
