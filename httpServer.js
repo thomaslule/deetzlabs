@@ -124,7 +124,7 @@ module.exports = ({
   });
 
   router.post(
-    '/send_cheer',
+    '/cheer',
     check('viewer').not().isEmpty(),
     check('displayName'),
     check('message').not().isEmpty(),
@@ -146,7 +146,7 @@ module.exports = ({
   );
 
   router.post(
-    '/send_subscription',
+    '/subscribe',
     check('viewer').not().isEmpty(),
     check('displayName'),
     check('message'),
