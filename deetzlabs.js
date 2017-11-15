@@ -6,8 +6,8 @@ const AchievementAlert = require('./modules/achievementAlert');
 const DisplayNames = require('./viewer/projections/displayName');
 const ViewersAchievements = require('./viewer/projections/achievements');
 const Settings = require('./settings/projections/settings');
-const succesCommand = require('./modules/succesCommand');
-const commandsCommand = require('./modules/commandsCommand');
+const Commands = require('./commands');
+const ChatBot = require('./modules/chatBot');
 
 module.exports = (db) => {
   configureLogger();
@@ -17,8 +17,8 @@ module.exports = (db) => {
   const displayNames = DisplayNames(bus);
   const achievementAlert = AchievementAlert(bus, settings, displayNames);
   const viewersAchievements = ViewersAchievements(bus);
-  succesCommand(bus, displayNames, viewersAchievements);
-  commandsCommand(bus);
+  const commands = Commands(displayNames, viewersAchievements);
+  ChatBot(bus, commands);
 
   const init = () => {
     const query = fs.readFileSync('db/schema.sql').toString();
