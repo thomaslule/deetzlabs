@@ -7,8 +7,7 @@ module.exports = (viewerName, achievementName, achievementText, volume) => {
   return request({
     method: 'POST',
     uri: config.get('show_achievement_url'),
-    json: true,
-    body: {
+    json: {
       viewerName,
       achievementName,
       achievementText,

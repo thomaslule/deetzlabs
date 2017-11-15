@@ -13,7 +13,7 @@ module.exports = (bus, displayNames, viewersAchievements) => {
       const message = viewerAchievements.length > 0 ?
         `Bravo ${displayName} pour tes succès : ${viewerAchievements.map(a => achievements[a].name).join(', ')} !`
         : `${displayName} n'a pas encore de succès, déso.`;
-      sendChatMessage(message);
+      return sendChatMessage(message);
     }
     return Promise.resolve();
   });

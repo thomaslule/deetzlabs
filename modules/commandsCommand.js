@@ -6,7 +6,7 @@ module.exports = (bus) => {
       !isReplay
       && event.type === 'sent-chat-message'
       && (event.message.trim().toLowerCase() === '!commands')) {
-      sendChatMessage('Moi j\'ai qu\'une commande c\'est !succès');
+      return sendChatMessage('Moi j\'ai qu\'une commande c\'est !succès');
     }
     return Promise.resolve();
   });
