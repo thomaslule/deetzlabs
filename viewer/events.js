@@ -3,6 +3,7 @@ const eventsTypes = {
   sentChatMessage: 'sent-chat-message',
   gotAchievement: 'got-achievement',
   subscribed: 'subscribed',
+  resubscribed: 'resubscribed',
   cheered: 'cheered',
   joined: 'joined',
   left: 'left',
@@ -31,10 +32,19 @@ const gotAchievement = (id, displayName, achievement) =>
     achievement,
   });
 
-const subscribed = (id, displayName, method) =>
+const subscribed = (id, displayName, message, method) =>
   createEvent(eventsTypes.subscribed, id, {
     displayName,
+    message,
     method,
+  });
+
+const resubscribed = (id, displayName, message, method, months) =>
+  createEvent(eventsTypes.resubscribed, id, {
+    displayName,
+    message,
+    method,
+    months,
   });
 
 const cheered = (id, displayName, amount) =>
@@ -62,4 +72,5 @@ module.exports = {
   cheered,
   joined,
   left,
+  resubscribed,
 };

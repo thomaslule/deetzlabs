@@ -28,6 +28,7 @@ test('achievement benefactor on sub', (done) => {
     .send({
       viewer: 'someone',
       displayName: 'Someone',
+      methods: { prime: false, plan: 1000, planName: 'some plan' },
     })
     .expect(200)
     .then(() => {
@@ -39,3 +40,14 @@ test('achievement benefactor on sub', (done) => {
       done();
     });
 });
+
+test('dont crash on resub', () =>
+  request(app)
+    .post('/api/resub')
+    .send({
+      viewer: 'someone',
+      months: 6,
+      methods: { prime: false, plan: 1000, planName: 'some plan' },
+      message: 'hey!',
+    })
+    .expect(200));

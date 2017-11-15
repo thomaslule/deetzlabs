@@ -152,7 +152,27 @@ module.exports = ({
         viewer, displayName, message, method,
       } = req.validParams;
       getCurrentViewer(viewer)
-        .then(v => v.subscribe(bus, method, message, displayName))
+        .then(v => v.subscribe(bus, displayName, message, method))
+        .then(okCallback(res))
+        .catch(next);
+    },
+  );
+
+  router.post(
+    '/resub',
+    check('viewer').not().isEmpty(),
+    check('displayName'),
+    check('message'),
+    check('methods'),
+    check('months').isInt(),
+    sanitize('months').toInt(),
+    validationMiddleware,
+    (req, res, next) => {
+      const {
+        viewer, displayName, message, method, months,
+      } = req.validParams;
+      getCurrentViewer(viewer)
+        .then(v => v.resub(bus, displayName, message, method, months))
         .then(okCallback(res))
         .catch(next);
     },
@@ -202,7 +222,7 @@ module.exports = ({
         const swedish = Number(getStorage('swedish')[id] || 0);
         const careful = Number(getStorage('careful')[id] || 0);
         const berzingue = Number(getStorage('berzingue')[id] || 0);
-        getCurrentViewer(id)
+        return getCurrentViewer(id)
           .then(v => v.migrateData(bus, {
             achievements: achs,
             displayName,
