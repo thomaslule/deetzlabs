@@ -23,6 +23,10 @@ module.exports = ({
   displayNames,
   settings,
 }) => {
+  const getCurrentViewer = viewer =>
+    store.get('viewer', viewer)
+      .then(events => Viewer(viewer, events));
+
   const router = Router();
 
   router.get('/ping', (req, res, next) => {
@@ -66,11 +70,8 @@ module.exports = ({
     validationMiddleware,
     (req, res, next) => {
       const { achievement, viewer, displayName } = req.validParams;
-      store.get('viewer', viewer)
-        .then((events) => {
-          const v = Viewer(viewer, events);
-          return v.receiveAchievement(bus, achievement, displayName);
-        })
+      getCurrentViewer(viewer)
+        .then(v => v.receiveAchievement(bus, achievement, displayName))
         .then(okCallback(res))
         .catch(next);
     },
@@ -109,11 +110,8 @@ module.exports = ({
     validationMiddleware,
     (req, res, next) => {
       const { viewer, displayName, message } = req.validParams;
-      store.get('viewer', viewer)
-        .then((events) => {
-          const v = Viewer(viewer, events);
-          return v.chatMessage(bus, displayName, message);
-        })
+      getCurrentViewer(viewer)
+        .then(v => v.chatMessage(bus, displayName, message))
         .then(okCallback(res))
         .catch(next);
     },
@@ -135,11 +133,8 @@ module.exports = ({
       const {
         viewer, displayName, message, amount,
       } = req.validParams;
-      store.get('viewer', viewer)
-        .then((events) => {
-          const v = Viewer(viewer, events);
-          return v.cheer(bus, displayName, message, amount);
-        })
+      getCurrentViewer(viewer)
+        .then(v => v.cheer(bus, displayName, message, amount))
         .then(okCallback(res))
         .catch(next);
     },
@@ -156,11 +151,8 @@ module.exports = ({
       const {
         viewer, displayName, message, method,
       } = req.validParams;
-      store.get('viewer', viewer)
-        .then((events) => {
-          const v = Viewer(viewer, events);
-          return v.subscribe(bus, method, message, displayName);
-        })
+      getCurrentViewer(viewer)
+        .then(v => v.subscribe(bus, method, message, displayName))
         .then(okCallback(res))
         .catch(next);
     },
@@ -172,14 +164,9 @@ module.exports = ({
     check('displayName'),
     validationMiddleware,
     (req, res, next) => {
-      const {
-        viewer, displayName,
-      } = req.validParams;
-      store.get('viewer', viewer)
-        .then((events) => {
-          const v = Viewer(viewer, events);
-          return v.join(bus, displayName);
-        })
+      const { viewer, displayName } = req.validParams;
+      getCurrentViewer(viewer)
+        .then(v => v.join(bus, displayName))
         .then(okCallback(res))
         .catch(next);
     },
@@ -191,14 +178,9 @@ module.exports = ({
     check('displayName'),
     validationMiddleware,
     (req, res, next) => {
-      const {
-        viewer, displayName,
-      } = req.validParams;
-      store.get('viewer', viewer)
-        .then((events) => {
-          const v = Viewer(viewer, events);
-          return v.leave(bus, displayName);
-        })
+      const { viewer, displayName } = req.validParams;
+      getCurrentViewer(viewer)
+        .then(v => v.leave(bus, displayName))
         .then(okCallback(res))
         .catch(next);
     },
@@ -220,21 +202,18 @@ module.exports = ({
         const swedish = Number(getStorage('swedish')[id] || 0);
         const careful = Number(getStorage('careful')[id] || 0);
         const berzingue = Number(getStorage('berzingue')[id] || 0);
-        return store.get('viewer', id)
-          .then((events) => {
-            const viewer = Viewer(id, events);
-            return viewer.migrateData(bus, {
-              achievements: achs,
-              displayName,
-              entertainer,
-              vigilante,
-              cheerleader,
-              gravedigger,
-              swedish,
-              careful,
-              berzingue,
-            });
-          });
+        getCurrentViewer(id)
+          .then(v => v.migrateData(bus, {
+            achievements: achs,
+            displayName,
+            entertainer,
+            vigilante,
+            cheerleader,
+            gravedigger,
+            swedish,
+            careful,
+            berzingue,
+          }));
       });
       return Promise.all(promises)
         .then(okCallback(res))
