@@ -166,6 +166,81 @@ module.exports = ({
     },
   );
 
+  router.post(
+    '/join',
+    check('viewer').not().isEmpty(),
+    check('displayName'),
+    validationMiddleware,
+    (req, res, next) => {
+      const {
+        viewer, displayName,
+      } = req.validParams;
+      store.get('viewer', viewer)
+        .then((events) => {
+          const v = Viewer(viewer, events);
+          return v.join(bus, displayName);
+        })
+        .then(okCallback(res))
+        .catch(next);
+    },
+  );
+
+  router.post(
+    '/leave',
+    check('viewer').not().isEmpty(),
+    check('displayName'),
+    validationMiddleware,
+    (req, res, next) => {
+      const {
+        viewer, displayName,
+      } = req.validParams;
+      store.get('viewer', viewer)
+        .then((events) => {
+          const v = Viewer(viewer, events);
+          return v.leave(bus, displayName);
+        })
+        .then(okCallback(res))
+        .catch(next);
+    },
+  );
+
+  router.post(
+    '/migrate_data',
+    (req, res, next) => {
+      const getStorage = name => req.body.find(d => d.key === name).value;
+      const promises = getStorage('viewers').map((displayName) => {
+        const id = displayName.toLowerCase();
+        const achs = getStorage('achievements')
+          .filter(a => a.username === id)
+          .map(a => ({ achievement: a.achievement, date: a.date }));
+        const entertainer = Number(getStorage('count_messages')[id] || 0);
+        const vigilante = Number(getStorage('vigilante')[id] || 0);
+        const cheerleader = Number(getStorage('cheerleader')[id] || 0);
+        const gravedigger = Number(getStorage('gravedigger')[id] || 0);
+        const swedish = Number(getStorage('swedish')[id] || 0);
+        const careful = Number(getStorage('careful')[id] || 0);
+        const berzingue = Number(getStorage('berzingue')[id] || 0);
+        return store.get('viewer', id)
+          .then((events) => {
+            const viewer = Viewer(id, events);
+            return viewer.migrateData(bus, {
+              achievements: achs,
+              displayName,
+              entertainer,
+              vigilante,
+              cheerleader,
+              gravedigger,
+              swedish,
+              careful,
+              berzingue,
+            });
+          });
+      });
+      return Promise.all(promises)
+        .then(okCallback(res))
+        .catch(next);
+    },
+  );
   const app = express();
   app.use(bodyParser.json());
   const stream = { write: message => log.info(message.slice(0, -1)) };

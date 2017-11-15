@@ -24,7 +24,7 @@ afterAll(() => closeDbConnection(db));
 test('achievement benefactor on sub', (done) => {
   const expectedCall = mockAchievement('Mécène', 'Cool ! Merci pour ton soutien %USER%');
   request(app)
-    .post('/api/send_subscription')
+    .post('/api/subscribe')
     .send({
       viewer: 'someone',
       displayName: 'Someone',

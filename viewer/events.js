@@ -4,6 +4,8 @@ const eventsTypes = {
   gotAchievement: 'got-achievement',
   subscribed: 'subscribed',
   cheered: 'cheered',
+  joined: 'joined',
+  left: 'left',
 };
 
 const createEvent = (type, id, content) => ({
@@ -41,6 +43,16 @@ const cheered = (id, displayName, amount) =>
     amount,
   });
 
+const joined = (id, displayName) =>
+  createEvent(eventsTypes.joined, id, {
+    displayName,
+  });
+
+const left = (id, displayName) =>
+  createEvent(eventsTypes.left, id, {
+    displayName,
+  });
+
 module.exports = {
   eventsTypes,
   migratedData,
@@ -48,4 +60,6 @@ module.exports = {
   gotAchievement,
   subscribed,
   cheered,
+  joined,
+  left,
 };

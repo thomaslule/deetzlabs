@@ -8,6 +8,8 @@ const {
   gotAchievement,
   subscribed,
   cheered,
+  joined,
+  left,
 } = require('./events');
 
 const decisionProjection = (eventsHistory) => {
@@ -92,11 +94,21 @@ module.exports = (id, eventsHistory) => {
       .then(() => dispatchAndApply(bus, cheered(id, displayName, amount)))
       .then(() => distributeAchievements(bus));
 
+  const join = (bus, displayName) =>
+    dispatchAndApply(bus, joined(id, displayName))
+      .then(() => distributeAchievements(bus));
+
+  const leave = (bus, displayName) =>
+    dispatchAndApply(bus, left(id, displayName))
+      .then(() => distributeAchievements(bus));
+
   return {
     migrateData,
     chatMessage,
     receiveAchievement,
     subscribe,
     cheer,
+    join,
+    leave,
   };
 };

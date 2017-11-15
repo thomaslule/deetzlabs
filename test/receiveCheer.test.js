@@ -24,7 +24,7 @@ afterAll(() => closeDbConnection(db));
 test('achievement benefactor on first cheer', (done) => {
   const expectedCall = mockAchievement('Mécène', 'Cool ! Merci pour ton soutien %USER%');
   request(app)
-    .post('/api/send_cheer')
+    .post('/api/cheer')
     .send({
       viewer: 'someone',
       displayName: 'Someone',
