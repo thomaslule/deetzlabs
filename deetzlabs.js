@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { Writable } = require('stream');
 const { configureLogger } = require('./logger');
 const EventStore = require('./eventStore');
 const Bus = require('./bus');
@@ -8,6 +9,13 @@ const ViewersAchievements = require('./viewer/projections/achievements');
 const Settings = require('./settings/projections/settings');
 const Commands = require('./commands');
 const ChatBot = require('./modules/chatBot');
+
+const replayWritable = bus => new Writable({
+  objectMode: true,
+  write(event, encoding, callback) {
+    bus.replay(event).then(() => callback());
+  },
+});
 
 module.exports = (db) => {
   configureLogger();
@@ -24,15 +32,10 @@ module.exports = (db) => {
     const query = fs.readFileSync('db/schema.sql').toString();
     return db.query(query)
       .then(() => store.getAllForAllAggregates())
-      .then((eventsHistory) => {
-        let promise = Promise.resolve();
-        eventsHistory.forEach((e) => {
-          promise = promise.then(() => bus.replay(e));
-        });
-        return promise;
-      });
+      .then(eventsStream => new Promise((resolve) => {
+        eventsStream.pipe(replayWritable(bus)).on('finish', resolve);
+      }));
   };
-
 
   return {
     init,
