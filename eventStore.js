@@ -10,23 +10,25 @@ const rowToEvent = () => new Transform({
 });
 
 module.exports = (db) => {
-  const get = (aggregate, id) =>
-    db.query('select event from events where aggregate = $1 and object_id = $2 order by insert_date', [aggregate, id])
-      .then(res => res.rows.map(r => r.event));
+  const get = async (aggregate, id) => {
+    const res = await db.query('select event from events where aggregate = $1 and object_id = $2 order by insert_date', [aggregate, id]);
+    return res.rows.map(r => r.event);
+  };
 
-  const getAll = aggregate =>
-    db.query('select event from events where aggregate = $1 order by insert_date', [aggregate])
-      .then(res => res.rows.map(r => r.event));
+  const getAll = async (aggregate) => {
+    const res = await db.query('select event from events where aggregate = $1 order by insert_date', [aggregate]);
+    return res.rows.map(r => r.event);
+  };
 
-  const getAllForAllAggregates = () =>
-    db.connect().then((client) => {
-      const stream = client.query(new QueryStream('select event from events order by insert_date'));
-      stream.on('end', () => { client.release(); });
-      stream.on('error', () => { client.release(); });
-      return stream.pipe(rowToEvent());
-    });
+  const getAllForAllAggregates = async () => {
+    const client = await db.connect();
+    const stream = client.query(new QueryStream('select event from events order by insert_date'));
+    stream.on('end', () => { client.release(); });
+    stream.on('error', () => { client.release(); });
+    return stream.pipe(rowToEvent());
+  };
 
-  const storeEvent = event =>
+  const storeEvent = async event =>
     db.query(
       'insert into events(insert_date, aggregate, object_id, event) values ($1, $2, $3, $4)',
       [event.insert_date, event.aggregate, event.id, event],

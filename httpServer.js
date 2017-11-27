@@ -23,22 +23,29 @@ module.exports = ({
   displayNames,
   settings,
 }) => {
-  const getCurrentViewer = viewer =>
-    store.get('viewer', viewer)
-      .then(events => Viewer(viewer, events));
+  const getCurrentViewer = async (viewer) => {
+    const events = await store.get('viewer', viewer);
+    return Viewer(viewer, events);
+  };
 
   const router = Router();
 
-  router.get('/ping', (req, res, next) => {
-    db.query('SELECT $1::text as message', ['Hello world!'])
-      .then(okCallback(res))
-      .catch(next);
+  router.get('/ping', async (req, res, next) => {
+    try {
+      await db.query('SELECT $1::text as message', ['Hello world!']);
+      res.sendStatus(200);
+    } catch (err) {
+      next(err);
+    }
   });
 
-  router.post('/show_test_achievement', (req, res, next) => {
-    achievementAlert.test()
-      .then(okCallback(res))
-      .catch(next);
+  router.post('/show_test_achievement', async (req, res, next) => {
+    try {
+      await achievementAlert.test();
+      res.sendStatus(200);
+    } catch (err) {
+      next(err);
+    }
   });
 
   router.post(
@@ -46,15 +53,16 @@ module.exports = ({
     check('volume').isFloat({ min: 0.1, max: 1 }),
     sanitize('volume').toFloat(),
     validationMiddleware,
-    (req, res, next) => {
-      const { volume } = req.validParams;
-      store.get('settings')
-        .then((events) => {
-          const s = Settings(events);
-          return s.changeAchievementVolume(bus, volume);
-        })
-        .then(okCallback(res))
-        .catch(next);
+    async (req, res, next) => {
+      try {
+        const { volume } = req.validParams;
+        const events = await store.get('settings');
+        const s = Settings(events);
+        await s.changeAchievementVolume(bus, volume);
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
     },
   );
 
@@ -68,12 +76,15 @@ module.exports = ({
     check('viewer').not().isEmpty(),
     check('displayName'),
     validationMiddleware,
-    (req, res, next) => {
-      const { achievement, viewer, displayName } = req.validParams;
-      getCurrentViewer(viewer)
-        .then(v => v.receiveAchievement(bus, achievement, displayName))
-        .then(okCallback(res))
-        .catch(next);
+    async (req, res, next) => {
+      try {
+        const { achievement, viewer, displayName } = req.validParams;
+        const v = await getCurrentViewer(viewer);
+        await v.receiveAchievement(bus, achievement, displayName);
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
     },
   );
 
@@ -94,11 +105,14 @@ module.exports = ({
     check('achievement').not().isEmpty(),
     check('viewer').not().isEmpty(),
     validationMiddleware,
-    (req, res, next) => {
-      const { achievement, viewer } = req.validParams;
-      achievementAlert.display(viewer, achievement)
-        .then(okCallback(res))
-        .catch(next);
+    async (req, res, next) => {
+      try {
+        const { achievement, viewer } = req.validParams;
+        await achievementAlert.display(viewer, achievement);
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
     },
   );
 
@@ -108,12 +122,15 @@ module.exports = ({
     check('displayName'),
     check('message').not().isEmpty(),
     validationMiddleware,
-    (req, res, next) => {
-      const { viewer, displayName, message } = req.validParams;
-      getCurrentViewer(viewer)
-        .then(v => v.chatMessage(bus, displayName, message))
-        .then(okCallback(res))
-        .catch(next);
+    async (req, res, next) => {
+      try {
+        const { viewer, displayName, message } = req.validParams;
+        const v = await getCurrentViewer(viewer);
+        await v.chatMessage(bus, displayName, message);
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
     },
   );
 
@@ -129,14 +146,17 @@ module.exports = ({
     check('amount').isInt(),
     sanitize('amount').toInt(),
     validationMiddleware,
-    (req, res, next) => {
-      const {
-        viewer, displayName, message, amount,
-      } = req.validParams;
-      getCurrentViewer(viewer)
-        .then(v => v.cheer(bus, displayName, message, amount))
-        .then(okCallback(res))
-        .catch(next);
+    async (req, res, next) => {
+      try {
+        const {
+          viewer, displayName, message, amount,
+        } = req.validParams;
+        const v = await getCurrentViewer(viewer);
+        await v.cheer(bus, displayName, message, amount);
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
     },
   );
 
@@ -147,14 +167,17 @@ module.exports = ({
     check('message'),
     check('method'),
     validationMiddleware,
-    (req, res, next) => {
-      const {
-        viewer, displayName, message, method,
-      } = req.validParams;
-      getCurrentViewer(viewer)
-        .then(v => v.subscribe(bus, displayName, message, method))
-        .then(okCallback(res))
-        .catch(next);
+    async (req, res, next) => {
+      try {
+        const {
+          viewer, displayName, message, method,
+        } = req.validParams;
+        const v = await getCurrentViewer(viewer);
+        await v.subscribe(bus, displayName, message, method);
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
     },
   );
 
@@ -167,14 +190,17 @@ module.exports = ({
     check('months').isInt(),
     sanitize('months').toInt(),
     validationMiddleware,
-    (req, res, next) => {
-      const {
-        viewer, displayName, message, method, months,
-      } = req.validParams;
-      getCurrentViewer(viewer)
-        .then(v => v.resub(bus, displayName, message, method, months))
-        .then(okCallback(res))
-        .catch(next);
+    async (req, res, next) => {
+      try {
+        const {
+          viewer, displayName, message, method, months,
+        } = req.validParams;
+        const v = await getCurrentViewer(viewer);
+        await v.resub(bus, displayName, message, method, months);
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
     },
   );
 
@@ -183,12 +209,15 @@ module.exports = ({
     check('viewer').not().isEmpty(),
     check('displayName'),
     validationMiddleware,
-    (req, res, next) => {
-      const { viewer, displayName } = req.validParams;
-      getCurrentViewer(viewer)
-        .then(v => v.join(bus, displayName))
-        .then(okCallback(res))
-        .catch(next);
+    async (req, res, next) => {
+      try {
+        const { viewer, displayName } = req.validParams;
+        const v = await getCurrentViewer(viewer);
+        await v.join(bus, displayName);
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
     },
   );
 
@@ -197,12 +226,15 @@ module.exports = ({
     check('viewer').not().isEmpty(),
     check('displayName'),
     validationMiddleware,
-    (req, res, next) => {
-      const { viewer, displayName } = req.validParams;
-      getCurrentViewer(viewer)
-        .then(v => v.leave(bus, displayName))
-        .then(okCallback(res))
-        .catch(next);
+    async (req, res, next) => {
+      try {
+        const { viewer, displayName } = req.validParams;
+        const v = await getCurrentViewer(viewer);
+        await v.leave(bus, displayName);
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
     },
   );
 

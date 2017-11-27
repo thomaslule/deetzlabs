@@ -16,11 +16,11 @@ module.exports = (eventStore) => {
     return Promise.all(promises);
   };
 
-  const dispatch = event => eventStore.storeEvent(event)
-    .then(() => {
-      log.info('Event happened: %s %s %s', event.aggregate, event.id, event.type);
-      return sendEventToListeners(event, false);
-    });
+  const dispatch = async (event) => {
+    await eventStore.storeEvent(event);
+    log.info('Event happened: %s %s %s', event.aggregate, event.id, event.type);
+    return sendEventToListeners(event, false);
+  };
 
   const replay = event => sendEventToListeners(event, true);
 

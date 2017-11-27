@@ -19,11 +19,10 @@ const decisionProjection = (eventsHistory) => {
 module.exports = (eventsHistory) => {
   const decProj = decisionProjection(eventsHistory);
 
-  const dispatchAndApply = (bus, event) =>
-    bus.dispatch(event)
-      .then(() => {
-        decProj.apply(event);
-      });
+  const dispatchAndApply = async (bus, event) => {
+    await bus.dispatch(event);
+    decProj.apply(event);
+  };
 
   const changeAchievementVolume = (bus, volume) =>
     dispatchAndApply(bus, achievementVolumeChanged(volume));

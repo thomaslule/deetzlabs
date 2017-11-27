@@ -61,11 +61,10 @@ const decisionProjection = (eventsHistory) => {
 module.exports = (id, eventsHistory) => {
   const decProj = decisionProjection(eventsHistory);
 
-  const dispatchAndApply = (bus, event) =>
-    bus.dispatch(event)
-      .then(() => {
-        decProj.apply(event);
-      });
+  const dispatchAndApply = async (bus, event) => {
+    await bus.dispatch(event);
+    decProj.apply(event);
+  };
 
   const maybeSendAchievement = (bus, achievement) =>
     (decProj.getState().achievementsReceived.includes(achievement)
@@ -78,9 +77,10 @@ module.exports = (id, eventsHistory) => {
 
   const migrateData = (bus, data) => dispatchAndApply(bus, migratedData(id, data));
 
-  const chatMessage = (bus, displayName, message) =>
-    dispatchAndApply(bus, sentChatMessage(id, displayName, message))
-      .then(() => distributeAchievements(bus));
+  const chatMessage = async (bus, displayName, message) => {
+    await dispatchAndApply(bus, sentChatMessage(id, displayName, message));
+    return distributeAchievements(bus);
+  };
 
   const receiveAchievement = (bus, achievement, displayName) => {
     if (decProj.getState().achievementsReceived.includes(achievement)) {
@@ -92,33 +92,36 @@ module.exports = (id, eventsHistory) => {
     return dispatchAndApply(bus, gotAchievement(id, displayName, achievement));
   };
 
-  const subscribe = (bus, displayName, message, method) =>
-    dispatchAndApply(bus, subscribed(id, displayName, message, method))
-      .then(() => distributeAchievements(bus));
-
-  const resub = (bus, displayName, message, method, months) =>
-    dispatchAndApply(bus, resubscribed(id, displayName, message, method, months))
-      .then(() => distributeAchievements(bus));
-
-  const cheer = (bus, displayName, message, amount) =>
-    chatMessage(bus, displayName, message)
-      .then(() => dispatchAndApply(bus, cheered(id, displayName, amount)))
-      .then(() => distributeAchievements(bus));
-
-  const join = (bus, displayName) => {
-    if (decProj.getState().connected) {
-      return Promise.reject(new Error('bad_request viewer already connected'));
-    }
-    return dispatchAndApply(bus, joined(id, displayName))
-      .then(() => distributeAchievements(bus));
+  const subscribe = async (bus, displayName, message, method) => {
+    await dispatchAndApply(bus, subscribed(id, displayName, message, method));
+    return distributeAchievements(bus);
   };
 
-  const leave = (bus, displayName) => {
-    if (!decProj.getState().connected) {
-      return Promise.reject(new Error('bad_request viewer not connected'));
+  const resub = async (bus, displayName, message, method, months) => {
+    await dispatchAndApply(bus, resubscribed(id, displayName, message, method, months));
+    return distributeAchievements(bus);
+  };
+
+  const cheer = async (bus, displayName, message, amount) => {
+    await chatMessage(bus, displayName, message);
+    await dispatchAndApply(bus, cheered(id, displayName, amount));
+    return distributeAchievements(bus);
+  };
+
+  const join = async (bus, displayName) => {
+    if (decProj.getState().connected) {
+      throw new Error('bad_request viewer already connected');
     }
-    return dispatchAndApply(bus, left(id, displayName))
-      .then(() => distributeAchievements(bus));
+    await dispatchAndApply(bus, joined(id, displayName));
+    return distributeAchievements(bus);
+  };
+
+  const leave = async (bus, displayName) => {
+    if (!decProj.getState().connected) {
+      throw new Error('bad_request viewer not connected');
+    }
+    await dispatchAndApply(bus, left(id, displayName));
+    return distributeAchievements(bus);
   };
 
   return {

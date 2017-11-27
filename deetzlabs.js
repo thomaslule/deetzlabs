@@ -12,8 +12,9 @@ const ChatBot = require('./modules/chatBot');
 
 const replayWritable = bus => new Writable({
   objectMode: true,
-  write(event, encoding, callback) {
-    bus.replay(event).then(() => callback());
+  async write(event, encoding, callback) {
+    await bus.replay(event);
+    callback();
   },
 });
 
@@ -28,13 +29,13 @@ module.exports = (db) => {
   const commands = Commands(displayNames, viewersAchievements);
   ChatBot(bus, commands);
 
-  const init = () => {
+  const init = async () => {
     const query = fs.readFileSync('db/schema.sql').toString();
-    return db.query(query)
-      .then(() => store.getAllForAllAggregates())
-      .then(eventsStream => new Promise((resolve) => {
-        eventsStream.pipe(replayWritable(bus)).on('finish', resolve);
-      }));
+    await db.query(query);
+    const eventsStream = await store.getAllForAllAggregates();
+    return new Promise((resolve) => {
+      eventsStream.pipe(replayWritable(bus)).on('finish', resolve);
+    });
   };
 
   return {
