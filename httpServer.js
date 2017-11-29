@@ -56,7 +56,7 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { volume } = req.validParams;
-        const events = await store.get('settings');
+        const events = await store.get('settings', 'settings');
         const s = Settings(events);
         await s.changeAchievementVolume(bus, volume);
         res.sendStatus(200);
@@ -68,6 +68,30 @@ module.exports = ({
 
   router.get('/achievement_volume', (req, res) => {
     res.send({ volume: settings.getAchievementVolume() });
+  });
+
+  router.post(
+    '/change_followers_goal',
+    check('goal').isInt({ min: 1 }),
+    check('html').exists(),
+    check('css').exists(),
+    sanitize('goal').toInt(),
+    validationMiddleware,
+    async (req, res, next) => {
+      try {
+        const { goal, html, css } = req.validParams;
+        const events = await store.get('settings', 'settings');
+        const s = Settings(events);
+        await s.changeFollowersGoal(bus, { goal, html, css });
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
+
+  router.get('/followers_goal', (req, res) => {
+    res.send(settings.getFollowersGoal());
   });
 
   router.post(

@@ -5,10 +5,13 @@ const projection = (eventsHistory) => {
     if (event.type === eventsTypes.achievementVolumeChanged) {
       return { ...currentState, achievementVolume: event.volume };
     }
+    if (event.type === eventsTypes.followersGoalChanged) {
+      return { ...currentState, followersGoal: event.settings };
+    }
     return currentState;
   };
 
-  let state = eventsHistory.reduce(reducer, { achievementVolume: 0.5 });
+  let state = eventsHistory.reduce(reducer, { achievementVolume: 0.5, followersGoal: { goal: 10, html: '<div />', css: '' } });
 
   const apply = (event) => {
     state = reducer(state, event);
@@ -25,5 +28,7 @@ module.exports = (bus) => {
 
   const getAchievementVolume = () => p.getState().achievementVolume;
 
-  return { getAchievementVolume };
+  const getFollowersGoal = () => p.getState().followersGoal;
+
+  return { getAchievementVolume, getFollowersGoal };
 };

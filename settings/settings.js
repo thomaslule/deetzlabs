@@ -1,5 +1,6 @@
 const {
   achievementVolumeChanged,
+  followersGoalChanged,
 } = require('./events');
 
 const decisionProjection = (eventsHistory) => {
@@ -27,7 +28,11 @@ module.exports = (eventsHistory) => {
   const changeAchievementVolume = (bus, volume) =>
     dispatchAndApply(bus, achievementVolumeChanged(volume));
 
+  const changeFollowersGoal = (bus, settings) =>
+    dispatchAndApply(bus, followersGoalChanged(settings));
+
   return {
     changeAchievementVolume,
+    changeFollowersGoal,
   };
 };
