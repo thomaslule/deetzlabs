@@ -1,7 +1,7 @@
 # deetzlabs
-A back-end system used to trigger various things when other various things happen on a twitch stream.
+A back-end system used to trigger various things (like on-screen achievements or chat messages) when other various things (like chat messages or subscribes) happen on a twitch stream.
 
-Best used in combination with [twitch-bot-http](https://github.com/thomaslule/twitch-bot-http), [twitch-achievements](https://github.com/thomaslule/twitch-achievements) and [deetzlabs-web](https://github.com/thomaslule/deetzlabs-web).
+Best used in combination with [deetzlabs-twitch](https://github.com/thomaslule/deetzlabs-twitch), [deetzlabs-widgets](https://github.com/thomaslule/deetzlabs-widgets) and [deetzlabs-web](https://github.com/thomaslule/deetzlabs-web).
 
 ## prerequisites
  * A postgresl database
