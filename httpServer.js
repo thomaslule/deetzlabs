@@ -10,6 +10,7 @@ const { log } = require('./logger');
 const Viewer = require('./viewer/viewer');
 const achievements = require('./achievements');
 const Settings = require('./settings/settings');
+const Stream = require('./stream/stream');
 const validationMiddleware = require('./util/validationMiddleware');
 
 const okCallback = res => () => { res.sendStatus(200); };
@@ -255,6 +256,34 @@ module.exports = ({
         const { viewer, displayName } = req.validParams;
         const v = await getCurrentViewer(viewer);
         await v.leave(bus, displayName);
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
+
+  router.post(
+    '/stream_begins',
+    async (req, res, next) => {
+      try {
+        const events = await store.get('stream', 'stream');
+        const s = Stream(events);
+        await s.begin(bus);
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
+
+  router.post(
+    '/stream_ends',
+    async (req, res, next) => {
+      try {
+        const events = await store.get('stream', 'stream');
+        const s = Stream(events);
+        await s.end(bus);
         res.sendStatus(200);
       } catch (err) {
         next(err);
