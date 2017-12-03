@@ -265,11 +265,31 @@ module.exports = ({
 
   router.post(
     '/stream_begins',
+    check('game').not().isEmpty(),
+    validationMiddleware,
     async (req, res, next) => {
       try {
+        const { game } = req.validParams;
         const events = await store.get('stream', 'stream');
         const s = Stream(events);
-        await s.begin(bus);
+        await s.begin(bus, game);
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
+
+  router.post(
+    '/stream_change_game',
+    check('game').not().isEmpty(),
+    validationMiddleware,
+    async (req, res, next) => {
+      try {
+        const { game } = req.validParams;
+        const events = await store.get('stream', 'stream');
+        const s = Stream(events);
+        await s.changeGame(bus, game);
         res.sendStatus(200);
       } catch (err) {
         next(err);

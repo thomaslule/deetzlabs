@@ -1,5 +1,6 @@
 const eventsTypes = {
   begun: 'begun',
+  changedGame: 'changedGame',
   ended: 'ended',
 };
 
@@ -12,8 +13,11 @@ const createEvent = (type, content) => ({
   ...content,
 });
 
-const begun = () =>
-  createEvent(eventsTypes.begun, {});
+const begun = game =>
+  createEvent(eventsTypes.begun, { game });
+
+const changedGame = game =>
+  createEvent(eventsTypes.changedGame, { game });
 
 const ended = () =>
   createEvent(eventsTypes.ended, {});
@@ -21,5 +25,6 @@ const ended = () =>
 module.exports = {
   eventsTypes,
   begun,
+  changedGame,
   ended,
 };
