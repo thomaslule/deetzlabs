@@ -12,9 +12,9 @@ module.exports = (bus, commands) => {
     return Promise.all(messagesToSend.map(message => sendChatMessage(message)));
   };
 
-  bus.subscribe('viewer', (event, isReplay) => {
+  bus.subscribe('viewer', async (event, isReplay) => {
     if (!isReplay) {
-      receiveEvent(event);
+      await receiveEvent(event);
     }
   });
 };
