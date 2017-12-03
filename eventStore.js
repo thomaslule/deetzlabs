@@ -11,18 +11,18 @@ const rowToEvent = () => new Transform({
 
 module.exports = (db) => {
   const get = async (aggregate, id) => {
-    const res = await db.query('select event from events where aggregate = $1 and object_id = $2 order by insert_date', [aggregate, id]);
+    const res = await db.query('select event from events where aggregate = $1 and object_id = $2 order by event_id', [aggregate, id]);
     return res.rows.map(r => r.event);
   };
 
   const getAll = async (aggregate) => {
-    const res = await db.query('select event from events where aggregate = $1 order by insert_date', [aggregate]);
+    const res = await db.query('select event from events where aggregate = $1 order by event_id', [aggregate]);
     return res.rows.map(r => r.event);
   };
 
   const getAllForAllAggregates = async () => {
     const client = await db.connect();
-    const stream = client.query(new QueryStream('select event from events order by insert_date'));
+    const stream = client.query(new QueryStream('select event from events order by event_id'));
     stream.on('end', () => { client.release(); });
     stream.on('error', () => { client.release(); });
     return stream.pipe(rowToEvent());
