@@ -12,54 +12,40 @@ const {
   left,
   resubscribed,
 } = require('./events');
-
-const decisionProjection = (eventsHistory) => {
-  const reducer = (currentState, event) => {
-    const newState = clone(currentState);
-    Object.keys(achievements).forEach((achievement) => {
-      newState.achievements[achievement] = achievements[achievement]
-        .reducer(newState.achievements[achievement], event);
-    });
-    if (event.type === eventsTypes.gotAchievement) {
-      return {
-        ...newState,
-        achievementsReceived: newState.achievementsReceived.concat(event.achievement),
-      };
-    }
-    if (event.type === eventsTypes.joined) {
-      return { ...newState, connected: true };
-    }
-    if (event.type === eventsTypes.left) {
-      return { ...newState, connected: false };
-    }
-    if (event.type === eventsTypes.migratedData) {
-      return {
-        ...newState,
-        achievementsReceived: newState.achievementsReceived
-          .concat(event.achievements.map(a => a.achievement)),
-      };
-    }
-    return newState;
-  };
-
-  let state = eventsHistory.reduce(
-    reducer,
-    {
-      achievementsReceived: [], achievements: {},
-    },
-  );
-
-  const apply = (event) => {
-    state = reducer(state, event);
-  };
-
-  const getState = () => state;
-
-  return { apply, getState };
-};
+const projection = require('../util/projection');
 
 module.exports = (id, eventsHistory) => {
-  const decProj = decisionProjection(eventsHistory);
+  const decProj = projection(
+    eventsHistory,
+    { achievementsReceived: [], achievements: {} },
+    (state, event) => {
+      const newState = clone(state);
+      Object.keys(achievements).forEach((achievement) => {
+        newState.achievements[achievement] = achievements[achievement]
+          .reducer(newState.achievements[achievement], event);
+      });
+      if (event.type === eventsTypes.gotAchievement) {
+        return {
+          ...newState,
+          achievementsReceived: newState.achievementsReceived.concat(event.achievement),
+        };
+      }
+      if (event.type === eventsTypes.joined) {
+        return { ...newState, connected: true };
+      }
+      if (event.type === eventsTypes.left) {
+        return { ...newState, connected: false };
+      }
+      if (event.type === eventsTypes.migratedData) {
+        return {
+          ...newState,
+          achievementsReceived: newState.achievementsReceived
+            .concat(event.achievements.map(a => a.achievement)),
+        };
+      }
+      return newState;
+    },
+  );
 
   const dispatchAndApply = async (bus, event) => {
     await bus.dispatch(event);

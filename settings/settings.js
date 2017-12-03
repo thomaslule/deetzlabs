@@ -2,23 +2,10 @@ const {
   achievementVolumeChanged,
   followersGoalChanged,
 } = require('./events');
-
-const decisionProjection = (eventsHistory) => {
-  const reducer = currentState => currentState;
-
-  let state = eventsHistory.reduce(reducer, {});
-
-  const apply = (event) => {
-    state = reducer(state, event);
-  };
-
-  const getState = () => state;
-
-  return { apply, getState };
-};
+const projection = require('../util/projection');
 
 module.exports = (eventsHistory) => {
-  const decProj = decisionProjection(eventsHistory);
+  const decProj = projection(eventsHistory, {}, state => state);
 
   const dispatchAndApply = async (bus, event) => {
     await bus.dispatch(event);

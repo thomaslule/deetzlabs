@@ -4,32 +4,23 @@ const {
   changedGame,
   ended,
 } = require('./events');
-
-const decisionProjection = (eventsHistory) => {
-  const reducer = (currentState, event) => {
-    if (event.type === eventsTypes.begun) {
-      return { ...currentState, broadcasting: true, game: event.game };
-    } else if (event.type === eventsTypes.changedGame) {
-      return { ...currentState, game: event.game };
-    } else if (event.type === eventsTypes.ended) {
-      return { ...currentState, broadcasting: false };
-    }
-    return currentState;
-  };
-
-  let state = eventsHistory.reduce(reducer, { broadcasting: false, game: '' });
-
-  const apply = (event) => {
-    state = reducer(state, event);
-  };
-
-  const getState = () => state;
-
-  return { apply, getState };
-};
+const projection = require('../util/projection');
 
 module.exports = (eventsHistory) => {
-  const decProj = decisionProjection(eventsHistory);
+  const decProj = projection(
+    eventsHistory,
+    { broadcasting: false, game: '' },
+    (state, event) => {
+      if (event.type === eventsTypes.begun) {
+        return { ...state, broadcasting: true, game: event.game };
+      } else if (event.type === eventsTypes.changedGame) {
+        return { ...state, game: event.game };
+      } else if (event.type === eventsTypes.ended) {
+        return { ...state, broadcasting: false };
+      }
+      return state;
+    },
+  );
 
   const dispatchAndApply = async (bus, event) => {
     await bus.dispatch(event);
