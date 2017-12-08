@@ -11,6 +11,7 @@ const {
   joined,
   left,
   resubscribed,
+  hosted,
 } = require('./events');
 const projection = require('../util/projection');
 
@@ -110,6 +111,11 @@ module.exports = (id, eventsHistory) => {
     return distributeAchievements(bus);
   };
 
+  const host = async (bus, nbViewers) => {
+    await dispatchAndApply(bus, hosted(id, nbViewers));
+    await distributeAchievements(bus);
+  };
+
   return {
     migrateData,
     chatMessage,
@@ -119,5 +125,6 @@ module.exports = (id, eventsHistory) => {
     cheer,
     join,
     leave,
+    host,
   };
 };

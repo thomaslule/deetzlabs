@@ -7,6 +7,7 @@ const eventsTypes = {
   cheered: 'cheered',
   joined: 'joined',
   left: 'left',
+  hosted: 'hosted',
 };
 
 const createEvent = (type, id, content) => ({
@@ -63,14 +64,18 @@ const left = (id, displayName) =>
     displayName,
   });
 
+const hosted = (id, nbViewers) =>
+  createEvent(eventsTypes.hosted, id, { nbViewers });
+
 module.exports = {
   eventsTypes,
   migratedData,
   sentChatMessage,
   gotAchievement,
   subscribed,
+  resubscribed,
   cheered,
   joined,
   left,
-  resubscribed,
+  hosted,
 };

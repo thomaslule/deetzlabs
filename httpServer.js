@@ -264,6 +264,23 @@ module.exports = ({
   );
 
   router.post(
+    '/host',
+    check('viewer').not().isEmpty(),
+    check('nbViewers').isInt(),
+    validationMiddleware,
+    async (req, res, next) => {
+      try {
+        const { viewer, nbViewers } = req.validParams;
+        const v = await getCurrentViewer(viewer);
+        await v.host(bus, nbViewers);
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
+
+  router.post(
     '/stream_begins',
     check('game').not().isEmpty(),
     validationMiddleware,
