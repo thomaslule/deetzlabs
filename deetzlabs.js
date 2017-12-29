@@ -21,7 +21,7 @@ const replayWritable = bus => new Writable({
 module.exports = (db) => {
   configureLogger();
   const store = EventStore(db);
-  const bus = Bus(store);
+  const bus = Bus();
   const settings = Settings(bus);
   const displayNames = DisplayNames(bus);
   const achievementAlert = AchievementAlert(bus, settings, displayNames);
@@ -32,7 +32,7 @@ module.exports = (db) => {
   const init = async () => {
     const query = fs.readFileSync('db/schema.sql').toString();
     await db.query(query);
-    const eventsStream = await store.getAllForAllAggregates();
+    const eventsStream = await store.getEverything();
     return new Promise((resolve) => {
       eventsStream.pipe(replayWritable(bus)).on('finish', resolve);
     });
@@ -40,7 +40,6 @@ module.exports = (db) => {
 
   return {
     init,
-    db,
     store,
     bus,
     achievementAlert,

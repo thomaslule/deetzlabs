@@ -48,73 +48,76 @@ module.exports = (id, eventsHistory) => {
     },
   );
 
-  const dispatchAndApply = async (bus, event) => {
-    await bus.dispatch(event);
+  const applyAndReturn = (event) => {
     decProj.apply(event);
+    return event;
   };
 
-  const maybeSendAchievement = (bus, achievement) =>
-    (decProj.getState().achievementsReceived.includes(achievement)
-      ? Promise.resolve()
-      : dispatchAndApply(bus, gotAchievement(id, null, achievement)));
-
-  const distributeAchievements = bus =>
-    Promise.all(Object.keys(pickBy(decProj.getState().achievements, a => a.deserved))
-      .map(a => maybeSendAchievement(bus, a)));
-
-  const migrateData = (bus, data) => dispatchAndApply(bus, migratedData(id, data));
-
-  const chatMessage = async (bus, displayName, message) => {
-    await dispatchAndApply(bus, sentChatMessage(id, displayName, message));
-    return distributeAchievements(bus);
+  const newAchievements = () => {
+    const list = Object.keys(pickBy(decProj.getState().achievements, a => a.deserved))
+      .filter(a => !decProj.getState().achievementsReceived.includes(a))
+      .map(a => gotAchievement(id, null, a));
+    list.forEach(applyAndReturn);
+    return list;
   };
 
-  const receiveAchievement = (bus, achievement, displayName) => {
+  const migrateData = data => [applyAndReturn(migratedData(id, data))];
+
+  const chatMessage = (displayName, message) => [
+    applyAndReturn(sentChatMessage(id, displayName, message)),
+    ...newAchievements(),
+  ];
+
+  const receiveAchievement = (achievement, displayName) => {
     if (decProj.getState().achievementsReceived.includes(achievement)) {
-      return Promise.reject(new Error('bad_request user already has achievement'));
+      throw new Error('bad_request user already has achievement');
     }
     if (!achievements[achievement]) {
-      return Promise.reject(new Error('bad_request achievement doesnt exist'));
+      throw new Error('bad_request achievement doesnt exist');
     }
-    return dispatchAndApply(bus, gotAchievement(id, displayName, achievement));
+    return [applyAndReturn(gotAchievement(id, displayName, achievement))];
   };
 
-  const subscribe = async (bus, displayName, message, method) => {
-    await dispatchAndApply(bus, subscribed(id, displayName, message, method));
-    return distributeAchievements(bus);
-  };
+  const subscribe = (displayName, message, method) => [
+    applyAndReturn(subscribed(id, displayName, message, method)),
+    ...newAchievements(),
+  ];
 
-  const resub = async (bus, displayName, message, method, months) => {
-    await dispatchAndApply(bus, resubscribed(id, displayName, message, method, months));
-    return distributeAchievements(bus);
-  };
+  const resub = (displayName, message, method, months) => [
+    applyAndReturn(resubscribed(id, displayName, message, method, months)),
+    ...newAchievements(),
+  ];
 
-  const cheer = async (bus, displayName, message, amount) => {
-    await chatMessage(bus, displayName, message);
-    await dispatchAndApply(bus, cheered(id, displayName, amount));
-    return distributeAchievements(bus);
-  };
+  const cheer = (displayName, message, amount) => [
+    applyAndReturn(sentChatMessage(id, displayName, message)),
+    applyAndReturn(cheered(id, displayName, amount)),
+    ...newAchievements(),
+  ];
 
-  const join = async (bus, displayName) => {
+  const join = (displayName) => {
     if (decProj.getState().connected) {
       throw new Error('bad_request viewer already connected');
     }
-    await dispatchAndApply(bus, joined(id, displayName));
-    return distributeAchievements(bus);
+    return [
+      applyAndReturn(joined(id, displayName)),
+      ...newAchievements(),
+    ];
   };
 
-  const leave = async (bus, displayName) => {
+  const leave = (displayName) => {
     if (!decProj.getState().connected) {
       throw new Error('bad_request viewer not connected');
     }
-    await dispatchAndApply(bus, left(id, displayName));
-    return distributeAchievements(bus);
+    return [
+      applyAndReturn(left(id, displayName)),
+      ...newAchievements(),
+    ];
   };
 
-  const host = async (bus, nbViewers) => {
-    await dispatchAndApply(bus, hosted(id, nbViewers));
-    await distributeAchievements(bus);
-  };
+  const host = nbViewers => [
+    applyAndReturn(hosted(id, nbViewers)),
+    ...newAchievements(),
+  ];
 
   return {
     migrateData,

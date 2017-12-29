@@ -1,6 +1,6 @@
 const { log } = require('./logger');
 
-module.exports = (eventStore) => {
+module.exports = () => {
   const listeners = {};
 
   const subscribe = (aggregate, callback) => {
@@ -17,7 +17,6 @@ module.exports = (eventStore) => {
   };
 
   const dispatch = async (event) => {
-    await eventStore.storeEvent(event);
     log.info('Event happened: %s %s %s', event.aggregate, event.id, event.type);
     return sendEventToListeners(event, false);
   };

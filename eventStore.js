@@ -10,17 +10,37 @@ const rowToEvent = () => new Transform({
 });
 
 module.exports = (db) => {
+  const add = async (aggregate, id, calculateNewEvents) => {
+    const client = await db.connect();
+    try {
+      await client.query('begin');
+      await client.query('lock events');
+      const res = await client.query('select event from events where aggregate = $1 and object_id = $2 order by event_id', [aggregate, id]);
+      const events = res.rows.map(r => r.event);
+      const newEvents = calculateNewEvents(events);
+      const chain = newEvents
+        .map(newEvent => () => client.query(
+          'insert into events(insert_date, aggregate, object_id, event) values ($1, $2, $3, $4)',
+          [newEvent.insert_date, newEvent.aggregate, newEvent.id, newEvent],
+        ))
+        .reduce((prev, cur) => prev.then(cur), Promise.resolve());
+      await chain;
+      await client.query('commit');
+      return newEvents;
+    } catch (err) {
+      await client.query('rollback');
+      throw err;
+    } finally {
+      client.release();
+    }
+  };
+
   const get = async (aggregate, id) => {
     const res = await db.query('select event from events where aggregate = $1 and object_id = $2 order by event_id', [aggregate, id]);
     return res.rows.map(r => r.event);
   };
 
-  const getAll = async (aggregate) => {
-    const res = await db.query('select event from events where aggregate = $1 order by event_id', [aggregate]);
-    return res.rows.map(r => r.event);
-  };
-
-  const getAllForAllAggregates = async () => {
+  const getEverything = async () => {
     const client = await db.connect();
     const stream = client.query(new QueryStream('select event from events order by event_id'));
     stream.on('end', () => { client.release(); });
@@ -28,13 +48,7 @@ module.exports = (db) => {
     return stream.pipe(rowToEvent());
   };
 
-  const storeEvent = async event =>
-    db.query(
-      'insert into events(insert_date, aggregate, object_id, event) values ($1, $2, $3, $4)',
-      [event.insert_date, event.aggregate, event.id, event],
-    );
-
   return {
-    storeEvent, get, getAll, getAllForAllAggregates,
+    get, getEverything, add,
   };
 };

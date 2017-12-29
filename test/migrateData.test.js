@@ -63,11 +63,7 @@ test('post to /migrate_data', () => {
     ])
     .expect(200)
     .then(() => postMessage(app, '!gg'))
-    .then(() => {
-      expected1.done();
-      expected2.done();
-      return userHasAchievement(app, 'entertainer');
-    })
+    .then(() => userHasAchievement(app, 'entertainer'))
     .then((hasAchievement) => {
       expect(hasAchievement).toBeTruthy();
       return userHasAchievement(app, 'cheerleader');
@@ -77,6 +73,8 @@ test('post to /migrate_data', () => {
       return userHasAchievement(app, 'gravedigger');
     })
     .then((hasAchievement) => {
+      expected1.done();
+      expected2.done();
       expect(hasAchievement).toBeTruthy();
     });
 });
