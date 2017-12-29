@@ -2,6 +2,7 @@ const fs = require('fs');
 const { Writable } = require('stream');
 const { configureLogger } = require('./logger');
 const EventStore = require('./eventStore');
+const SecureEventStore = require('./secureEventStore');
 const Bus = require('./bus');
 const AchievementAlert = require('./modules/achievementAlert');
 const DisplayNames = require('./viewer/projections/displayName');
@@ -20,7 +21,7 @@ const replayWritable = bus => new Writable({
 
 module.exports = (db) => {
   configureLogger();
-  const store = EventStore(db);
+  const store = SecureEventStore(EventStore(db));
   const bus = Bus();
   const settings = Settings(bus);
   const displayNames = DisplayNames(bus);
