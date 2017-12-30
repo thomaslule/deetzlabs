@@ -2,14 +2,17 @@ const fs = require('fs');
 const { Writable } = require('stream');
 const { configureLogger } = require('./logger');
 const EventStore = require('./eventStore');
-const SecureEventStore = require('./secureEventStore');
+const AggregateEventStore = require('./aggregateEventStore');
 const Bus = require('./bus');
 const AchievementAlert = require('./modules/achievementAlert');
 const DisplayNames = require('./viewer/projections/displayName');
 const ViewersAchievements = require('./viewer/projections/achievements');
-const Settings = require('./settings/projections/settings');
+const SettingsProj = require('./settings/projections/settings');
 const Commands = require('./commands');
 const ChatBot = require('./modules/chatBot');
+const Viewer = require('./viewer/viewer');
+const Settings = require('./settings/settings');
+const Stream = require('./stream/stream');
 
 const replayWritable = bus => new Writable({
   objectMode: true,
@@ -21,9 +24,11 @@ const replayWritable = bus => new Writable({
 
 module.exports = (db) => {
   configureLogger();
-  const store = SecureEventStore(EventStore(db));
+  const viewerStore = AggregateEventStore(EventStore(db), 'viewer', Viewer);
+  const streamStore = AggregateEventStore(EventStore(db), 'stream', Stream);
+  const settingsStore = AggregateEventStore(EventStore(db), 'settings', Settings);
   const bus = Bus();
-  const settings = Settings(bus);
+  const settings = SettingsProj(bus);
   const displayNames = DisplayNames(bus);
   const achievementAlert = AchievementAlert(bus, settings, displayNames);
   const viewersAchievements = ViewersAchievements(bus);
@@ -33,7 +38,7 @@ module.exports = (db) => {
   const init = async () => {
     const query = fs.readFileSync('db/schema.sql').toString();
     await db.query(query);
-    const eventsStream = await store.getEverything();
+    const eventsStream = await EventStore(db).getEverything();
     return new Promise((resolve) => {
       eventsStream.pipe(replayWritable(bus)).on('finish', resolve);
     });
@@ -41,7 +46,9 @@ module.exports = (db) => {
 
   return {
     init,
-    store,
+    viewerStore,
+    streamStore,
+    settingsStore,
     bus,
     achievementAlert,
     viewersAchievements,

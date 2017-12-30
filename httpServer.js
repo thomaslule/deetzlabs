@@ -7,16 +7,15 @@ const { check } = require('express-validator/check');
 const { sanitize } = require('express-validator/filter');
 const mapValues = require('lodash/mapValues');
 const { log } = require('./logger');
-const Viewer = require('./viewer/viewer');
 const achievements = require('./achievements');
-const settingsLogic = require('./settings/settings');
-const Stream = require('./stream/stream');
 const validationMiddleware = require('./util/validationMiddleware');
 
 const okCallback = res => () => { res.sendStatus(200); };
 
 module.exports = ({
-  store,
+  viewerStore,
+  streamStore,
+  settingsStore,
   bus,
   achievementAlert,
   viewersAchievements,
@@ -26,11 +25,6 @@ module.exports = ({
   const dispatchEvents = events =>
     events.map(event => () => bus.dispatch(event))
       .reduce((prev, cur) => prev.then(cur), Promise.resolve());
-
-  const handleViewerCommand = async (id, handler) => {
-    const events = await store.add('viewer', id, eventsHistory => handler(Viewer(id, eventsHistory)));
-    dispatchEvents(events);
-  };
 
   const router = Router();
 
@@ -51,7 +45,7 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { volume } = req.validParams;
-        const events = await store.add('settings', 'settings', () => settingsLogic.changeAchievementVolume(volume));
+        const events = await settingsStore.add('settings', s => s.changeAchievementVolume(volume));
         dispatchEvents(events);
         res.sendStatus(200);
       } catch (err) {
@@ -74,7 +68,7 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { goal, html, css } = req.validParams;
-        const events = await store.add('settings', 'settings', () => settingsLogic.changeFollowersGoal({ goal, html, css }));
+        const events = await settingsStore.add('settings', s => s.changeFollowersGoal({ goal, html, css }));
         dispatchEvents(events);
         res.sendStatus(200);
       } catch (err) {
@@ -96,7 +90,9 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { achievement, viewer, displayName } = req.validParams;
-        await handleViewerCommand(viewer, v => v.receiveAchievement(achievement, displayName));
+        const newEvents = await viewerStore
+          .add(viewer, v => v.receiveAchievement(achievement, displayName));
+        dispatchEvents(newEvents);
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -141,7 +137,8 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { viewer, displayName, message } = req.validParams;
-        await handleViewerCommand(viewer, v => v.chatMessage(displayName, message));
+        const newEvents = await viewerStore.add(viewer, v => v.chatMessage(displayName, message));
+        dispatchEvents(newEvents);
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -166,7 +163,8 @@ module.exports = ({
         const {
           viewer, displayName, message, amount,
         } = req.validParams;
-        await handleViewerCommand(viewer, v => v.cheer(displayName, message, amount));
+        const newEvents = await viewerStore.add(viewer, v => v.cheer(displayName, message, amount));
+        dispatchEvents(newEvents);
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -186,7 +184,9 @@ module.exports = ({
         const {
           viewer, displayName, message, method,
         } = req.validParams;
-        await handleViewerCommand(viewer, v => v.subscribe(displayName, message, method));
+        const newEvents = await viewerStore
+          .add(viewer, v => v.subscribe(displayName, message, method));
+        dispatchEvents(newEvents);
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -208,7 +208,9 @@ module.exports = ({
         const {
           viewer, displayName, message, method, months,
         } = req.validParams;
-        await handleViewerCommand(viewer, v => v.resub(displayName, message, method, months));
+        const newEvents = await viewerStore
+          .add(viewer, v => v.resub(displayName, message, method, months));
+        dispatchEvents(newEvents);
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -224,7 +226,8 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { viewer, displayName } = req.validParams;
-        await handleViewerCommand(viewer, v => v.join(displayName));
+        const newEvents = await viewerStore.add(viewer, v => v.join(displayName));
+        dispatchEvents(newEvents);
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -240,7 +243,8 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { viewer, displayName } = req.validParams;
-        await handleViewerCommand(viewer, v => v.leave(displayName));
+        const newEvents = await viewerStore.add(viewer, v => v.leave(displayName));
+        dispatchEvents(newEvents);
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -256,7 +260,8 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { viewer, nbViewers } = req.validParams;
-        await handleViewerCommand(viewer, v => v.host(nbViewers));
+        const newEvents = await viewerStore.add(viewer, v => v.host(nbViewers));
+        dispatchEvents(newEvents);
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -271,7 +276,7 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { game } = req.validParams;
-        const newEvents = await store.add('stream', 'stream', eventsHistory => Stream(eventsHistory).begin(game));
+        const newEvents = await streamStore.add('stream', stream => stream.begin(game));
         dispatchEvents(newEvents);
         res.sendStatus(200);
       } catch (err) {
@@ -287,7 +292,7 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { game } = req.validParams;
-        const newEvents = await store.add('stream', 'stream', eventsHistory => Stream(eventsHistory).changeGame(game));
+        const newEvents = await streamStore.add('stream', stream => stream.changeGame(game));
         dispatchEvents(newEvents);
         res.sendStatus(200);
       } catch (err) {
@@ -300,7 +305,7 @@ module.exports = ({
     '/stream_ends',
     async (req, res, next) => {
       try {
-        const newEvents = await store.add('stream', 'stream', eventsHistory => Stream(eventsHistory).end());
+        const newEvents = await streamStore.add('stream', stream => stream.end());
         dispatchEvents(newEvents);
         res.sendStatus(200);
       } catch (err) {
@@ -326,7 +331,7 @@ module.exports = ({
         const careful = Number(getStorage('careful')[id] || 0);
         const berzingue = Number(getStorage('berzingue')[id] || 0);
 
-        return store.add('viewer', id, eventsHistory => Viewer(id, eventsHistory).migrateData({
+        return viewerStore.add(id, v => v.migrateData({
           achievements: achs,
           displayName,
           entertainer,

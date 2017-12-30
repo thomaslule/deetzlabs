@@ -3,13 +3,15 @@ const {
   followersGoalChanged,
 } = require('./events');
 
-const changeAchievementVolume = volume =>
-  [achievementVolumeChanged(volume)];
+module.exports = () => {
+  const changeAchievementVolume = volume =>
+    [achievementVolumeChanged(volume)];
 
-const changeFollowersGoal = settings =>
-  [followersGoalChanged(settings)];
+  const changeFollowersGoal = settings =>
+    [followersGoalChanged(settings)];
 
-module.exports = {
-  changeAchievementVolume,
-  changeFollowersGoal,
+  return {
+    changeAchievementVolume,
+    changeFollowersGoal,
+  };
 };
