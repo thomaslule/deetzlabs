@@ -23,7 +23,7 @@ afterAll(() => closeDbConnection(db));
 test('host adds event to store', async () => {
   await request(app).post('/api/host').send({ viewer: 'someone', nbViewers: 20 }).expect(200);
   const store = Store(db);
-  const events = await store.get('viewer', 'someone');
+  const events = (await store.get('viewer', 'someone')).map(r => r.event);
   expect(events.length).toBe(1);
   expect(events[0].type).toBe('hosted');
   expect(events[0].nbViewers).toBe(20);

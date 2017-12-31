@@ -2,6 +2,7 @@ const fs = require('fs');
 const { Writable } = require('stream');
 const { configureLogger } = require('./logger');
 const EventStore = require('./eventStore');
+const SnapshotStore = require('./snapshotStore');
 const AggregateEventStore = require('./aggregateEventStore');
 const Bus = require('./bus');
 const AchievementAlert = require('./modules/achievementAlert');
@@ -24,9 +25,11 @@ const replayWritable = bus => new Writable({
 
 module.exports = (db) => {
   configureLogger();
-  const viewerStore = AggregateEventStore(EventStore(db), 'viewer', Viewer);
-  const streamStore = AggregateEventStore(EventStore(db), 'stream', Stream);
-  const settingsStore = AggregateEventStore(EventStore(db), 'settings', Settings);
+  const eventStore = EventStore(db);
+  const snapshotStore = SnapshotStore(db);
+  const viewerStore = AggregateEventStore(eventStore, snapshotStore, 'viewer', Viewer);
+  const streamStore = AggregateEventStore(eventStore, snapshotStore, 'stream', Stream);
+  const settingsStore = AggregateEventStore(eventStore, snapshotStore, 'settings', Settings);
   const bus = Bus();
   const settings = SettingsProj(bus);
   const displayNames = DisplayNames(bus);
@@ -38,7 +41,8 @@ module.exports = (db) => {
   const init = async () => {
     const query = fs.readFileSync('db/schema.sql').toString();
     await db.query(query);
-    const eventsStream = await EventStore(db).getEverything();
+    await snapshotStore.empty();
+    const eventsStream = await eventStore.getEverything();
     return new Promise((resolve) => {
       eventsStream.pipe(replayWritable(bus)).on('finish', resolve);
     });

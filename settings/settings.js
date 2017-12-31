@@ -11,6 +11,7 @@ module.exports = () => {
     [followersGoalChanged(settings)];
 
   return {
+    getState: () => {},
     changeAchievementVolume,
     changeFollowersGoal,
   };

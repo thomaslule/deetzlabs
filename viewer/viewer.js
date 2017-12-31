@@ -15,10 +15,12 @@ const {
 } = require('./events');
 const projection = require('../util/projection');
 
-module.exports = (id, eventsHistory) => {
+const defaultState = { achievementsReceived: [], achievements: {} };
+
+module.exports = (id, eventsHistory, initState = defaultState) => {
   const decProj = projection(
     eventsHistory,
-    { achievementsReceived: [], achievements: {} },
+    initState,
     (state, event) => {
       const newState = clone(state);
       Object.keys(achievements).forEach((achievement) => {
@@ -120,6 +122,7 @@ module.exports = (id, eventsHistory) => {
   ];
 
   return {
+    getState: decProj.getState,
     migrateData,
     chatMessage,
     receiveAchievement,

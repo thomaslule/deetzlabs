@@ -6,10 +6,12 @@ const {
 } = require('./events');
 const projection = require('../util/projection');
 
-module.exports = (id, eventsHistory) => {
+const defaultState = { broadcasting: false, game: '' };
+
+module.exports = (id, eventsHistory, initState = defaultState) => {
   const decProj = projection(
     eventsHistory,
-    { broadcasting: false, game: '' },
+    initState,
     (state, event) => {
       if (event.type === eventsTypes.begun) {
         return { ...state, broadcasting: true, game: event.game };

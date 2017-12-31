@@ -10,9 +10,9 @@ const rowToEvent = () => new Transform({
 });
 
 module.exports = (db) => {
-  const get = async (aggregate, id) => {
-    const res = await db.query('select event from events where aggregate = $1 and object_id = $2 order by event_id', [aggregate, id]);
-    return res.rows.map(r => r.event);
+  const get = async (aggregate, id, fromEventId = '0') => {
+    const res = await db.query('select event_id, event from events where aggregate = $1 and object_id = $2 and event_id > $3 order by event_id', [aggregate, id, fromEventId]);
+    return res.rows;
   };
 
   const getEverything = async () => {
