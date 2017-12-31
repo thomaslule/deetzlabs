@@ -9,7 +9,7 @@ const rowToEvent = () => new Transform({
   },
 });
 
-module.exports = (db) => {
+module.exports = (db, onEvent = () => null) => {
   const get = async (aggregate, id, fromEventId = '0') => {
     const res = await db.query('select event_id, event from events where aggregate = $1 and object_id = $2 and event_id > $3 order by event_id', [aggregate, id, fromEventId]);
     return res.rows;
@@ -23,11 +23,13 @@ module.exports = (db) => {
     return stream.pipe(rowToEvent());
   };
 
-  const insert = async event =>
-    db.query(
+  const insert = async (event) => {
+    await db.query(
       'insert into events(insert_date, aggregate, object_id, event) values ($1, $2, $3, $4)',
       [event.insert_date, event.aggregate, event.id, event],
     );
+    onEvent(event);
+  };
 
   return {
     get, getEverything, insert,

@@ -25,12 +25,12 @@ const replayWritable = bus => new Writable({
 
 module.exports = (db) => {
   configureLogger();
-  const eventStore = EventStore(db);
+  const bus = Bus();
+  const eventStore = EventStore(db, bus.dispatch);
   const snapshotStore = SnapshotStore(db);
   const viewerStore = AggregateEventStore(eventStore, snapshotStore, 'viewer', Viewer);
   const streamStore = AggregateEventStore(eventStore, snapshotStore, 'stream', Stream);
   const settingsStore = AggregateEventStore(eventStore, snapshotStore, 'settings', Settings);
-  const bus = Bus();
   const settings = SettingsProj(bus);
   const displayNames = DisplayNames(bus);
   const achievementAlert = AchievementAlert(bus, settings, displayNames);
@@ -53,7 +53,6 @@ module.exports = (db) => {
     viewerStore,
     streamStore,
     settingsStore,
-    bus,
     achievementAlert,
     viewersAchievements,
     displayNames,

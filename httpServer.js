@@ -16,16 +16,11 @@ module.exports = ({
   viewerStore,
   streamStore,
   settingsStore,
-  bus,
   achievementAlert,
   viewersAchievements,
   displayNames,
   settings,
 }) => {
-  const dispatchEvents = events =>
-    events.map(event => () => bus.dispatch(event))
-      .reduce((prev, cur) => prev.then(cur), Promise.resolve());
-
   const router = Router();
 
   router.post('/show_test_achievement', async (req, res, next) => {
@@ -45,8 +40,7 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { volume } = req.validParams;
-        const events = await settingsStore.add('settings', s => s.changeAchievementVolume(volume));
-        dispatchEvents(events);
+        await settingsStore.add('settings', s => s.changeAchievementVolume(volume));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -68,8 +62,7 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { goal, html, css } = req.validParams;
-        const events = await settingsStore.add('settings', s => s.changeFollowersGoal({ goal, html, css }));
-        dispatchEvents(events);
+        await settingsStore.add('settings', s => s.changeFollowersGoal({ goal, html, css }));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -90,9 +83,7 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { achievement, viewer, displayName } = req.validParams;
-        const newEvents = await viewerStore
-          .add(viewer, v => v.receiveAchievement(achievement, displayName));
-        dispatchEvents(newEvents);
+        await viewerStore.add(viewer, v => v.receiveAchievement(achievement, displayName));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -137,8 +128,7 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { viewer, displayName, message } = req.validParams;
-        const newEvents = await viewerStore.add(viewer, v => v.chatMessage(displayName, message));
-        dispatchEvents(newEvents);
+        await viewerStore.add(viewer, v => v.chatMessage(displayName, message));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -163,8 +153,7 @@ module.exports = ({
         const {
           viewer, displayName, message, amount,
         } = req.validParams;
-        const newEvents = await viewerStore.add(viewer, v => v.cheer(displayName, message, amount));
-        dispatchEvents(newEvents);
+        await viewerStore.add(viewer, v => v.cheer(displayName, message, amount));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -184,9 +173,7 @@ module.exports = ({
         const {
           viewer, displayName, message, method,
         } = req.validParams;
-        const newEvents = await viewerStore
-          .add(viewer, v => v.subscribe(displayName, message, method));
-        dispatchEvents(newEvents);
+        await viewerStore.add(viewer, v => v.subscribe(displayName, message, method));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -208,9 +195,7 @@ module.exports = ({
         const {
           viewer, displayName, message, method, months,
         } = req.validParams;
-        const newEvents = await viewerStore
-          .add(viewer, v => v.resub(displayName, message, method, months));
-        dispatchEvents(newEvents);
+        await viewerStore.add(viewer, v => v.resub(displayName, message, method, months));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -226,8 +211,7 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { viewer, displayName } = req.validParams;
-        const newEvents = await viewerStore.add(viewer, v => v.join(displayName));
-        dispatchEvents(newEvents);
+        await viewerStore.add(viewer, v => v.join(displayName));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -243,8 +227,7 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { viewer, displayName } = req.validParams;
-        const newEvents = await viewerStore.add(viewer, v => v.leave(displayName));
-        dispatchEvents(newEvents);
+        await viewerStore.add(viewer, v => v.leave(displayName));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -260,8 +243,7 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { viewer, nbViewers } = req.validParams;
-        const newEvents = await viewerStore.add(viewer, v => v.host(nbViewers));
-        dispatchEvents(newEvents);
+        await viewerStore.add(viewer, v => v.host(nbViewers));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -276,8 +258,7 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { game } = req.validParams;
-        const newEvents = await streamStore.add('stream', stream => stream.begin(game));
-        dispatchEvents(newEvents);
+        await streamStore.add('stream', stream => stream.begin(game));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -292,8 +273,7 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { game } = req.validParams;
-        const newEvents = await streamStore.add('stream', stream => stream.changeGame(game));
-        dispatchEvents(newEvents);
+        await streamStore.add('stream', stream => stream.changeGame(game));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -305,8 +285,7 @@ module.exports = ({
     '/stream_ends',
     async (req, res, next) => {
       try {
-        const newEvents = await streamStore.add('stream', stream => stream.end());
-        dispatchEvents(newEvents);
+        await streamStore.add('stream', stream => stream.end());
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -341,7 +320,7 @@ module.exports = ({
           swedish,
           careful,
           berzingue,
-        })).then(dispatchEvents);
+        }));
       });
       return Promise.all(promises)
         .then(okCallback(res))
