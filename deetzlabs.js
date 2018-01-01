@@ -30,7 +30,7 @@ module.exports = (db) => {
   const snapshotStore = SnapshotStore(db);
 
   const viewerSnapshotTaker = SnapshotTaker(eventStore, snapshotStore, 'viewer', ViewerProj);
-  bus.subscribe('stream', viewerSnapshotTaker.onEvent);
+  bus.subscribe('viewer', viewerSnapshotTaker.onEvent);
   const viewerStore = AggregateEventStore(eventStore, snapshotStore, 'viewer', ViewerProj);
 
   const streamSnapshotTaker = SnapshotTaker(eventStore, snapshotStore, 'stream', StreamProj);
@@ -49,9 +49,13 @@ module.exports = (db) => {
     await db.query(query);
     await snapshotStore.empty();
     const eventsStream = await eventStore.getEverything();
-    return new Promise((resolve) => {
+    await new Promise((resolve) => {
       eventsStream.pipe(replayWritable(bus)).on('finish', resolve);
     });
+    await Promise.all([
+      viewerSnapshotTaker.refreshAll(),
+      streamSnapshotTaker.refreshAll(),
+    ]);
   };
 
   return {
