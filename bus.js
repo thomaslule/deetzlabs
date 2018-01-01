@@ -12,13 +12,12 @@ module.exports = () => {
 
   const sendEventToListeners = (event, isReplay) => {
     const interestedListeners = listeners[event.aggregate] || [];
-    const promises = interestedListeners.map(listener => listener(event, isReplay));
-    return Promise.all(promises);
+    interestedListeners.forEach(listener => listener(event, isReplay));
   };
 
-  const dispatch = async (event) => {
+  const dispatch = (event) => {
     log.info('Event happened: %s %s %s', event.aggregate, event.id, event.type);
-    return sendEventToListeners(event, false);
+    sendEventToListeners(event, false);
   };
 
   const replay = event => sendEventToListeners(event, true);
