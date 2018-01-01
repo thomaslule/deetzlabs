@@ -3,6 +3,7 @@ const { Writable } = require('stream');
 const { configureLogger } = require('./logger');
 const EventStore = require('./eventStore');
 const SnapshotStore = require('./snapshotStore');
+const SnapshotTaker = require('./snapshotTaker');
 const AggregateEventStore = require('./aggregateEventStore');
 const Bus = require('./bus');
 const AchievementAlert = require('./modules/achievementAlert');
@@ -11,9 +12,8 @@ const ViewersAchievements = require('./viewer/projections/achievements');
 const SettingsProj = require('./settings/projections/settings');
 const Commands = require('./commands');
 const ChatBot = require('./modules/chatBot');
-const Viewer = require('./viewer/viewer');
-const Settings = require('./settings/settings');
-const Stream = require('./stream/stream');
+const ViewerProj = require('./viewer/decisionProjection');
+const StreamProj = require('./stream/decisionProjection');
 
 const replayWritable = bus => new Writable({
   objectMode: true,
@@ -28,9 +28,15 @@ module.exports = (db) => {
   const bus = Bus();
   const eventStore = EventStore(db, bus.dispatch);
   const snapshotStore = SnapshotStore(db);
-  const viewerStore = AggregateEventStore(eventStore, snapshotStore, 'viewer', Viewer);
-  const streamStore = AggregateEventStore(eventStore, snapshotStore, 'stream', Stream);
-  const settingsStore = AggregateEventStore(eventStore, snapshotStore, 'settings', Settings);
+
+  const viewerSnapshotTaker = SnapshotTaker(eventStore, snapshotStore, 'viewer', ViewerProj);
+  bus.subscribe('stream', viewerSnapshotTaker.onEvent);
+  const viewerStore = AggregateEventStore(eventStore, snapshotStore, 'viewer', ViewerProj);
+
+  const streamSnapshotTaker = SnapshotTaker(eventStore, snapshotStore, 'stream', StreamProj);
+  bus.subscribe('stream', streamSnapshotTaker.onEvent);
+  const streamStore = AggregateEventStore(eventStore, snapshotStore, 'stream', StreamProj);
+
   const settings = SettingsProj(bus);
   const displayNames = DisplayNames(bus);
   const achievementAlert = AchievementAlert(bus, settings, displayNames);
@@ -50,9 +56,9 @@ module.exports = (db) => {
 
   return {
     init,
+    eventStore,
     viewerStore,
     streamStore,
-    settingsStore,
     achievementAlert,
     viewersAchievements,
     displayNames,

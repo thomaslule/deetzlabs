@@ -6,6 +6,9 @@ const morgan = require('morgan');
 const { check } = require('express-validator/check');
 const { sanitize } = require('express-validator/filter');
 const mapValues = require('lodash/mapValues');
+const Viewer = require('./viewer/viewer');
+const Stream = require('./stream/stream');
+const Settings = require('./settings/settings');
 const { log } = require('./logger');
 const achievements = require('./achievements');
 const validationMiddleware = require('./util/validationMiddleware');
@@ -13,9 +16,9 @@ const validationMiddleware = require('./util/validationMiddleware');
 const okCallback = res => () => { res.sendStatus(200); };
 
 module.exports = ({
+  eventStore,
   viewerStore,
   streamStore,
-  settingsStore,
   achievementAlert,
   viewersAchievements,
   displayNames,
@@ -40,7 +43,7 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { volume } = req.validParams;
-        await settingsStore.add('settings', s => s.changeAchievementVolume(volume));
+        await eventStore.insert(Settings().changeAchievementVolume(volume));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -62,7 +65,7 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { goal, html, css } = req.validParams;
-        await settingsStore.add('settings', s => s.changeFollowersGoal({ goal, html, css }));
+        await eventStore.insert(Settings().changeFollowersGoal({ goal, html, css }));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -83,7 +86,8 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { achievement, viewer, displayName } = req.validParams;
-        await viewerStore.add(viewer, v => v.receiveAchievement(achievement, displayName));
+        await viewerStore.add(viewer, decProj =>
+          Viewer(viewer, decProj).receiveAchievement(achievement, displayName));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -128,7 +132,8 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { viewer, displayName, message } = req.validParams;
-        await viewerStore.add(viewer, v => v.chatMessage(displayName, message));
+        await viewerStore.add(viewer, decProj =>
+          Viewer(viewer, decProj).chatMessage(displayName, message));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -153,7 +158,8 @@ module.exports = ({
         const {
           viewer, displayName, message, amount,
         } = req.validParams;
-        await viewerStore.add(viewer, v => v.cheer(displayName, message, amount));
+        await viewerStore.add(viewer, decProj =>
+          Viewer(viewer, decProj).cheer(displayName, message, amount));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -173,7 +179,8 @@ module.exports = ({
         const {
           viewer, displayName, message, method,
         } = req.validParams;
-        await viewerStore.add(viewer, v => v.subscribe(displayName, message, method));
+        await viewerStore.add(viewer, decProj =>
+          Viewer(viewer, decProj).subscribe(displayName, message, method));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -195,7 +202,8 @@ module.exports = ({
         const {
           viewer, displayName, message, method, months,
         } = req.validParams;
-        await viewerStore.add(viewer, v => v.resub(displayName, message, method, months));
+        await viewerStore.add(viewer, decProj =>
+          Viewer(viewer, decProj).resub(displayName, message, method, months));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -211,7 +219,8 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { viewer, displayName } = req.validParams;
-        await viewerStore.add(viewer, v => v.join(displayName));
+        await viewerStore.add(viewer, decProj =>
+          Viewer(viewer, decProj).join(displayName));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -227,7 +236,8 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { viewer, displayName } = req.validParams;
-        await viewerStore.add(viewer, v => v.leave(displayName));
+        await viewerStore.add(viewer, decProj =>
+          Viewer(viewer, decProj).leave(displayName));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -243,7 +253,8 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { viewer, nbViewers } = req.validParams;
-        await viewerStore.add(viewer, v => v.host(nbViewers));
+        await viewerStore.add(viewer, decProj =>
+          Viewer(viewer, decProj).host(nbViewers));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -258,7 +269,7 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { game } = req.validParams;
-        await streamStore.add('stream', stream => stream.begin(game));
+        await streamStore.add('stream', decProj => Stream('stream', decProj).begin(game));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -273,7 +284,7 @@ module.exports = ({
     async (req, res, next) => {
       try {
         const { game } = req.validParams;
-        await streamStore.add('stream', stream => stream.changeGame(game));
+        await streamStore.add('stream', decProj => Stream('stream', decProj).changeGame(game));
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -285,7 +296,7 @@ module.exports = ({
     '/stream_ends',
     async (req, res, next) => {
       try {
-        await streamStore.add('stream', stream => stream.end());
+        await streamStore.add('stream', decProj => Stream('stream', decProj).end());
         res.sendStatus(200);
       } catch (err) {
         next(err);
@@ -310,17 +321,18 @@ module.exports = ({
         const careful = Number(getStorage('careful')[id] || 0);
         const berzingue = Number(getStorage('berzingue')[id] || 0);
 
-        return viewerStore.add(id, v => v.migrateData({
-          achievements: achs,
-          displayName,
-          entertainer,
-          vigilante,
-          cheerleader,
-          gravedigger,
-          swedish,
-          careful,
-          berzingue,
-        }));
+        return viewerStore.add(id, decProj =>
+          Viewer(id, decProj).migrateData({
+            achievements: achs,
+            displayName,
+            entertainer,
+            vigilante,
+            cheerleader,
+            gravedigger,
+            swedish,
+            careful,
+            berzingue,
+          }));
       });
       return Promise.all(promises)
         .then(okCallback(res))

@@ -1,8 +1,6 @@
-const clone = require('clone');
 const pickBy = require('lodash/pickBy');
 const achievements = require('../achievements');
 const {
-  eventsTypes,
   migratedData,
   sentChatMessage,
   gotAchievement,
@@ -13,43 +11,8 @@ const {
   resubscribed,
   hosted,
 } = require('./events');
-const projection = require('../util/projection');
 
-const defaultState = { achievementsReceived: [], achievements: {} };
-
-module.exports = (id, eventsHistory, initState = defaultState) => {
-  const decProj = projection(
-    eventsHistory,
-    initState,
-    (state, event) => {
-      const newState = clone(state);
-      Object.keys(achievements).forEach((achievement) => {
-        newState.achievements[achievement] = achievements[achievement]
-          .reducer(newState.achievements[achievement], event);
-      });
-      if (event.type === eventsTypes.gotAchievement) {
-        return {
-          ...newState,
-          achievementsReceived: newState.achievementsReceived.concat(event.achievement),
-        };
-      }
-      if (event.type === eventsTypes.joined) {
-        return { ...newState, connected: true };
-      }
-      if (event.type === eventsTypes.left) {
-        return { ...newState, connected: false };
-      }
-      if (event.type === eventsTypes.migratedData) {
-        return {
-          ...newState,
-          achievementsReceived: newState.achievementsReceived
-            .concat(event.achievements.map(a => a.achievement)),
-        };
-      }
-      return newState;
-    },
-  );
-
+module.exports = (id, decProj) => {
   const applyAndReturn = (event) => {
     decProj.apply(event);
     return event;
@@ -122,7 +85,6 @@ module.exports = (id, eventsHistory, initState = defaultState) => {
   ];
 
   return {
-    getState: decProj.getState,
     migrateData,
     chatMessage,
     receiveAchievement,

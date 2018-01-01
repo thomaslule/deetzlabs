@@ -1,29 +1,10 @@
 const {
-  eventsTypes,
   begun,
   changedGame,
   ended,
 } = require('./events');
-const projection = require('../util/projection');
 
-const defaultState = { broadcasting: false, game: '' };
-
-module.exports = (id, eventsHistory, initState = defaultState) => {
-  const decProj = projection(
-    eventsHistory,
-    initState,
-    (state, event) => {
-      if (event.type === eventsTypes.begun) {
-        return { ...state, broadcasting: true, game: event.game };
-      } else if (event.type === eventsTypes.changedGame) {
-        return { ...state, game: event.game };
-      } else if (event.type === eventsTypes.ended) {
-        return { ...state, broadcasting: false };
-      }
-      return state;
-    },
-  );
-
+module.exports = (id, decProj) => {
   const applyAndReturn = (event) => {
     decProj.apply(event);
     return [event];

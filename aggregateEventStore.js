@@ -1,6 +1,6 @@
 const Queue = require('promise-queue');
 
-module.exports = (eventStore, snapshotStore, aggregate, constructor, options = { maxEventsLength: 100 }) => {
+module.exports = (eventStore, snapshotStore, aggregate, Projection) => {
   const queues = {};
 
   const add = async (id, calculateNewEvents) => {
@@ -10,12 +10,8 @@ module.exports = (eventStore, snapshotStore, aggregate, constructor, options = {
     return queues[id].add(async () => {
       const snapshot = await snapshotStore.get(aggregate, id);
       const rows = await eventStore.get(aggregate, id, snapshot.lastEventId);
-      const item = constructor(id, rows.map(r => r.event), snapshot.snapshot);
-      if (rows.length > options.maxEventsLength) {
-        // no need to await
-        snapshotStore.store(aggregate, id, rows[rows.length - 1].event_id, item.getState());
-      }
-      const newEvents = calculateNewEvents(item);
+      const proj = Projection(rows.map(r => r.event), snapshot.snapshot);
+      const newEvents = calculateNewEvents(proj);
       const chain = newEvents
         .map(newEvent => () => eventStore.insert(newEvent))
         .reduce((prev, cur) => prev.then(cur), Promise.resolve());

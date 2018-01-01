@@ -5,13 +5,12 @@ const {
 
 module.exports = () => {
   const changeAchievementVolume = volume =>
-    [achievementVolumeChanged(volume)];
+    achievementVolumeChanged(volume);
 
   const changeFollowersGoal = settings =>
-    [followersGoalChanged(settings)];
+    followersGoalChanged(settings);
 
   return {
-    getState: () => {},
     changeAchievementVolume,
     changeFollowersGoal,
   };
