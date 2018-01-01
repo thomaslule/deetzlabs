@@ -4,7 +4,7 @@ const connectToDb = require('./util/connectToDb');
 const initApp = require('./util/initApp');
 const deleteData = require('./util/deleteData');
 const closeDbConnection = require('./util/closeDbConnection');
-const Store = require('../eventStore');
+const Store = require('../store/eventStore');
 
 let app;
 let db;

@@ -1,10 +1,10 @@
 const AggregateEventStore = require('./aggregateEventStore');
 const EventStore = require('./eventStore');
 const SnapshotStore = require('./snapshotStore');
-const connectToDb = require('./test/util/connectToDb');
-const deleteData = require('./test/util/deleteData');
-const closeDbConnection = require('./test/util/closeDbConnection');
-const projection = require('./util/projection');
+const connectToDb = require('../test/util/connectToDb');
+const deleteData = require('../test/util/deleteData');
+const closeDbConnection = require('../test/util/closeDbConnection');
+const projection = require('../util/projection');
 
 let db;
 let eventStore;

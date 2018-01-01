@@ -1,10 +1,10 @@
 const fs = require('fs');
 const { Writable } = require('stream');
 const { configureLogger } = require('./logger');
-const EventStore = require('./eventStore');
-const SnapshotStore = require('./snapshotStore');
-const SnapshotTaker = require('./snapshotTaker');
-const AggregateEventStore = require('./aggregateEventStore');
+const EventStore = require('./store/eventStore');
+const SnapshotStore = require('./store/snapshotStore');
+const SnapshotTaker = require('./store/snapshotTaker');
+const AggregateEventStore = require('./store/aggregateEventStore');
 const Bus = require('./bus');
 const AchievementAlert = require('./modules/achievementAlert');
 const DisplayNames = require('./viewer/projections/displayName');

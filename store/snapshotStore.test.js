@@ -1,7 +1,7 @@
 const SnapshotStore = require('./snapshotStore');
-const connectToDb = require('./test/util/connectToDb');
-const deleteData = require('./test/util/deleteData');
-const closeDbConnection = require('./test/util/closeDbConnection');
+const connectToDb = require('../test/util/connectToDb');
+const deleteData = require('../test/util/deleteData');
+const closeDbConnection = require('../test/util/closeDbConnection');
 
 let db;
 

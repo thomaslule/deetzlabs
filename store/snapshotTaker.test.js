@@ -1,10 +1,10 @@
 const EventStore = require('./eventStore');
 const SnapshotStore = require('./snapshotStore');
 const SnapShotTaker = require('./snapshotTaker');
-const projection = require('./util/projection');
-const connectToDb = require('./test/util/connectToDb');
-const deleteData = require('./test/util/deleteData');
-const closeDbConnection = require('./test/util/closeDbConnection');
+const projection = require('../util/projection');
+const connectToDb = require('../test/util/connectToDb');
+const deleteData = require('../test/util/deleteData');
+const closeDbConnection = require('../test/util/closeDbConnection');
 
 const Proj = (eventsHistory, initState = { nb: 0 }) =>
   projection(eventsHistory, initState, state => ({ nb: state.nb + 1 }));
