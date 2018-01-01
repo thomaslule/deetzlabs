@@ -26,7 +26,7 @@ module.exports = (id, decProj) => {
     return list;
   };
 
-  const migrateData = data => [applyAndReturn(migratedData(id, data))];
+  const migrateData = data => applyAndReturn(migratedData(id, data));
 
   const chatMessage = (displayName, message) => [
     applyAndReturn(sentChatMessage(id, displayName, message)),
@@ -40,7 +40,7 @@ module.exports = (id, decProj) => {
     if (!achievements[achievement]) {
       throw new Error('bad_request achievement doesnt exist');
     }
-    return [applyAndReturn(gotAchievement(id, displayName, achievement))];
+    return applyAndReturn(gotAchievement(id, displayName, achievement));
   };
 
   const subscribe = (displayName, message, method) => [

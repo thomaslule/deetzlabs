@@ -11,7 +11,10 @@ module.exports = (eventStore, snapshotStore, aggregate, Projection) => {
       const snapshot = await snapshotStore.get(aggregate, id);
       const rows = await eventStore.get(aggregate, id, snapshot.lastEventId);
       const proj = Projection(rows.map(r => r.event), snapshot.snapshot);
-      const newEvents = calculateNewEvents(proj);
+      let newEvents = calculateNewEvents(proj);
+      if (!Array.isArray(newEvents)) {
+        newEvents = [newEvents];
+      }
       const chain = newEvents
         .map(newEvent => () => eventStore.insert(newEvent))
         .reduce((prev, cur) => prev.then(cur), Promise.resolve());

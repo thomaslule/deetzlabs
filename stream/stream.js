@@ -7,7 +7,7 @@ const {
 module.exports = (id, decProj) => {
   const applyAndReturn = (event) => {
     decProj.apply(event);
-    return [event];
+    return event;
   };
 
   const begin = (game) => {
@@ -16,7 +16,6 @@ module.exports = (id, decProj) => {
     }
     return applyAndReturn(begun(game));
   };
-
 
   const changeGame = (game) => {
     if (decProj.getState().game === game) {
