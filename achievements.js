@@ -96,7 +96,7 @@ module.exports = {
       return { deserved: false };
     },
   },
-  old: {
+  elder: {
     name: 'Doyenne',
     text: 'Bienvenue parmi les anciennes, %USER%',
     reducer: (state = { deserved: false }, event) => {
