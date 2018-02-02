@@ -4,6 +4,7 @@
   "db_url": "postgresql://postgres:admin@localhost:5432/deetzlabs",
   "bot_url": "http://localhost:3102/send_message",
   "show_achievement_url": "http://localhost:3103/achievement",
+  "show_credits_url": "http://localhost:3103/credits",
   "log_to_console": false,
   "log_to_file": true
 }

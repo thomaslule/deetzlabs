@@ -12,6 +12,7 @@ const Settings = require('./settings/settings');
 const { log } = require('./logger');
 const achievements = require('./achievements');
 const validationMiddleware = require('./util/validationMiddleware');
+const showCredits = require('./apis/showCredits');
 
 const okCallback = res => () => { res.sendStatus(200); };
 
@@ -23,6 +24,7 @@ module.exports = ({
   viewersAchievements,
   displayNames,
   settings,
+  credits,
 }) => {
   const router = Router();
 
@@ -355,6 +357,19 @@ module.exports = ({
         .catch(next);
     },
   );
+
+  router.post(
+    '/launch_credits',
+    (req, res, next) => {
+      try {
+        showCredits(credits.get());
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
+
   const app = express();
   app.use(bodyParser.json());
   const s = { write: message => log.info(message.slice(0, -1)) };

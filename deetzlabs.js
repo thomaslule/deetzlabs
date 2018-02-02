@@ -14,6 +14,7 @@ const Commands = require('./commands');
 const ChatBot = require('./modules/chatBot');
 const ViewerProj = require('./viewer/decisionProjection');
 const StreamProj = require('./stream/decisionProjection');
+const CreditsProj = require('./projections/credits');
 
 const replayWritable = bus => new Writable({
   objectMode: true,
@@ -39,6 +40,7 @@ module.exports = (db) => {
 
   const settings = SettingsProj(bus);
   const displayNames = DisplayNames(bus);
+  const credits = CreditsProj(bus, displayNames);
   const achievementAlert = AchievementAlert(bus, settings, displayNames);
   const viewersAchievements = ViewersAchievements(bus);
   const commands = Commands(displayNames, viewersAchievements);
@@ -67,5 +69,6 @@ module.exports = (db) => {
     viewersAchievements,
     displayNames,
     settings,
+    credits,
   };
 };
