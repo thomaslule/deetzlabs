@@ -10,6 +10,7 @@ const {
   left,
   resubscribed,
   hosted,
+  followed,
 } = require('./events');
 
 module.exports = (id, decProj) => {
@@ -84,6 +85,11 @@ module.exports = (id, decProj) => {
     ...newAchievements(),
   ];
 
+  const follow = () => [
+    applyAndReturn(followed(id)),
+    ...newAchievements(),
+  ];
+
   return {
     migrateData,
     chatMessage,
@@ -94,5 +100,6 @@ module.exports = (id, decProj) => {
     join,
     leave,
     host,
+    follow,
   };
 };

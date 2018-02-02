@@ -305,6 +305,22 @@ module.exports = ({
   );
 
   router.post(
+    '/follow',
+    check('viewer').not().isEmpty(),
+    validationMiddleware,
+    async (req, res, next) => {
+      try {
+        const { viewer } = req.validParams;
+        await viewerStore.add(viewer, decProj =>
+          Viewer(viewer, decProj).follow());
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
+
+  router.post(
     '/migrate_data',
     (req, res, next) => {
       const getStorage = name => req.body.find(d => d.key === name).value;

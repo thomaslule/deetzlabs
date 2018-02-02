@@ -8,6 +8,7 @@ const eventsTypes = {
   joined: 'joined',
   left: 'left',
   hosted: 'hosted',
+  followed: 'followed',
 };
 
 const createEvent = (type, id, content) => ({
@@ -67,6 +68,9 @@ const left = (id, displayName) =>
 const hosted = (id, nbViewers) =>
   createEvent(eventsTypes.hosted, id, { nbViewers });
 
+const followed = id =>
+  createEvent(eventsTypes.followed, id);
+
 module.exports = {
   eventsTypes,
   migratedData,
@@ -78,4 +82,5 @@ module.exports = {
   joined,
   left,
   hosted,
+  followed,
 };
