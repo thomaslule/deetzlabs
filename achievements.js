@@ -86,4 +86,37 @@ module.exports = {
     text: '%USER% mène l\'enquête !',
     reducer: nopeReducer,
   },
+  host: {
+    name: 'Hospitalière',
+    text: '%USER% nous accueille sur sa chaîne !',
+    reducer: (state, event) => {
+      if (event.type === eventsTypes.hosted) {
+        return { deserved: true };
+      }
+      return { deserved: false };
+    },
+  },
+  old: {
+    name: 'Doyenne',
+    text: 'Bienvenue parmi les anciennes, %USER%',
+    reducer: (state = { deserved: false }, event) => {
+      if (state.deserved) {
+        return state;
+      }
+      if (!state.oldestMessage && event.type === eventsTypes.sentChatMessage) {
+        return {
+          ...state,
+          oldestMessage: new Date(event.insert_date),
+        };
+      }
+      if (event.type === eventsTypes.sentChatMessage
+        && (new Date(event.insert_date) - state.oldestMessage > 100 * 24 * 60 * 60 * 1000)) { // 100 days
+        return {
+          ...state,
+          deserved: true,
+        };
+      }
+      return state;
+    },
+  },
 };
