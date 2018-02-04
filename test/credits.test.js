@@ -21,17 +21,8 @@ afterEach(() => {
 
 afterAll(() => closeDbConnection(db));
 
-test('send the credits on POST /launch_credits', async () => {
+test('get the credits with GET /credits', async () => {
   mockAllShowAchievements();
-  const expectedCall = nock('http://localhost:3103').post('/credits', {
-    games: ['Tetris'],
-    viewers: ['Someone'],
-    hosts: [],
-    achievements: [{ viewer: 'Someone', achievement: 'Mécène' }],
-    subscribes: [],
-    donators: ['Someone'],
-    follows: [],
-  }).reply(200);
   await request(app).post('/api/stream_begins').send({ game: 'Tetris' });
   await postMessage(app, 'yo');
   await request(app).post('/api/cheer').send({
@@ -41,7 +32,13 @@ test('send the credits on POST /launch_credits', async () => {
     message: 'hop cheer100',
   });
 
-  await request(app).post('/api/launch_credits').send({ viewer: 'someone', nbViewers: 20 }).expect(200);
-
-  expectedCall.done();
+  await request(app).get('/api/credits').expect(200, {
+    games: ['Tetris'],
+    viewers: ['Someone'],
+    hosts: [],
+    achievements: [{ viewer: 'Someone', achievement: 'Mécène' }],
+    subscribes: [],
+    donators: ['Someone'],
+    follows: [],
+  });
 });

@@ -12,7 +12,6 @@ const Settings = require('./settings/settings');
 const { log } = require('./logger');
 const achievements = require('./achievements');
 const validationMiddleware = require('./util/validationMiddleware');
-const showCredits = require('./apis/showCredits');
 
 const okCallback = res => () => { res.sendStatus(200); };
 
@@ -358,12 +357,11 @@ module.exports = ({
     },
   );
 
-  router.post(
-    '/launch_credits',
+  router.get(
+    '/credits',
     (req, res, next) => {
       try {
-        showCredits(credits.get());
-        res.sendStatus(200);
+        res.send(credits.get());
       } catch (err) {
         next(err);
       }
