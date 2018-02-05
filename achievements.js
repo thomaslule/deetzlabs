@@ -61,6 +61,11 @@ module.exports = {
     text: '%USER% ne laisse rien passer !',
     reducer: messageCounter(5, message => isCommand('!putain', message), 'vigilante'),
   },
+  pyromaniac: {
+    name: 'Pyromane',
+    text: '%USER% allume le feu',
+    reducer: messageCounter(5, message => isCommand('!fire', message), 'pyromaniac'),
+  },
   benefactor: {
     name: 'Mécène',
     text: 'Cool ! Merci pour ton soutien %USER%',

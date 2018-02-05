@@ -118,6 +118,14 @@ test('say n times !putain', () => testSayNthTimes({
   achievementText: '%USER% ne laisse rien passer !',
 }));
 
+test('say n times !fire', () => testSayNthTimes({
+  command: '!fire',
+  n: 5,
+  achievementCode: 'pyromaniac',
+  achievementTitle: 'Pyromane',
+  achievementText: '%USER% allume le feu',
+}));
+
 test('say anything 300 times', () => {
   const expectedCall = mockAchievement('Ambianceuse', 'Bim plein de messages dans le chat, gg %USER%');
   return request(app)
