@@ -2,5 +2,4 @@ node_modules
 log
 .vscode
 .node-persist
-config.js
 config/production.json
