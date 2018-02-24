@@ -1,6 +1,6 @@
 const fs = require('fs');
 const { Writable } = require('stream');
-const { configureLogger } = require('./logger');
+const { configureLogger, log } = require('./logger');
 const EventStore = require('./store/eventStore');
 const SnapshotStore = require('./store/snapshotStore');
 const SnapshotTaker = require('./store/snapshotTaker');
@@ -54,6 +54,7 @@ module.exports = (db) => {
     await new Promise((resolve) => {
       eventsStream.pipe(replayWritable(bus)).on('finish', resolve);
     });
+    log.info('replayed all events');
     await Promise.all([
       viewerSnapshotTaker.refreshAll(),
       streamSnapshotTaker.refreshAll(),

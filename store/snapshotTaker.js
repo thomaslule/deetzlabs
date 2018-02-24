@@ -1,3 +1,5 @@
+const { log } = require('../logger');
+
 module.exports = (
   eventStore,
   snapshotStore,
@@ -15,10 +17,12 @@ module.exports = (
     }
   };
 
-  const refreshAll = async () =>
-    Promise.all(Object.keys(nbEventsById)
+  const refreshAll = async () => {
+    await Promise.all(Object.keys(nbEventsById)
       .filter(id => nbEventsById[id] >= nbOfEventsBeforeSnapshot)
       .map(id => refresh(id)));
+    log.info('refreshed all snapshots');
+  };
 
   const onEvent = async (event, isReplay) => {
     if (!nbEventsById[event.id]) {
