@@ -44,3 +44,11 @@ test('add cheers in credits', () => {
   bus.replay(viewerEvts.cheered('someone'));
   expect(credits.get().donators).toEqual(['someone']);
 });
+
+test('add donations in credits', () => {
+  const bus = Bus();
+  const credits = Credits(bus, fakeDisplayNames);
+  bus.replay(streamEvts.begun('Tetris'));
+  bus.replay(viewerEvts.donated('someone', 10));
+  expect(credits.get().donators).toEqual(['someone']);
+});

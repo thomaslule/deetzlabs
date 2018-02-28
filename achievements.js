@@ -70,7 +70,9 @@ module.exports = {
     name: 'Mécène',
     text: 'Cool ! Merci pour ton soutien %USER%',
     reducer: (state = { deserved: false }, event) => {
-      if (event.type === eventsTypes.subscribed || event.type === eventsTypes.cheered) {
+      if (event.type === eventsTypes.subscribed
+        || event.type === eventsTypes.cheered
+        || event.type === eventsTypes.donated) {
         return { deserved: true };
       }
       return state;
@@ -114,8 +116,9 @@ module.exports = {
           oldestMessage: event.insert_date,
         };
       }
+      const oneHundredDays = 100 * 24 * 60 * 60 * 1000;
       if (event.type === eventsTypes.sentChatMessage
-        && (new Date(event.insert_date) - new Date(state.oldestMessage) > 100 * 24 * 60 * 60 * 1000)) { // 100 days
+        && (new Date(event.insert_date) - new Date(state.oldestMessage) > oneHundredDays)) {
         return {
           ...state,
           deserved: true,

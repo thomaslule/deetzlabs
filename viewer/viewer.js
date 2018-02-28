@@ -6,6 +6,7 @@ const {
   gotAchievement,
   subscribed,
   cheered,
+  donated,
   joined,
   left,
   resubscribed,
@@ -60,6 +61,11 @@ module.exports = (id, decProj) => {
     ...newAchievements(),
   ];
 
+  const donate = amount => [
+    applyAndReturn(donated(id, amount)),
+    ...newAchievements(),
+  ];
+
   const join = (displayName) => {
     if (decProj.getState().connected) {
       throw new Error('bad_request viewer already connected');
@@ -97,6 +103,7 @@ module.exports = (id, decProj) => {
     subscribe,
     resub,
     cheer,
+    donate,
     join,
     leave,
     host,

@@ -5,6 +5,7 @@ const eventsTypes = {
   subscribed: 'subscribed',
   resubscribed: 'resubscribed',
   cheered: 'cheered',
+  donated: 'donated',
   joined: 'joined',
   left: 'left',
   hosted: 'hosted',
@@ -55,6 +56,9 @@ const cheered = (id, displayName, amount) =>
     amount,
   });
 
+const donated = (id, amount) =>
+  createEvent(eventsTypes.donated, id, { amount });
+
 const joined = (id, displayName) =>
   createEvent(eventsTypes.joined, id, {
     displayName,
@@ -79,6 +83,7 @@ module.exports = {
   subscribed,
   resubscribed,
   cheered,
+  donated,
   joined,
   left,
   hosted,

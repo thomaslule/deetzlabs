@@ -169,6 +169,24 @@ module.exports = ({
   );
 
   router.post(
+    '/donate',
+    check('viewer').not().isEmpty(),
+    check('amount').isFloat(),
+    sanitize('amount').toFloat(),
+    validationMiddleware,
+    async (req, res, next) => {
+      try {
+        const { viewer, amount } = req.validParams;
+        await viewerStore.add(viewer, decProj =>
+          Viewer(viewer, decProj).donate(amount));
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
+
+  router.post(
     '/subscribe',
     check('viewer').not().isEmpty(),
     check('displayName'),

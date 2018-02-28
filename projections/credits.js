@@ -53,6 +53,9 @@ module.exports = (bus, displayNames) => {
       if (event.type === viewerEvts.eventsTypes.cheered) {
         return addItem(state, 'donators', event.id);
       }
+      if (event.type === viewerEvts.eventsTypes.donated) {
+        return addItem(state, 'donators', event.id);
+      }
       if (event.type === viewerEvts.eventsTypes.followed) {
         return addItem(state, 'follows', event.id);
       }
