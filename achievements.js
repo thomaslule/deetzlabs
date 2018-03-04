@@ -9,7 +9,7 @@ const messageCounter = (numberToReach, condition, achievement) =>
         deserved: state.count + 1 >= numberToReach,
       };
     }
-    if (event.type === eventsTypes.migratedData) {
+    if (event.type === eventsTypes.migratedData && event[achievement]) {
       return {
         count: state.count + event[achievement],
         deserved: state.count + event[achievement] >= numberToReach,
