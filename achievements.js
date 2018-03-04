@@ -12,10 +12,13 @@ const messageCounter = (numberToReach, condition, achievement) =>
     if (event.type === eventsTypes.migratedData && event[achievement]) {
       return {
         count: state.count + event[achievement],
-        deserved: state.count + event[achievement] >= numberToReach,
+        deserved: false,
       };
     }
-    return state;
+    return {
+      count: state.count,
+      deserved: false,
+    };
   };
 
 const nopeReducer = () => ({ deserved: false });
