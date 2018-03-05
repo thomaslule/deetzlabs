@@ -2,7 +2,7 @@ const pickBy = require('lodash/pickBy');
 const showAchievement = require('../apis/showAchievement');
 const { gotAchievement } = require('../viewer/events').eventsTypes;
 const achievements = require('./achievements');
-const log = require('../logger');
+const { log } = require('../logger');
 
 module.exports = (closet) => {
   const distribute = (achievementsProj, event) => {
@@ -12,7 +12,7 @@ module.exports = (closet) => {
         .filter(a => !viewerProj.achievementsReceived.includes(a))
         .forEach(async (achievement) => {
           try {
-            closet.handleCommand('viewer', event.id, 'giveAchievement', { achievement });
+            await closet.handleCommand('viewer', event.id, 'giveAchievement', { achievement });
           } catch (err) {
             log.error(err);
           }
@@ -24,7 +24,7 @@ module.exports = (closet) => {
     try {
       if (event.aggregate === 'viewer' && event.type === gotAchievement) {
         const a = achievements[event.achievement];
-        showAchievement(event.id, a.name, a.text, 0.5);
+        await showAchievement(event.id, a.name, a.text, 0.5);
       }
     } catch (err) {
       log.error(err);

@@ -1,3 +1,4 @@
+const request = require('supertest');
 const nock = require('nock');
 
 const mockAchievement = (achievementName, achievementText, viewerName = 'Someone', volume = 0.5) => (
@@ -11,4 +12,23 @@ const mockAchievement = (achievementName, achievementText, viewerName = 'Someone
     .reply(200)
 );
 
-module.exports = { mockAchievement };
+const postAchievement = (
+  app,
+  achievement,
+  expectedCode = 200,
+  viewer = 'someone',
+) =>
+  request(app)
+    .post('/give_achievement')
+    .send({
+      viewer,
+      achievement,
+    })
+    .expect(expectedCode);
+
+const userHasAchievement = (app, achievement) =>
+  request(app).get('/all_viewer_achievements')
+    .then(res => res.body
+      .find(a => a.viewer === 'someone' && a.achievement === achievement));
+
+module.exports = { mockAchievement, postAchievement, userHasAchievement };

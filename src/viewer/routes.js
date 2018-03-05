@@ -1,6 +1,8 @@
 const { Router } = require('express');
-const { check, sanitize } = require('express-validator/check');
+const { check } = require('express-validator/check');
+const { sanitize } = require('express-validator/filter');
 const { validationMiddleware } = require('../util');
+const distributedAchievementsProjection = require('./distributedAchievementsProjection');
 
 module.exports = (closet) => {
   const router = Router();
@@ -181,6 +183,15 @@ module.exports = (closet) => {
       }
     },
   );
+
+  router.get('/all_viewer_achievements', async (req, res, next) => {
+    try {
+      const proj = await closet.getProjection('distributedAchievements');
+      res.send(distributedAchievementsProjection.getAll(proj));
+    } catch (err) {
+      next(err);
+    }
+  });
 
   return router;
 };
