@@ -1,5 +1,6 @@
-node_modules
-log
 .vscode
 .node-persist
 config/production.json
+log
+node_modules
+package-lock.json
