@@ -8,6 +8,13 @@ const viewerProj = (state = { achievementsReceived: [], achievements: {} }, even
       achievementsReceived: state.achievementsReceived.concat(event.achievement),
     };
   }
+  if (event.aggregate === 'viewer' && event.type === viewerEvents.migratedData) {
+    return {
+      ...state,
+      achievementsReceived: state.achievementsReceived
+        .concat(event.achievements.map(a => a.achievement)),
+    };
+  }
   return {
     ...state,
     achievements: Object.keys(achievements).reduce((obj, achievement) => ({
