@@ -1,4 +1,4 @@
-const { eventsTypes } = require('../viewer/events');
+const { eventsTypes } = require('./events');
 const { isCommand } = require('../util');
 
 const ONE_HUNDRED_DAYS = 100 * 24 * 60 * 60 * 1000;

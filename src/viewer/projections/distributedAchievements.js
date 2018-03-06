@@ -1,4 +1,4 @@
-const { eventsTypes } = require('./events');
+const { eventsTypes } = require('../events');
 
 const proj = (state = [], event) => {
   if (event.aggregate === 'viewer') {

@@ -1,5 +1,5 @@
 const events = require('./events');
-const achievements = require('../achievement/achievements');
+const achievements = require('./achievements');
 
 module.exports = {
   chatMessage: (projection, { message, displayName }) =>

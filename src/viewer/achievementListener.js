@@ -1,8 +1,8 @@
 const pickBy = require('lodash/pickBy');
 const showAchievement = require('../apis/showAchievement');
-const { gotAchievement } = require('../viewer/events').eventsTypes;
+const { gotAchievement } = require('./events').eventsTypes;
 const achievements = require('./achievements');
-const getDisplayName = require('../viewer/displayNameProjection').get;
+const getDisplayName = require('./projections/displayNames').get;
 const { log } = require('../logger');
 
 module.exports = (closet) => {
@@ -25,7 +25,7 @@ module.exports = (closet) => {
     try {
       if (event.aggregate === 'viewer' && event.type === gotAchievement) {
         const a = achievements[event.achievement];
-        const displayName = getDisplayName(await closet.getProjection('displayName'), event.id);
+        const displayName = getDisplayName(await closet.getProjection('displayNames'), event.id);
         await showAchievement(displayName, a.name, a.text, 0.5);
       }
     } catch (err) {

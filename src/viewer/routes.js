@@ -2,9 +2,9 @@ const { Router } = require('express');
 const { check } = require('express-validator/check');
 const { sanitize } = require('express-validator/filter');
 const { validationMiddleware } = require('../util');
-const distributedAchievementsProjection = require('./distributedAchievementsProjection');
-const achievements = require('../achievement/achievements');
-const displayNameProjection = require('./displayNameProjection');
+const distributedAchievementsProjection = require('./projections/distributedAchievements');
+const achievements = require('./achievements');
+const displayNamesProjection = require('./projections/displayNames');
 const showAchievement = require('../apis/showAchievement');
 
 module.exports = (closet) => {
@@ -195,7 +195,7 @@ module.exports = (closet) => {
     async (req, res, next) => {
       try {
         const { achievement, viewer } = req.validParams;
-        const displayName = displayNameProjection.get(await closet.getProjection('displayName'), viewer);
+        const displayName = displayNamesProjection.get(await closet.getProjection('displayNames'), viewer);
         const a = achievements[achievement];
         await showAchievement(displayName, a.name, a.text, 0.5);
         res.sendStatus(200);
@@ -225,8 +225,8 @@ module.exports = (closet) => {
 
   router.get('/viewers', async (req, res, next) => {
     try {
-      const proj = await closet.getProjection('displayName');
-      res.send(displayNameProjection.getAll(proj));
+      const proj = await closet.getProjection('displayNames');
+      res.send(displayNamesProjection.getAll(proj));
     } catch (err) {
       next(err);
     }

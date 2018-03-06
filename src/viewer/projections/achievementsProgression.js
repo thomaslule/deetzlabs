@@ -1,5 +1,5 @@
-const viewerEvents = require('../viewer/events').eventsTypes;
-const achievements = require('./achievements');
+const viewerEvents = require('../events').eventsTypes;
+const achievements = require('../achievements');
 
 const viewerProj = (state = { achievementsReceived: [], achievements: {} }, event) => {
   if (event.aggregate === 'viewer' && event.type === viewerEvents.gotAchievement) {
