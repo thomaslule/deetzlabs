@@ -12,6 +12,12 @@ const mockAchievement = (achievementName, achievementText, viewerName = 'Someone
     .reply(200)
 );
 
+const mockAllAchievements = () => nock('http://localhost:3103')
+  .post('/achievement')
+  .reply(200)
+  .persist();
+
+
 const postAchievement = (
   app,
   achievement,
@@ -31,4 +37,21 @@ const userHasAchievement = (app, achievement) =>
     .then(res => res.body
       .find(a => a.viewer === 'someone' && a.achievement === achievement));
 
-module.exports = { mockAchievement, postAchievement, userHasAchievement };
+const postMessage = (app, message, displayName = 'Someone', viewer = 'someone') =>
+  request(app)
+    .post('/send_chat_message')
+    .send({
+      viewer,
+      displayName,
+      message,
+    })
+    .expect(200);
+
+
+module.exports = {
+  mockAchievement,
+  mockAllAchievements,
+  postAchievement,
+  userHasAchievement,
+  postMessage,
+};

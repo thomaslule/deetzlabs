@@ -193,5 +193,14 @@ module.exports = (closet) => {
     }
   });
 
+  router.get('/last_viewer_achievements', async (req, res, next) => {
+    try {
+      const proj = await closet.getProjection('distributedAchievements');
+      res.send(distributedAchievementsProjection.getLasts(proj));
+    } catch (err) {
+      next(err);
+    }
+  });
+
   return router;
 };
