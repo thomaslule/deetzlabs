@@ -9,7 +9,10 @@ const proj = (state = {}, event) => {
 
 const get = (state, id) => (state[id] ? state[id] : id);
 
+const getAll = state => state;
+
 module.exports = {
   default: proj,
   get,
+  getAll,
 };
