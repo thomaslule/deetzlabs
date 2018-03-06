@@ -15,17 +15,23 @@ module.exports = {
     return events.gotAchievement(achievement);
   },
 
-  subscribe: (projection, { message, method, displayName }) => [
-    events.subscribed(method),
-    events.sentChatMessage(message, displayName),
-  ],
+  subscribe: (projection, { message, method, displayName }) => {
+    const subEvent = events.subscribed(method);
+    if (message) {
+      return [subEvent, events.sentChatMessage(message, displayName)];
+    }
+    return subEvent;
+  },
 
   resub: (projection, {
     message, method, months, displayName,
-  }) => [
-    events.resubscribed(method, months),
-    events.sentChatMessage(message, displayName),
-  ],
+  }) => {
+    const resubEvent = events.resubscribed(method, months);
+    if (message) {
+      return [resubEvent, events.sentChatMessage(message, displayName)];
+    }
+    return resubEvent;
+  },
 
   cheer: (projection, { message, amount, displayName }) => [
     events.cheered(amount),
