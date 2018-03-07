@@ -32,6 +32,8 @@ const postAchievement = (
     })
     .expect(expectedCode);
 
+const showTestAchievement = app => request(app).post('/show_test_achievement');
+
 const userHasAchievement = (app, achievement) =>
   request(app).get('/all_viewer_achievements')
     .then(res => res.body
@@ -52,6 +54,7 @@ module.exports = {
   mockAchievement,
   mockAllAchievements,
   postAchievement,
+  showTestAchievement,
   userHasAchievement,
   postMessage,
 };

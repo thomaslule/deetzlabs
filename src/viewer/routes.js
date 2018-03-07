@@ -6,6 +6,7 @@ const distributedAchievementsProjection = require('./projections/distributedAchi
 const achievements = require('./achievements');
 const displayNamesProjection = require('./projections/displayNames');
 const showAchievement = require('../apis/showAchievement');
+const { getAchievementVolume } = require('../settings/projections/settings');
 
 module.exports = (closet) => {
   const router = Router();
@@ -196,8 +197,23 @@ module.exports = (closet) => {
       try {
         const { achievement, viewer } = req.validParams;
         const displayName = displayNamesProjection.get(await closet.getProjection('displayNames'), viewer);
+        const volume = getAchievementVolume(await closet.getProjection('settings'));
         const a = achievements[achievement];
-        await showAchievement(displayName, a.name, a.text, 0.5);
+        await showAchievement(displayName, a.name, a.text, volume);
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
+
+  router.post(
+    '/show_test_achievement',
+    async (req, res, next) => {
+      try {
+        const a = achievements.testing;
+        const volume = getAchievementVolume(await closet.getProjection('settings'));
+        await showAchievement('Berzingator2000', a.name, a.text, volume);
         res.sendStatus(200);
       } catch (err) {
         next(err);
