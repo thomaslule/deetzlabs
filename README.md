@@ -17,5 +17,3 @@ npm start
 
 ## use
 Incoming events like chat messages, subscription or cheers are received on an http interface. Following the coded rules, outgoing events like sending a chat message or displaying an achievement on screen will be sent via http.
-
-Achievements are coded in `achievements.js` and chat commands are coded in `commands.js`.

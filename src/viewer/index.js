@@ -5,6 +5,8 @@ const displayNamesProjection = require('./projections/displayNames').default;
 const achievementProgressionProjection = require('./projections/achievementsProgression');
 const distributeAchievementListener = require('./listeners/distributeAchievement');
 const showAchievementListener = require('./listeners/showAchievement');
+const commandsCommandListener = require('./listeners/commandsCommand');
+const succesCommandListener = require('./listeners/succesCommand');
 const routes = require('./routes');
 
 module.exports = (closet) => {
@@ -16,6 +18,8 @@ module.exports = (closet) => {
     onChange: distributeAchievementListener(closet),
   });
   closet.onEvent(showAchievementListener(closet));
+  closet.onEvent(commandsCommandListener);
+  closet.onEvent(succesCommandListener(closet));
 
   return {
     routes: routes(closet),

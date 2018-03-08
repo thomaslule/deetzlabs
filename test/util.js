@@ -49,6 +49,10 @@ const postMessage = (app, message, displayName = 'Someone', viewer = 'someone') 
     })
     .expect(200);
 
+const mockSay = message =>
+  nock('http://localhost:3102')
+    .post('/send_message', { message })
+    .reply(200);
 
 module.exports = {
   mockAchievement,
@@ -57,4 +61,5 @@ module.exports = {
   showTestAchievement,
   userHasAchievement,
   postMessage,
+  mockSay,
 };
