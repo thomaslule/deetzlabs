@@ -3,13 +3,14 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const { log } = require('./logger');
 
-module.exports = (viewerRoutes, settingsRoutes) => {
+module.exports = (viewerRoutes, streamRoutes, settingsRoutes) => {
   const server = express();
   server.use(bodyParser.json());
   const s = { write: message => log.info(message.slice(0, -1)) };
   server.use(morgan(':remote-addr ":method :url" - :status - :response-time ms', { stream: s }));
 
   server.use('', viewerRoutes);
+  server.use('', streamRoutes);
   server.use('', settingsRoutes);
 
   server.use((err, req, res, next) => {
