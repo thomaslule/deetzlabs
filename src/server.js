@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const { log } = require('./logger');
 
-module.exports = (viewerRoutes, streamRoutes, settingsRoutes) => {
+module.exports = (viewerRoutes, streamRoutes, settingsRoutes, creditsRoutes) => {
   const server = express();
   server.use(bodyParser.json());
   const s = { write: message => log.info(message.slice(0, -1)) };
@@ -12,6 +12,7 @@ module.exports = (viewerRoutes, streamRoutes, settingsRoutes) => {
   server.use('', viewerRoutes);
   server.use('', streamRoutes);
   server.use('', settingsRoutes);
+  server.use('', creditsRoutes);
 
   server.use((err, req, res, next) => {
     log.error(err);
