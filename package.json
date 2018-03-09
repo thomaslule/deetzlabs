@@ -26,6 +26,7 @@
     "jest": "^21.2.0",
     "nock": "^9.0.22",
     "nodemon": "^1.12.1",
+    "stream-to-array": "^2.3.0",
     "supertest": "^3.0.0"
   },
   "dependencies": {

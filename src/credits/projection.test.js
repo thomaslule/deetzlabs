@@ -9,14 +9,12 @@ const addStreamFields = event => ({
   ...event,
   aggregate: 'stream',
   id: 'stream',
-  insertDate: new Date(),
 });
 
 const addViewerFields = (event, id) => ({
   ...event,
   aggregate: 'viewer',
   id,
-  insertDate: new Date(),
 });
 
 test('add games and viewers in credits', () => {
