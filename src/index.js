@@ -1,10 +1,17 @@
+const Closet = require('event-closet').default;
+const { Pool } = require('pg');
+const closetStorage = require('./closet/storage');
 const { log } = require('./logger');
 const config = require('config');
 const App = require('./app');
 
-const start = () => {
+const start = async () => {
+  let db;
   try {
-    const app = App();
+    db = new Pool({ connectionString: config.get('db_url') });
+    const closet = Closet({ storage: closetStorage(db) });
+    const app = App(closet);
+    await closet.rebuildProjections();
 
     app.listen(config.get('port'), 'localhost', () => {
       log.info(`listening on ${config.get('port')}`);
@@ -12,6 +19,7 @@ const start = () => {
   } catch (err) {
     console.error(err);
     log.error(err);
+    await db.end();
     process.exit(1);
   }
 };

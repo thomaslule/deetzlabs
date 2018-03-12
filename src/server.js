@@ -1,19 +1,22 @@
 const express = require('express');
+const { Router } = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const config = require('config');
 const { log } = require('./logger');
 
 module.exports = (viewerRoutes, streamRoutes, settingsRoutes, creditsRoutes) => {
+  const router = Router();
+  router.use('', viewerRoutes);
+  router.use('', streamRoutes);
+  router.use('', settingsRoutes);
+  router.use('', creditsRoutes);
+
   const server = express();
   server.use(bodyParser.json());
   const s = { write: message => log.info(message.slice(0, -1)) };
   server.use(morgan(':remote-addr ":method :url" - :status - :response-time ms', { stream: s }));
-
-  server.use('', viewerRoutes);
-  server.use('', streamRoutes);
-  server.use('', settingsRoutes);
-  server.use('', creditsRoutes);
-
+  server.use(config.get('base_path'), router);
   server.use((err, req, res, next) => {
     log.error(err);
     if (err.message.startsWith('bad_request')) {

@@ -24,7 +24,10 @@ module.exports = (db) => {
       const stream = client.query(new QueryStream('select event from events where aggregate = $1 and id = $2 order by sequence', [aggregate, id]));
       stream.pipe(transStream);
       stream.on('end', () => { client.release(); });
-      stream.on('error', () => { client.release(); });
+      stream.on('error', (err) => {
+        client.release();
+        transStream.emit('error', err);
+      });
     });
     return transStream;
   };
@@ -33,9 +36,12 @@ module.exports = (db) => {
     const transStream = rowToEvent();
     db.connect().then((client) => {
       const stream = client.query(new QueryStream('select event from events order by insert_date, sequence'));
-      stream.pipe(transStream);
       stream.on('end', () => { client.release(); });
-      stream.on('error', () => { client.release(); });
+      stream.on('error', (err) => {
+        client.release();
+        transStream.emit('error', err);
+      });
+      stream.pipe(transStream);
     });
     return transStream;
   };

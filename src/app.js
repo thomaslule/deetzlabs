@@ -1,14 +1,15 @@
+const Closet = require('event-closet').default;
 const { configureLogger } = require('./logger');
-const Closet = require('./closet');
+const configureCloset = require('./closet/configureCloset');
 const Server = require('./server');
 const ViewerModule = require('./viewer');
 const StreamModule = require('./stream');
 const SettingsModule = require('./settings');
 const CreditsModule = require('./credits');
 
-module.exports = () => {
+module.exports = (closet = Closet()) => {
   configureLogger();
-  const closet = Closet();
+  configureCloset(closet);
   const viewerModule = ViewerModule(closet);
   const streamModule = StreamModule(closet);
   const settingsModule = SettingsModule(closet);
