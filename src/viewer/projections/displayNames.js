@@ -1,8 +1,11 @@
-const { eventsTypes } = require('../events');
-
 const proj = (state = {}, event) => {
-  if (event.type === eventsTypes.sentChatMessage && event.displayName) {
-    return { ...state, [event.id]: event.displayName };
+  if (event.aggregate === 'viewer') {
+    if (event.displayName) {
+      return { ...state, [event.id]: event.displayName };
+    }
+    if (!state[event.id]) {
+      return { ...state, [event.id]: event.id };
+    }
   }
   return state;
 };
