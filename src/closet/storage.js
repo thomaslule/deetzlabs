@@ -18,33 +18,27 @@ module.exports = (db) => {
     );
   };
 
-  const getEvents = (aggregate, id) => {
-    const transStream = rowToEvent();
-    db.connect().then((client) => {
-      const stream = client.query(new QueryStream('select event from events where aggregate = $1 and id = $2 order by sequence', [aggregate, id]));
-      stream.pipe(transStream);
-      stream.on('end', () => { client.release(); });
-      stream.on('error', (err) => {
-        client.release();
-        transStream.emit('error', err);
-      });
-    });
-    return transStream;
+  const queryToEventStream = (query, params) => {
+    const transformer = rowToEvent();
+    db.connect()
+      .then((client) => {
+        client.query(new QueryStream(query, params))
+          .on('end', () => { client.release(); })
+          .on('error', (err) => {
+            client.release();
+            transformer.emit('error', err);
+          })
+          .pipe(transformer);
+      })
+      .catch((err) => { transformer.emit('error', err); });
+    return transformer;
   };
 
-  const getAllEvents = () => {
-    const transStream = rowToEvent();
-    db.connect().then((client) => {
-      const stream = client.query(new QueryStream('select event from events order by insert_date, sequence'));
-      stream.on('end', () => { client.release(); });
-      stream.on('error', (err) => {
-        client.release();
-        transStream.emit('error', err);
-      });
-      stream.pipe(transStream);
-    });
-    return transStream;
-  };
+  const getEvents = (aggregate, id) =>
+    queryToEventStream('select event from events where aggregate = $1 and id = $2 order by sequence', [aggregate, id]);
+
+  const getAllEvents = () =>
+    queryToEventStream('select event from events order by insert_date, sequence');
 
   const { storeProjection, getProjection } = inMemoryStorage();
 

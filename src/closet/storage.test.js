@@ -56,6 +56,14 @@ test('can store and retrieve events', async () => {
   expect(allEvts).toEqual([jane1, julia1, jane2, jane3]);
 });
 
+test('getEvents emits error on db error', async () => {
+  const badDb = new Pool({ connectionString: 'badurl' });
+  const storage = Storage(badDb);
+  const stream = storage.getEvents('user', 'jane');
+  await new Promise((resolve) => { stream.on('error', resolve); });
+  await badDb.end();
+});
+
 test('can store and retrieve projections', async () => {
   const storage = Storage(db);
   const proj = { foo: 'bar' };

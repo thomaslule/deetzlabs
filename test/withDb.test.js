@@ -27,7 +27,7 @@ test('persist data in db', async () => {
   db = new Pool({ connectionString: config.get('db_url') });
   const closet = Closet({ storage: closetStorage(db) });
   app = App(closet);
-  await closet.rebuildProjections();
+  await closet.rebuild();
   // achievement still here
   expect(await userHasAchievement(app, 'benefactor')).toBeTruthy();
 });
