@@ -6,7 +6,7 @@ const proj = (state = [], event) => {
       return state.concat({
         viewer: event.id,
         achievement: event.achievement,
-        date: event.insert_date,
+        date: event.insertDate,
       });
     }
     if (event.type === eventsTypes.migratedData) {

@@ -115,11 +115,11 @@ module.exports = {
       if (!state.oldestMessage && event.type === eventsTypes.sentChatMessage) {
         return {
           distribute: false,
-          oldestMessage: event.insert_date,
+          oldestMessage: event.insertDate,
         };
       }
       if (event.type === eventsTypes.sentChatMessage
-        && (new Date(event.insert_date) - new Date(state.oldestMessage) > ONE_HUNDRED_DAYS)) {
+        && (new Date(event.insertDate) - new Date(state.oldestMessage) > ONE_HUNDRED_DAYS)) {
         return {
           ...state,
           distribute: true,
