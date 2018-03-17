@@ -14,7 +14,7 @@ module.exports = (closet) => {
   Object.keys(commands).forEach((command) => { closet.registerCommand('viewer', command, commands[command]); });
   closet.registerProjection('distributedAchievements', ['viewer'], distributedAchievementsProjection);
   closet.registerProjection('displayNames', ['viewer'], displayNamesProjection);
-  closet.registerProjection('achievementsProgression', ['viewer'], achievementProgressionProjection, {
+  closet.registerProjection('achievementsProgression', ['viewer', 'stream'], achievementProgressionProjection, {
     onChange: distributeAchievementListener(closet),
   });
   closet.onEvent(showAchievementListener(closet));
