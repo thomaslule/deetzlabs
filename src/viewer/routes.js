@@ -1,7 +1,6 @@
 const { Router } = require('express');
 const { check } = require('express-validator/check');
 const { sanitize } = require('express-validator/filter');
-const mapValues = require('lodash/mapValues');
 const { validationMiddleware } = require('../util');
 const distributedAchievementsProjection = require('./projections/distributedAchievements');
 const achievements = require('./achievements');
@@ -250,7 +249,11 @@ module.exports = (closet) => {
   });
 
   router.get('/all_achievements', (req, res) => {
-    res.send(mapValues(achievements, a => ({ name: a.name })));
+    const all = Object.keys(achievements)
+      .reduce((result, a) => (
+        { ...result, [a]: { name: achievements[a].name } }
+      ), {});
+    res.send(all);
   });
 
   return router;
