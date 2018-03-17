@@ -9,7 +9,7 @@ const start = async () => {
   let db;
   try {
     db = new Pool({ connectionString: config.get('db_url') });
-    const closet = Closet({ storage: closetStorage(db), snapshotEvery: 50 });
+    const closet = Closet({ storage: closetStorage(db), snapshotEvery: 50, logger: log });
     const app = App(closet);
     await closet.rebuild();
 
