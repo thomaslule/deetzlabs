@@ -7,6 +7,7 @@ let db;
 beforeEach(() => { db = new Pool({ connectionString: config.get('db_url') }); });
 afterEach(async () => {
   await db.query('truncate table events');
+  await db.query('truncate table snapshots');
   await db.end();
 });
 
@@ -69,4 +70,15 @@ test('can store and retrieve projections', async () => {
   const proj = { foo: 'bar' };
   await storage.storeProjection('proj', proj);
   expect(await storage.getProjection('proj')).toEqual(proj);
+});
+
+test('can store, update and retrieve snapshots', async () => {
+  const storage = Storage(db);
+  const snapshot1 = { sequence: 3, state: { foo: 'bar' } };
+  const snapshot2 = { sequence: 6, state: { foo: 'baz' } };
+  expect(await storage.getSnapshot('user', 'jane', '__decision__')).toBeUndefined();
+  await storage.storeSnapshot('user', 'jane', '__decision__', snapshot1);
+  expect(await storage.getSnapshot('user', 'jane', '__decision__')).toEqual(snapshot1);
+  await storage.storeSnapshot('user', 'jane', '__decision__', snapshot2);
+  expect(await storage.getSnapshot('user', 'jane', '__decision__')).toEqual(snapshot2);
 });

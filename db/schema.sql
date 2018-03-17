@@ -6,3 +6,11 @@ create table events(
   event json not null,
   primary key(aggregate, id, sequence)
 );
+
+create table snapshots(
+  aggregate char(50) not null,
+  id text not null,
+  projection char(50) not null,
+  snapshot json not null,
+  primary key(aggregate, id, projection)
+);

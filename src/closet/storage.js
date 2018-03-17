@@ -40,9 +40,30 @@ module.exports = (db) => {
   const getAllEvents = () =>
     queryToEventStream('select event from events order by insert_date, sequence');
 
+  const storeSnapshot = async (aggregate, id, projection, snapshot) => {
+    await db.query(
+      `
+      insert into snapshots(aggregate, id, projection, snapshot) values ($1, $2, $3, $4)
+      on conflict (aggregate, id, projection) do update set snapshot = $4
+      `,
+      [aggregate, id, projection, snapshot],
+    );
+  };
+
+  const getSnapshot = async (aggregate, id, projection) => {
+    const res = await db.query(
+      'select snapshot from snapshots where aggregate = $1 and id = $2 and projection = $3',
+      [aggregate, id, projection],
+    );
+    if (res.rowCount === 0) {
+      return undefined;
+    }
+    return res.rows[0].snapshot;
+  };
+
   const { storeProjection, getProjection } = inMemoryStorage();
 
   return {
-    storeEvent, getEvents, getAllEvents, storeProjection, getProjection,
+    storeEvent, getEvents, getAllEvents, storeProjection, getProjection, storeSnapshot, getSnapshot,
   };
 };

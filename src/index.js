@@ -9,9 +9,9 @@ const start = async () => {
   let db;
   try {
     db = new Pool({ connectionString: config.get('db_url') });
-    const closet = Closet({ storage: closetStorage(db) });
+    const closet = Closet({ storage: closetStorage(db), snapshotEvery: 50 });
     const app = App(closet);
-    await closet.rebuildProjections();
+    await closet.rebuild();
 
     app.listen(config.get('port'), 'localhost', () => {
       log.info(`listening on ${config.get('port')}`);
