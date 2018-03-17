@@ -1,41 +1,31 @@
 const viewerEvents = require('../events').eventsTypes;
 const achievements = require('../achievements');
 
+/* eslint-disable no-param-reassign */
+/* this projections is quite big so for performance reasons we do in-place editing */
 const viewerProj = (state = { achievementsReceived: [], achievements: {} }, event) => {
   if (event.aggregate === 'viewer' && event.type === viewerEvents.gotAchievement) {
-    return {
-      ...state,
-      achievementsReceived: state.achievementsReceived.concat(event.achievement),
-    };
+    state.achievementsReceived.push(event.achievement);
+  } else if (event.aggregate === 'viewer' && event.type === viewerEvents.migratedData) {
+    state.achievementsReceived.push(event.achievements.map(a => a.achievement));
+  } else {
+    Object.keys(achievements).forEach((achievement) => {
+      state.achievements[achievement] = achievements[achievement]
+        .reducer(state.achievements[achievement], event);
+    });
   }
-  if (event.aggregate === 'viewer' && event.type === viewerEvents.migratedData) {
-    return {
-      ...state,
-      achievementsReceived: state.achievementsReceived
-        .concat(event.achievements.map(a => a.achievement)),
-    };
-  }
-  return {
-    ...state,
-    achievements: Object.keys(achievements).reduce((obj, achievement) => ({
-      ...obj,
-      [achievement]: achievements[achievement].reducer(state.achievements[achievement], event),
-    }), {}),
-  };
+  return state;
 };
 
 module.exports = (state = {}, event) => {
   if (event.aggregate === 'viewer') {
-    return {
-      ...state,
-      [event.id]: viewerProj(state[event.id], event),
-    };
+    state[event.id] = viewerProj(state[event.id], event);
   }
   if (event.aggregate === 'stream') {
-    return Object.keys(state).reduce((obj, viewer) => ({
-      ...obj,
-      [viewer]: viewerProj(state[viewer], event),
-    }), {});
+    Object.keys(state).forEach((id) => {
+      state[id] = viewerProj(state[id], event);
+    });
   }
   return state;
 };
+/* eslint-enable no-param-reassign */
