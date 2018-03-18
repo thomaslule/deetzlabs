@@ -20,7 +20,7 @@ const viewerProj = (state = { achievementsReceived: [], achievements: {} }, even
 };
 
 module.exports = (state = {}, event) => {
-  if (event.aggregate === 'viewer') {
+  if (event.aggregate === 'viewer' && event.type !== viewerEvents.joined && event.type !== viewerEvents.left) {
     state[event.id] = viewerProj(state[event.id], event);
   }
   if (event.aggregate === 'stream') {
