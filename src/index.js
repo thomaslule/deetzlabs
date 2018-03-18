@@ -5,7 +5,7 @@ const { log } = require('./logger');
 const config = require('config');
 const App = require('./app');
 
-const start = async () => {
+module.exports = async () => {
   let db;
   try {
     db = new Pool({ connectionString: config.get('db_url') });
@@ -23,5 +23,3 @@ const start = async () => {
     process.exit(1);
   }
 };
-
-start();
