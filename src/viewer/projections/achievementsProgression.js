@@ -7,7 +7,9 @@ const viewerProj = (state = { achievementsReceived: [], achievements: {} }, even
   if (event.aggregate === 'viewer' && event.type === viewerEvents.gotAchievement) {
     state.achievementsReceived.push(event.achievement);
   } else if (event.aggregate === 'viewer' && event.type === viewerEvents.migratedData) {
-    state.achievementsReceived.push(event.achievements.map(a => a.achievement));
+    event.achievements.forEach((a) => {
+      state.achievementsReceived.push(a.achievement);
+    });
   } else {
     Object.keys(achievements).forEach((achievement) => {
       state.achievements[achievement] = achievements[achievement]
