@@ -1,17 +1,21 @@
-const { eventsTypes } = require('./events');
+const viewerEvents = require('./events').eventsTypes;
 const { isCommand } = require('../util');
 
 const ONE_HUNDRED_DAYS = 100 * 24 * 60 * 60 * 1000;
 
+const isViewerEvent = event => event.aggregate === 'viewer';
+
 const messageCounter = (numberToReach, condition, achievement) =>
   (state = { distribute: false, count: 0 }, event) => {
-    if (event.type === eventsTypes.sentChatMessage && condition(event.message)) {
+    if (isViewerEvent(event)
+      && event.type === viewerEvents.sentChatMessage
+      && condition(event.message)) {
       return {
         count: state.count + 1,
         distribute: state.count + 1 >= numberToReach,
       };
     }
-    if (event.type === eventsTypes.migratedData && event[achievement]) {
+    if (isViewerEvent(event) && event.type === viewerEvents.migratedData && event[achievement]) {
       return {
         count: state.count + event[achievement],
         distribute: false,
@@ -75,9 +79,10 @@ module.exports = {
     name: 'Mécène',
     text: 'Cool ! Merci pour ton soutien %USER%',
     reducer: (state, event) => {
-      if (event.type === eventsTypes.subscribed
-        || event.type === eventsTypes.cheered
-        || event.type === eventsTypes.donated) {
+      if (isViewerEvent(event) && (
+        event.type === viewerEvents.subscribed
+        || event.type === viewerEvents.cheered
+        || event.type === viewerEvents.donated)) {
         return { distribute: true };
       }
       return { distribute: false };
@@ -102,7 +107,7 @@ module.exports = {
     name: 'Hospitalière',
     text: '%USER% nous accueille sur sa chaîne !',
     reducer: (state, event) => {
-      if (event.type === eventsTypes.hosted) {
+      if (isViewerEvent(event) && event.type === viewerEvents.hosted) {
         return { distribute: true };
       }
       return { distribute: false };
@@ -112,13 +117,14 @@ module.exports = {
     name: 'Doyenne',
     text: 'Bienvenue parmi les anciennes, %USER%',
     reducer: (state = { distribute: false, oldestMessage: null }, event) => {
-      if (!state.oldestMessage && event.type === eventsTypes.sentChatMessage) {
+      if (!state.oldestMessage && isViewerEvent(event)
+        && event.type === viewerEvents.sentChatMessage) {
         return {
           distribute: false,
           oldestMessage: event.insertDate,
         };
       }
-      if (event.type === eventsTypes.sentChatMessage
+      if (isViewerEvent(event) && event.type === viewerEvents.sentChatMessage
         && (new Date(event.insertDate) - new Date(state.oldestMessage) > ONE_HUNDRED_DAYS)) {
         return {
           ...state,
