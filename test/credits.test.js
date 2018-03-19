@@ -1,7 +1,7 @@
 const request = require('supertest');
 const nock = require('nock');
 const App = require('../src/app');
-const { mockAllAchievements, postMessage } = require('./util');
+const { mockAllAchievements, postMessage, beginStream } = require('./util');
 
 let app;
 beforeEach(() => { app = App(); });
@@ -9,7 +9,7 @@ afterEach(() => { nock.cleanAll(); });
 
 test('get the credits with GET /credits', async () => {
   mockAllAchievements();
-  await request(app).post('/stream_begins').send({ game: 'Tetris' });
+  await beginStream(app);
   await postMessage(app, 'yo');
   await request(app).post('/cheer').send({
     viewer: 'someone',

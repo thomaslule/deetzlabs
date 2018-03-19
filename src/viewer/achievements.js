@@ -1,9 +1,12 @@
 const viewerEvents = require('./events').eventsTypes;
+const streamEvents = require('../stream/events').eventsTypes;
 const { isCommand } = require('../util');
 
 const ONE_HUNDRED_DAYS = 100 * 24 * 60 * 60 * 1000;
 
 const isViewerEvent = event => event.aggregate === 'viewer';
+
+const isStreamEvent = event => event.aggregate === 'stream';
 
 const messageCounter = (numberToReach, condition, achievement) =>
   (state = { distribute: false, count: 0 }, event) => {
@@ -135,6 +138,40 @@ module.exports = {
         ...state,
         distribute: false,
       };
+    },
+  },
+  assiduous: {
+    name: 'Assidue',
+    text: '%USER% est fidèle au poste',
+    reducer: (state = {
+      distribute: false, streak: 0, broadcasting: false, wasHere: false,
+    }, event) => {
+      if (isStreamEvent(event) && event.type === streamEvents.begun) {
+        return {
+          ...state,
+          distribute: false,
+          wasHere: false,
+          broadcasting: true,
+        };
+      }
+      if (isStreamEvent(event) && event.type === streamEvents.ended) {
+        return {
+          ...state,
+          distribute: false,
+          broadcasting: false,
+          streak: state.wasHere ? state.streak + 1 : 0,
+        };
+      }
+      if (isViewerEvent(event)
+        && event.type === viewerEvents.sentChatMessage
+        && state.broadcasting) {
+        return {
+          ...state,
+          wasHere: true,
+          distribute: state.streak + 1 >= 3,
+        };
+      }
+      return { ...state, distribute: false };
     },
   },
 };

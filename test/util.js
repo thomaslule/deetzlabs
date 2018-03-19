@@ -39,7 +39,7 @@ const userHasAchievement = (app, achievement) =>
     .then(res => res.body
       .find(a => a.viewer === 'someone' && a.achievement === achievement));
 
-const postMessage = (app, message, displayName = 'Someone', viewer = 'someone') =>
+const postMessage = (app, message = 'yo', displayName = 'Someone', viewer = 'someone') =>
   request(app)
     .post('/send_chat_message')
     .send({
@@ -54,6 +54,12 @@ const mockSay = message =>
     .post('/send_message', { message })
     .reply(200);
 
+const beginStream = app => request(app)
+  .post('/stream_begins').send({ game: 'Tetris' });
+
+const endStream = app => request(app)
+  .post('/stream_ends');
+
 module.exports = {
   mockAchievement,
   mockAllAchievements,
@@ -62,4 +68,6 @@ module.exports = {
   userHasAchievement,
   postMessage,
   mockSay,
+  beginStream,
+  endStream,
 };
