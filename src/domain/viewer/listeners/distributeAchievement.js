@@ -1,4 +1,4 @@
-const { log } = require('../../logger');
+const { log } = require('../../../logger');
 
 module.exports = closet => (achievementsProj, event) => {
   if (event.aggregate === 'viewer') {

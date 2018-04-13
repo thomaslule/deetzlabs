@@ -5,7 +5,6 @@ const { validationMiddleware } = require('../util');
 const distributedAchievementsProjection = require('./projections/distributedAchievements');
 const achievements = require('./achievements');
 const displayNamesProjection = require('./projections/displayNames');
-const showAchievement = require('../apis/showAchievement');
 const { getAchievementVolume } = require('../settings/projections/settings');
 
 module.exports = (closet) => {

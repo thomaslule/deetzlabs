@@ -5,12 +5,11 @@ const morgan = require('morgan');
 const config = require('config');
 const { log } = require('./logger');
 
-module.exports = (viewerRoutes, streamRoutes, settingsRoutes, creditsRoutes) => {
+module.exports = (apiRouter, widgetsRouter, twitchRouter) => {
   const router = Router();
-  router.use('', viewerRoutes);
-  router.use('', streamRoutes);
-  router.use('', settingsRoutes);
-  router.use('', creditsRoutes);
+  router.use('/api', apiRouter);
+  router.use('/widgets', widgetsRouter);
+  router.use('/twitch', twitchRouter);
 
   const server = express();
   server.use(bodyParser.json());

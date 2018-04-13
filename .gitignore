@@ -1,6 +1,7 @@
 .vscode
 .node-persist
-config/production.json
+config/production.js
+config/development.js
 log
 node_modules
 package-lock.json
