@@ -79,6 +79,22 @@ module.exports = (closet) => {
   });
 
   router.post(
+    '/give_achievement',
+    check('achievement').not().isEmpty(),
+    check('viewer').not().isEmpty(),
+    validationMiddleware,
+    async (req, res, next) => {
+      try {
+        const { achievement, viewer } = req.validParams;
+        await closet.handleCommand('viewer', viewer, 'giveAchievement', { achievement });
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
+
+  router.post(
     '/change_achievement_volume',
     check('volume').isFloat({ min: 0.1, max: 1 }),
     sanitize('volume').toFloat(),
