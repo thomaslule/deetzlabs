@@ -9,7 +9,7 @@ module.exports = (bus) => {
 
   const refresh = async () => {
     const streamerId = await twitch.getUserId(config.channel);
-    await twitch.registerFollowHook(streamerId);
+    // await twitch.registerFollowHook(streamerId);
   };
 
   return { refresh };

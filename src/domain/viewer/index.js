@@ -7,7 +7,6 @@ const distributeAchievementListener = require('./listeners/distributeAchievement
 const showAchievementListener = require('./listeners/showAchievement');
 const commandsCommandListener = require('./listeners/commandsCommand');
 const succesCommandListener = require('./listeners/succesCommand');
-const routes = require('./routes');
 
 module.exports = (closet, sendChatMessage, showAchievement) => {
   closet.registerAggregate('viewer', decProj);
@@ -20,8 +19,4 @@ module.exports = (closet, sendChatMessage, showAchievement) => {
   closet.onEvent(showAchievementListener(closet, showAchievement));
   closet.onEvent(commandsCommandListener(sendChatMessage));
   closet.onEvent(succesCommandListener(closet, sendChatMessage));
-
-  return {
-    routes: routes(closet),
-  };
 };
