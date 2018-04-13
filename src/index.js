@@ -3,7 +3,7 @@ const { Pool } = require('pg');
 const config = require('config');
 const { configureLogger, log } = require('./logger');
 const closetStorage = require('./storage');
-const Domain = require('./domain');
+const configureCloset = require('./domain');
 const Twitch = require('./twitch');
 const server = require('./server');
 const Api = require('./api');
@@ -15,19 +15,19 @@ module.exports = async () => {
     const db = new Pool({ connectionString: config.get('db_url') });
     const twitch = Twitch();
     const bus = new EventEmitter();
-    const domain = Domain({
+    const closet = configureCloset({
       closetOptions: { storage: closetStorage(db), snapshotEvery: 50, logger: log },
       sendChatMessage: twitch.sendChatMessage,
       showAchievement: (...args) => {
         bus.emit('show', ...args);
       },
     });
-    await domain.rebuild();
+    await closet.rebuild();
 
     twitch.on('chat', async (channel, userstate, message, isSelf) => {
       try {
         if (isSelf) return;
-        await domain.handleCommand('viewer', userstate.viewer, 'chatMessage', {
+        await closet.handleCommand('viewer', userstate.viewer, 'chatMessage', {
           message: userstate.message,
           displayName: userstate['display-name'],
         });
@@ -37,10 +37,10 @@ module.exports = async () => {
     });
     await twitch.connect();
 
-    const widgets = Widgets(domain);
+    const widgets = Widgets(closet);
     bus.on('show', widgets.showAchievement);
 
-    const api = Api(domain);
+    const api = Api(closet);
 
     const app = server(api, widgets.getRouter(), twitch.getRouter());
     app.listen(config.get('port'), () => {

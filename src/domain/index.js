@@ -23,14 +23,5 @@ module.exports = (options = {}) => {
   SettingsModule(closet);
   CreditsModule(closet);
 
-  const {
-    rebuild, handleCommand, getProjection, getEntityProjection,
-  } = closet;
-
-  return {
-    rebuild,
-    handleCommand,
-    getProjection,
-    getEntityProjection,
-  };
+  return closet;
 };
