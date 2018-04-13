@@ -8,6 +8,7 @@ const Twitch = require('./twitch');
 const server = require('./server');
 const Api = require('./api');
 const Widgets = require('./widgets');
+const addListeners = require('./addListeners');
 
 module.exports = async () => {
   try {
@@ -24,17 +25,8 @@ module.exports = async () => {
     });
     await closet.rebuild();
 
-    twitch.on('chat', async (channel, userstate, message, isSelf) => {
-      try {
-        if (isSelf) return;
-        await closet.handleCommand('viewer', userstate.viewer, 'chatMessage', {
-          message: userstate.message,
-          displayName: userstate['display-name'],
-        });
-      } catch (error) {
-        log.error(error);
-      }
-    });
+    addListeners(twitch, closet);
+
     await twitch.connect();
 
     const widgets = Widgets(closet);
