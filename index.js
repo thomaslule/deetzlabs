@@ -1,3 +1,3 @@
-const index = require('./src');
+const app = require('./src');
 
-index();
+app();

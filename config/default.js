@@ -1,6 +1,6 @@
 module.exports = {
   port: 3100,
-  base_path: '/',
+  base_path: '',
   db_url: 'postgresql://postgres:admin@localhost:5432/deetzlabs',
   log_to_console: false,
   log_to_file: true,

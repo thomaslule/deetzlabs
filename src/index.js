@@ -5,7 +5,7 @@ const { configureLogger, log } = require('./logger');
 const closetStorage = require('./storage');
 const configureCloset = require('./domain');
 const Twitch = require('./twitch');
-const server = require('./server');
+const Server = require('./server');
 const Api = require('./api');
 const Widgets = require('./widgets');
 const addListeners = require('./addListeners');
@@ -29,13 +29,18 @@ module.exports = async () => {
 
     await twitch.connect();
 
-    const widgets = Widgets(closet);
+    const server = Server();
+
+    const widgets = Widgets(closet, server.getSocket());
     bus.on('show', widgets.showAchievement);
 
     const api = Api(closet);
 
-    const app = server(api, widgets.getRouter(), twitch.getRouter());
-    app.listen(config.get('port'), () => {
+    server.getRouter().use('/twitch', twitch.getRouter());
+    server.getRouter().use('/api', api);
+    server.getRouter().use('/widgets', widgets.getRouter());
+
+    server.getServer().listen(config.get('port'), () => {
       log.info(`listening on ${config.get('port')}`);
     });
   } catch (err) {

@@ -42,6 +42,7 @@
     "pg-query-stream": "^1.1.1",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5",
+    "socket.io": "^2.1.0",
     "tmi.js": "^1.2.1",
     "winston": "^2.3.1",
     "winston-daily-rotate-file": "^1.7.2"

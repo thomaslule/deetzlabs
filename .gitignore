@@ -5,3 +5,4 @@ config/development.js
 log
 node_modules
 package-lock.json
+src/widgets/public/config-public.js
