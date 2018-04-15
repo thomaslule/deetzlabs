@@ -3,10 +3,16 @@ const { check } = require('express-validator/check');
 const { sanitize } = require('express-validator/filter');
 const { validationResult } = require('express-validator/check');
 const { matchedData } = require('express-validator/filter');
+const jwt = require('jsonwebtoken');
+const expressjwt = require('express-jwt');
+const config = require('config');
+const crypto = require('crypto');
 const achievements = require('../domain/viewer/achievements');
 const distributedAchievementsProjection = require('../domain/viewer/projections/distributedAchievements');
 const displayNamesProjection = require('../domain/viewer/projections/displayNames');
 const settingsProjection = require('../domain/settings/projections/settings');
+
+const ONE_DAY = 60 * 60 * 24;
 
 const validationMiddleware = (req, res, next) => {
   const errors = validationResult(req);
@@ -20,6 +26,31 @@ const validationMiddleware = (req, res, next) => {
 
 module.exports = (closet) => {
   const router = Router();
+
+  router.use(expressjwt({
+    secret: config.get('secret'),
+  }).unless({ path: ['/api/login'] }));
+
+  router.post(
+    '/login',
+    check('username').exists(),
+    check('password').exists(),
+    validationMiddleware,
+    (req, res, next) => {
+      try {
+        const { username, password } = req.validParams;
+        const users = config.get('users');
+        if (users[username] && users[username] === crypto.createHash('sha256').update(password).digest('base64')) {
+          const token = jwt.sign({ username }, config.get('secret'), { expiresIn: ONE_DAY });
+          res.send(token);
+        } else {
+          res.sendStatus(401);
+        }
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
 
   router.get('/all_viewer_achievements', async (req, res, next) => {
     try {
