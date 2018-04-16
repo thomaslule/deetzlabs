@@ -6,15 +6,21 @@ const defaultOptions = {
   channel: null,
   username: null,
   token: null,
+  poll: true,
   clientId: null,
   clientSecret: null,
   logger: console,
 };
 
+const noop = () => {};
+
 module.exports = (options = {}) => {
   const opts = { ...defaultOptions, ...options };
   const bus = new EventEmitter();
-  const poller = Poller(bus, opts);
+  let intervalId;
+
+  const poller = opts.poll ? Poller(bus, opts) : { poll: noop };
+
   const user = new tmi.client({
     options: { debug: false },
     connection: { reconnect: true },
@@ -30,13 +36,20 @@ module.exports = (options = {}) => {
 
   const connect = async () => {
     await user.connect();
+    intervalId = setInterval(poller.poll, 5 * 60 * 1000); // poll every 5 minutes
     poller.poll();
-    setInterval(poller.poll, 5 * 60 * 1000); // poll every 5 minutes
+  };
+
+  const disconnect = async () => {
+    await user.disconnect();
+    clearInterval(intervalId);
   };
 
   const say = (message) => {
     user.say(`#${opts.channel}`, message);
   };
 
-  return { on, connect, say };
+  return {
+    on, connect, disconnect, say,
+  };
 };

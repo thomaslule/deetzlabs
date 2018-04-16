@@ -10,7 +10,6 @@ module.exports = {
   streamer_token: '', // create your token here https://twitchapps.com/tmi/
   bot_name: '', // twitch account login
   bot_token: '', // create your token here https://twitchapps.com/tmi/
-  webhook_url: '', // the reverse proxy must have an url which redirects to the path /twitch-webhook of this server
   secret: '', // any random string
   logins: {
     // key-value username => password

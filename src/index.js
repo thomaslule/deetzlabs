@@ -18,7 +18,7 @@ module.exports = async () => {
     const bus = new EventEmitter();
     const closet = configureCloset({
       closetOptions: { storage: closetStorage(db), snapshotEvery: 50, logger: log },
-      sendChatMessage: twitch.sendChatMessage,
+      sendChatMessage: twitch.say,
       showAchievement: (...args) => {
         bus.emit('show', ...args);
       },
@@ -36,7 +36,6 @@ module.exports = async () => {
 
     const api = Api(closet);
 
-    server.getRouter().use('/twitch', twitch.getRouter());
     server.getRouter().use('/api', api);
     server.getRouter().use('/widgets', widgets.getRouter());
 
