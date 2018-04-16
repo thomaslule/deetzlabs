@@ -6,7 +6,8 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
-    "test": "cross-env NODE_ENV=testing jest --runInBand"
+    "test": "cross-env NODE_ENV=testing jest --runInBand",
+    "twitchtest": "cross-env NODE_ENV=development node ./src/twitch/twitch-channel/justtesting.js"
   },
   "repository": {
     "type": "git",
@@ -46,6 +47,7 @@
     "request-promise-native": "^1.0.5",
     "socket.io": "^2.1.0",
     "tmi.js": "^1.2.1",
+    "twitch-helix": "^1.0.7",
     "winston": "^2.3.1",
     "winston-daily-rotate-file": "^1.7.2"
   }

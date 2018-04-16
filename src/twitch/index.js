@@ -5,6 +5,53 @@ const Webhook = require('./webhook');
 const Chatbot = require('./chatbot');
 const Router = require('./router');
 
+/*
+const Channel = require('./twitch-channel');
+
+module.exports = () => {
+  const bot = Channel({
+    channel: config.get('channel'),
+    username: config.get('bot'),
+    token: config.get('botToken'),
+  });
+
+  const streamer = Channel({
+    channel: config.get('channel'),
+    username: config.get('channel'),
+    token: config.get('streamerToken'),
+  });
+
+  bot.on('start-stream', () => {
+    streamer.connect();
+  });
+
+  bot.on('end-stream', () => {
+    streamer.disconnect();
+  });
+
+  const on = (event, listener) => {
+    if (event === 'hosted') {
+      streamer.on(event, listener);
+    } else {
+      bot.on(event, listener);
+    }
+  };
+
+  const say = (message) => {
+    bot.say(message);
+  };
+
+  const connect = () => {
+    bot.connect();
+    if (bot.broadcasting()) {
+      streamer.connect();
+    }
+  };
+
+  return { say, on, connect };
+};
+*/
+
 module.exports = () => {
   const bus = new EventEmitter();
   const poller = Poller(bus);

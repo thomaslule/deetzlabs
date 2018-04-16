@@ -6,6 +6,7 @@ module.exports = {
   log_to_file: true,
   channel: 'some_twitch_channel',
   client_id: '', // get it by registering a twitch app https://www.twitch.tv/kraken/oauth2/clients/new
+  client_secret: '',
   streamer_token: '', // create your token here https://twitchapps.com/tmi/
   bot_name: '', // twitch account login
   bot_token: '', // create your token here https://twitchapps.com/tmi/
