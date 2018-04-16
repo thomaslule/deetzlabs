@@ -126,6 +126,51 @@ module.exports = (closet) => {
   );
 
   router.post(
+    '/replay_achievement',
+    check('achievement').not().isEmpty(),
+    check('viewer').not().isEmpty(),
+    validationMiddleware,
+    async (req, res, next) => {
+      try {
+        const { achievement, viewer } = req.validParams;
+        await closet.handleCommand('viewer', viewer, 'replayAchievement', { achievement });
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
+
+  router.post(
+    '/show_test_achievement',
+    async (req, res, next) => {
+      try {
+        await closet.handleCommand('viewer', 'berzingator2000', 'replayAchievement', { achievement: 'testing' });
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
+
+  router.post(
+    '/donate',
+    check('viewer').not().isEmpty(),
+    check('amount').isFloat(),
+    sanitize('amount').toFloat(),
+    validationMiddleware,
+    async (req, res, next) => {
+      try {
+        const { viewer, amount } = req.validParams;
+        await closet.handleCommand('viewer', viewer, 'donate', { amount });
+        res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
+
+  router.post(
     '/change_achievement_volume',
     check('volume').isFloat({ min: 0.1, max: 1 }),
     sanitize('volume').toFloat(),

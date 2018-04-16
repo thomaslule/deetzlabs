@@ -15,6 +15,13 @@ module.exports = {
     return events.gotAchievement(achievement);
   },
 
+  replayAchievement: (projection, { achievement }) => {
+    if (!achievements[achievement]) {
+      throw new Error('bad_request achievement doesnt exist');
+    }
+    return events.replayedAchievement(achievement);
+  },
+
   subscribe: (projection, { message, method, displayName }) => {
     const subEvent = events.subscribed(method);
     if (message) {

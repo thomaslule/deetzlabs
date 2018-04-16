@@ -2,6 +2,7 @@ const eventsTypes = {
   migratedData: 'migrated-data',
   sentChatMessage: 'sent-chat-message',
   gotAchievement: 'got-achievement',
+  replayedAchievement: 'replayed-achievement',
   subscribed: 'subscribed',
   resubscribed: 'resubscribed',
   cheered: 'cheered',
@@ -28,9 +29,10 @@ module.exports = {
     }),
 
   gotAchievement: achievement =>
-    createEvent(eventsTypes.gotAchievement, {
-      achievement,
-    }),
+    createEvent(eventsTypes.gotAchievement, { achievement }),
+
+  replayedAchievement: achievement =>
+    createEvent(eventsTypes.replayedAchievement, { achievement }),
 
   subscribed: method => createEvent(eventsTypes.subscribed, { method }),
 
