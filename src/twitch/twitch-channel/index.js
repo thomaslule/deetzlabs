@@ -12,6 +12,8 @@ const defaultOptions = {
   logger: console,
 };
 
+const tmiEvents = ['action', 'ban', 'chat', 'cheer', 'clearchat', 'connected', 'connecting', 'disconnected', 'emoteonly', 'emotesets', 'followersonly', 'hosted', 'hosting', 'join', 'logon', 'message', 'mod', 'mods', 'notice', 'part', 'ping', 'pong', 'r9kbeta', 'reconnect', 'resub', 'roomstate', 'serverchange', 'slowmode', 'subscribers', 'subscription', 'timeout', 'unhost', 'unmod', 'whisper'];
+
 const noop = () => {};
 
 module.exports = (options = {}) => {
@@ -31,7 +33,9 @@ module.exports = (options = {}) => {
     },
     channels: [`#${opts.channel}`],
   });
-  user.on('chat', (...args) => bus.emit('chat', ...args));
+  tmiEvents.forEach((event) => {
+    user.on(event, (...args) => bus.emit(event, ...args));
+  });
 
   const on = (event, handler) => bus.on(event, handler);
 
