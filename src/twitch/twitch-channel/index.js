@@ -21,7 +21,8 @@ module.exports = (options = {}) => {
 
   const poller = opts.poll ? Poller(bus, opts) : { poll: noop };
 
-  const user = new tmi.client({
+  const TmiClient = tmi.client;
+  const user = new TmiClient({
     options: { debug: false },
     connection: { reconnect: true },
     identity: {
