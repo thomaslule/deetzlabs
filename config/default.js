@@ -11,6 +11,7 @@ module.exports = {
   bot_name: '', // twitch account login
   bot_token: '', // create your token here https://twitchapps.com/tmi/
   secret: '', // any random string
+  protect_api: true,
   logins: {
     // key-value username => password
     // password hashed with crypto.createHash('sha256').update('p4ssw0rd').digest('base64')

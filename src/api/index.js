@@ -27,9 +27,11 @@ const validationMiddleware = (req, res, next) => {
 module.exports = (closet) => {
   const router = Router();
 
-  router.use(expressjwt({
-    secret: config.get('secret'),
-  }).unless({ path: ['/api/login'] }));
+  if (config.get('protect_api')) {
+    router.use(expressjwt({
+      secret: config.get('secret'),
+    }).unless({ path: ['/api/login'] }));
+  }
 
   router.post(
     '/login',
