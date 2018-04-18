@@ -1,9 +1,9 @@
 const Closet = require('event-closet').default;
 const { log } = require('../logger');
-const ViewerModule = require('./viewer');
-const StreamModule = require('./stream');
-const SettingsModule = require('./settings');
-const CreditsModule = require('./credits');
+const configureViewer = require('./viewer');
+const configureStream = require('./stream');
+const configureSettings = require('./settings');
+const configureCredits = require('./credits');
 
 const defaultOptions = {
   closetOptions: {},
@@ -18,10 +18,10 @@ module.exports = (options = {}) => {
   };
   const closet = Closet(opts.closetOptions);
   closet.onEvent((e) => { log.info('Event happened: %s %s %s', e.aggregate, e.id, e.type); });
-  ViewerModule(closet, opts.sendChatMessage, opts.showAchievement);
-  StreamModule(closet);
-  SettingsModule(closet);
-  CreditsModule(closet);
+  configureViewer(closet, opts.sendChatMessage, opts.showAchievement);
+  configureStream(closet);
+  configureSettings(closet);
+  configureCredits(closet);
 
   return closet;
 };
