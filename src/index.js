@@ -1,6 +1,7 @@
 const { EventEmitter } = require('events');
 const { Pool } = require('pg');
 const config = require('config');
+const express = require('express');
 const socketio = require('socket.io');
 const { configureLogger, log } = require('./logger');
 const closetStorage = require('./storage');
@@ -30,7 +31,8 @@ module.exports = async () => {
 
     const widgets = Widgets(closet);
     const api = Api(closet);
-    const server = Server(api, widgets);
+    const admin = express.static('./node_modules/deetzlabs-web');
+    const server = Server(api, widgets, admin);
 
     const socket = socketio.listen(server);
     bus.on('show', (achievement, text, username, volume) => {

@@ -4,12 +4,14 @@ const configureCloset = require('../../src/domain');
 const Server = require('../../src/server');
 const { configureLogger } = require('../../src/logger');
 
+const noopMiddleware = (req, res, next) => { next(); };
+
 const setup = () => {
   configureLogger();
   const showAchievement = jest.fn();
   const closet = configureCloset({ showAchievement });
   const api = Api(closet);
-  const app = Server(api, (req, res, next) => { next(); });
+  const app = Server(api, noopMiddleware, noopMiddleware);
   return { app, showAchievement, closet };
 };
 
