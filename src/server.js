@@ -14,6 +14,7 @@ module.exports = (api, widgets, admin) => {
   app.use('/api', api);
   app.use('/widgets', widgets);
   app.use('/admin', admin);
+  app.get('/', (req, res) => { res.redirect('/admin'); });
 
   app.use((err, req, res, next) => {
     log.error(err);
