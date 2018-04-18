@@ -6,7 +6,7 @@ beforeEach(() => {
   ({ app, closet } = setup());
 });
 
-const getViewers = () => request(app).get('/viewers').expect(200);
+const getViewers = () => request(app).get('/api/viewers').expect(200);
 
 test('remember viewer', (done) => {
   postMessage(closet, 'yo', 'Machin', 'machin')

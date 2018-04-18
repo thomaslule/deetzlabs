@@ -13,7 +13,7 @@ test('GET /last_viewer_achievements returns the last 5 achievements', (done) => 
     .then(() => postAchievement(app, 'cheerleader'))
     .then(() => postAchievement(app, 'benefactor'))
     .then(() => postAchievement(app, 'entertainer'))
-    .then(() => request(app).get('/last_viewer_achievements').expect(200))
+    .then(() => request(app).get('/api/last_viewer_achievements').expect(200))
     .then((response) => {
       const list = response.body;
       expect(list.length).toBe(5);
@@ -25,7 +25,7 @@ test('GET /last_viewer_achievements returns the last 5 achievements', (done) => 
 
 test('GET /last_viewer_achievements returns all the achievements if less than 5', (done) => {
   postAchievement(app, 'berzingue')
-    .then(() => request(app).get('/last_viewer_achievements').expect(200))
+    .then(() => request(app).get('/api/last_viewer_achievements').expect(200))
     .then((response) => {
       const list = response.body;
       expect(list.length).toBe(1);

@@ -1,6 +1,7 @@
 const { EventEmitter } = require('events');
 const { Pool } = require('pg');
 const config = require('config');
+const socketio = require('socket.io');
 const { configureLogger, log } = require('./logger');
 const closetStorage = require('./storage');
 const configureCloset = require('./domain');
@@ -19,9 +20,7 @@ module.exports = async () => {
     const closet = configureCloset({
       closetOptions: { storage: closetStorage(db), snapshotEvery: 50, logger: log },
       sendChatMessage: twitch.say,
-      showAchievement: (...args) => {
-        bus.emit('show', ...args);
-      },
+      showAchievement: (...args) => { bus.emit('show', ...args); },
     });
     await closet.rebuild();
 
@@ -29,17 +28,18 @@ module.exports = async () => {
 
     await twitch.connect();
 
-    const server = Server();
-
-    const widgets = Widgets(closet, server.getSocket());
-    bus.on('show', widgets.showAchievement);
-
+    const widgets = Widgets(closet);
     const api = Api(closet);
+    const server = Server(api, widgets);
 
-    server.getRouter().use('/api', api);
-    server.getRouter().use('/widgets', widgets.getRouter());
+    const socket = socketio.listen(server, { path: `${config.get('base_path')}/socket.io` });
+    bus.on('show', (achievement, text, username, volume) => {
+      socket.emit('achievement', {
+        achievement, username, text, volume,
+      });
+    });
 
-    server.getServer().listen(config.get('port'), () => {
+    server.listen(config.get('port'), () => {
       log.info(`listening on ${config.get('port')}`);
     });
   } catch (err) {

@@ -9,13 +9,11 @@ const setup = () => {
   const showAchievement = jest.fn();
   const closet = configureCloset({ showAchievement });
   const api = Api(closet);
-  const server = Server();
-  server.getRouter().use(api);
-  const app = server.getServer();
+  const app = Server(api, (req, res, next) => { next(); });
   return { app, showAchievement, closet };
 };
 
-const showTestAchievement = app => request(app).post('/show_test_achievement');
+const showTestAchievement = app => request(app).post('/api/show_test_achievement');
 
 const postAchievement = (
   app,
@@ -24,7 +22,7 @@ const postAchievement = (
   viewer = 'someone',
 ) =>
   request(app)
-    .post('/give_achievement')
+    .post('/api/give_achievement')
     .send({
       viewer,
       achievement,
@@ -32,7 +30,7 @@ const postAchievement = (
     .expect(expectedCode);
 
 const userHasAchievement = (app, achievement) =>
-  request(app).get('/all_viewer_achievements')
+  request(app).get('/api/all_viewer_achievements')
     .then(res => res.body
       .find(a => a.viewer === 'someone' && a.achievement === achievement));
 

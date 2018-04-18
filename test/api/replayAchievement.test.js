@@ -8,7 +8,7 @@ beforeEach(() => {
 
 test('post to /replay_achievement shows achievement', (done) => {
   request(app)
-    .post('/replay_achievement')
+    .post('/api/replay_achievement')
     .send({
       achievement: 'swedish',
       viewer: 'someone',

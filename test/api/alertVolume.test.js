@@ -6,8 +6,8 @@ beforeEach(() => {
   ({ app, showAchievement } = setup());
 });
 
-const getVolume = () => request(app).get('/achievement_volume').expect(200);
-const postVolume = volume => request(app).post('/change_achievement_volume').send({ volume });
+const getVolume = () => request(app).get('/api/achievement_volume').expect(200);
+const postVolume = volume => request(app).post('/api/change_achievement_volume').send({ volume });
 
 test('volume modified on POST /change_achievement_volume', (done) => {
   postVolume('0.8')

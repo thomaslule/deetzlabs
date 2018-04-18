@@ -4,7 +4,7 @@ const { getFollowersGoal } = require('../domain/settings/projections/settings');
 const getCredits = require('../domain/credits/projection').get;
 const getDisplayName = require('../domain/viewer/projections/displayNames').get;
 
-module.exports = (closet, socket) => {
+module.exports = (closet) => {
   const router = Router();
 
   router.use('/', express.static('src/widgets/public'));
@@ -30,16 +30,5 @@ module.exports = (closet, socket) => {
     }
   });
 
-  const getRouter = () => router;
-
-  const showAchievement = (achievement, text, username, volume) => {
-    socket.emit('achievement', {
-      achievement, username, text, volume,
-    });
-  };
-
-  return {
-    getRouter,
-    showAchievement,
-  };
+  return router;
 };

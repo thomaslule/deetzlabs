@@ -13,7 +13,7 @@ test('GET /all_viewer_achievements returns the achievements', (done) => {
     .then(() => postAchievement(app, 'cheerleader'))
     .then(() => postAchievement(app, 'benefactor'))
     .then(() => postAchievement(app, 'entertainer'))
-    .then(() => request(app).get('/all_viewer_achievements').expect(200))
+    .then(() => request(app).get('/api/all_viewer_achievements').expect(200))
     .then((response) => {
       const list = response.body;
       expect(list.length).toBe(6);
