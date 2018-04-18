@@ -2,7 +2,7 @@ module.exports = {
   port: 3100,
   db_url: 'postgresql://postgres:admin@localhost:5432/deetzlabs',
   channel: 'some_twitch_channel',
-  client_id: '', // get it by registering a twitch app https://www.twitch.tv/kraken/oauth2/clients/new
+  client_id: '', // get it by registering a twitch app https://dev.twitch.tv/dashboard/apps/create (Redirect URI is not used)
   client_secret: '', // secret of your registered twitch app
   streamer_token: '', // create your token here https://twitchapps.com/tmi/
   bot_name: '', // twitch bot login
