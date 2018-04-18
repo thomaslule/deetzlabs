@@ -45,7 +45,7 @@ const launchCredits = (credits) => {
 };
 
 const getCredits = async () => {
-  const res = await fetch(`${window.config.public_server.root_path}/widgets/credits_data`);
+  const res = await fetch('/api/credits');
   if (!res.ok) {
     throw new Error('couldnt fetch credits');
   }

@@ -1,6 +1,5 @@
 module.exports = {
   port: 3100,
-  base_path: '',
   db_url: 'postgresql://postgres:admin@localhost:5432/deetzlabs',
   channel: 'some_twitch_channel',
   client_id: '', // get it by registering a twitch app https://www.twitch.tv/kraken/oauth2/clients/new

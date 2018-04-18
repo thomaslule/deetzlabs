@@ -2,7 +2,6 @@ const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
-const config = require('config');
 const { log } = require('./logger');
 
 const stream = { write: message => log.info(message.slice(0, -1)) };
@@ -12,8 +11,8 @@ module.exports = (api, widgets) => {
   app.use(bodyParser.json());
   app.use(morgan(':remote-addr ":method :url" - :status - :response-time ms', { stream }));
 
-  app.use(`${config.get('base_path')}/api`, api);
-  app.use(`${config.get('base_path')}/widgets`, widgets);
+  app.use('/api', api);
+  app.use('/widgets', widgets);
 
   app.use((err, req, res, next) => {
     log.error(err);

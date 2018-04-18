@@ -11,6 +11,7 @@ const achievements = require('../domain/viewer/achievements');
 const distributedAchievementsProjection = require('../domain/viewer/projections/distributedAchievements');
 const displayNamesProjection = require('../domain/viewer/projections/displayNames');
 const settingsProjection = require('../domain/settings/projections/settings');
+const creditsProjection = require('../domain/credits/projection');
 
 const ONE_DAY = 60 * 60 * 24;
 
@@ -30,7 +31,7 @@ module.exports = (closet) => {
   if (config.get('protect_api')) {
     router.use(expressjwt({
       secret: config.get('secret'),
-    }).unless({ path: ['/api/login'] }));
+    }).unless({ path: ['/api/login', '/api/followers_goal', '/api/credits'] }));
   }
 
   router.post(
@@ -106,6 +107,18 @@ module.exports = (closet) => {
     try {
       const proj = await closet.getProjection('settings');
       res.send(settingsProjection.getFollowersGoal(proj));
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.get('/credits', async (req, res, next) => {
+    try {
+      const [credits, displayNames] = await Promise.all([
+        closet.getProjection('credits'),
+        closet.getProjection('displayNames'),
+      ]);
+      res.send(creditsProjection.get(credits, id => displayNamesProjection.get(displayNames, id)));
     } catch (err) {
       next(err);
     }

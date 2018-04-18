@@ -17,7 +17,7 @@ function refresh(goal) {
     .then((json) => { refreshAmount(json._total, goal); });
 }
 
-fetch(`${window.config.public_server.root_path}/widgets/followers_goal_settings`)
+fetch('/api/followers_goal')
   .then(res => res.json())
   .then((json) => {
     document.getElementById('goal_html').innerHTML = json.html;

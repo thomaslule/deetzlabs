@@ -32,7 +32,7 @@ module.exports = async () => {
     const api = Api(closet);
     const server = Server(api, widgets);
 
-    const socket = socketio.listen(server, { path: `${config.get('base_path')}/socket.io` });
+    const socket = socketio.listen(server);
     bus.on('show', (achievement, text, username, volume) => {
       socket.emit('achievement', {
         achievement, username, text, volume,
