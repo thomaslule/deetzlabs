@@ -42,8 +42,8 @@ module.exports = (closet) => {
     (req, res, next) => {
       try {
         const { username, password } = req.validParams;
-        const users = config.get('users');
-        if (users[username] && users[username] === crypto.createHash('sha256').update(password).digest('base64')) {
+        const logins = config.get('logins');
+        if (logins[username] && logins[username] === crypto.createHash('sha256').update(password).digest('base64')) {
           const token = jwt.sign({ username }, config.get('secret'), { expiresIn: ONE_DAY });
           res.send(token);
         } else {
