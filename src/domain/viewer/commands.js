@@ -49,14 +49,14 @@ module.exports = {
 
   join: (projection) => {
     if (projection.connected) {
-      throw new Error('bad_request viewer already connected');
+      return [];
     }
     return events.joined();
   },
 
   leave: (projection) => {
     if (!projection.connected) {
-      throw new Error('bad_request viewer not connected');
+      return [];
     }
     return events.left();
   },

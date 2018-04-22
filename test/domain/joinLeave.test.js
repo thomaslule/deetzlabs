@@ -1,4 +1,5 @@
 const { setup } = require('./util');
+const { joined, left } = require('../../src/domain/viewer/events');
 
 let closet;
 beforeEach(() => {
@@ -10,9 +11,9 @@ const join = () => closet.handleCommand('viewer', 'someone', 'join');
 const leave = () => closet.handleCommand('viewer', 'someone', 'leave');
 
 test('cant join or leave twice', async () => {
-  await expect(leave()).rejects.toEqual(expect.anything());
-  await expect(join()).resolves.toEqual(expect.anything());
-  await expect(join()).rejects.toEqual(expect.anything());
-  await expect(leave()).resolves.toEqual(expect.anything());
-  await expect(leave()).rejects.toEqual(expect.anything());
+  expect(await leave()).toEqual([]);
+  expect(await join()).toMatchObject(joined());
+  expect(await join()).toMatchObject([]);
+  expect(await leave()).toMatchObject(left());
+  expect(await leave()).toEqual([]);
 });
