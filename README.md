@@ -1,11 +1,8 @@
 # deetzlabs
-A back-end system used to trigger various things (like on-screen achievements or chat messages) when other various things (like chat messages or subscribes) happen on a twitch stream.
-
-Best used in combination with [deetzlabs-twitch](https://github.com/thomaslule/deetzlabs-twitch), [deetzlabs-widgets](https://github.com/thomaslule/deetzlabs-widgets) and [deetzlabs-web](https://github.com/thomaslule/deetzlabs-web).
+Add achievements and credits to a twitch stream.
 
 ## prerequisites
- * A postgresl database
- * A reverse proxy with an authentication layer (the server will only listen to localhost)
+ * A postgresl database initialized with `db/schema.sql`
 
 ## install
 ```bash
@@ -15,5 +12,5 @@ npm install
 npm start
 ```
 
-## use
-Incoming events like chat messages, subscription or cheers are received on an http interface. Following the coded rules, outgoing events like sending a chat message or displaying an achievement on screen will be sent via http.
+## configure achievements
+Edit the `domain/viewer/achievements` file to create your own achievements.
