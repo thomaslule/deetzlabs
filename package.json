@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "less": "lessc src/widgets/less/achievement.less src/widgets/public/achievement.css",
     "test": "jest --runInBand",
     "twitch_test": "node ./src/twitch/twitch-channel/manual_testing.js"
   },
@@ -24,7 +23,6 @@
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jest": "^21.2.0",
     "jest": "^21.2.0",
-    "less": "^3.0.1",
     "nodemon": "^1.12.1",
     "stream-to-array": "^2.3.0",
     "supertest": "^3.0.0"
