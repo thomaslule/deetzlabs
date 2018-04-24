@@ -13,25 +13,55 @@ const Widgets = require('./widgets');
 const Admin = require('./admin');
 const addListeners = require('./addListeners');
 
-const Deetzlabs = (options) => {
-  const db = new Pool({ connectionString: options.db_url });
-  const twitch = Twitch(options);
+const defaultOptions = {
+  port: 3100,
+  db_url: 'postgresql://postgres:admin@localhost:5432/deetzlabs',
+  channel: '',
+  client_id: '',
+  client_secret: '',
+  streamer_token: '',
+  bot_name: '',
+  bot_token: '',
+  secret: '',
+  protect_api: true,
+  logins: {
+    test: 'n4bQgYhMfWWaL+qgxVrQFaO/TxsrC4Is0V1sFbDwCgg=', // test
+  },
+  log_to_console: true,
+  log_to_file: true,
+  achievements: {
+    testing: {
+      name: 'Testing',
+      text: '%USER% tests something',
+      reducer: () => ({ distribute: false }),
+    },
+  },
+  widgets_folder: null,
+};
+
+const Deetzlabs = (options = {}) => {
+  const opts = {
+    ...defaultOptions,
+    ...options,
+  };
+  const db = new Pool({ connectionString: opts.db_url });
+  const twitch = Twitch(opts);
   const bus = new EventEmitter();
   const closet = configureCloset({
     closetOptions: { storage: closetStorage(db), snapshotEvery: 50, logger: log },
-    achievements: options.achievements,
+    achievements: opts.achievements,
     sendChatMessage: twitch.say,
     showAchievement: (...args) => { bus.emit('show', ...args); },
   });
   addListeners(twitch, closet);
-  const widgets = Widgets(options);
-  const api = Api(closet, options);
+  const widgets = Widgets(opts);
+  const api = Api(closet, opts);
   const admin = Admin();
   const server = Server(api, widgets, admin);
 
   const start = async () => {
     try {
-      configureLogger(options);
+      configureLogger(opts);
       await closet.rebuild();
       await twitch.connect();
       const socket = socketio.listen(server);
@@ -41,8 +71,8 @@ const Deetzlabs = (options) => {
         });
       });
 
-      server.listen(options.port, () => {
-        log.info(`listening on ${options.port}`);
+      server.listen(opts.port, () => {
+        log.info(`listening on ${opts.port}`);
       });
     } catch (err) {
       console.error(err);
