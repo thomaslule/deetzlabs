@@ -31,16 +31,16 @@ const launchCredits = (credits) => {
   }
   const wrapper = document.createElement('div');
   wrapper.id = 'wrapper';
-  wrapper.appendChild(createDiv('job', 'Merci d\'avoir regardé'));
+  wrapper.appendChild(createDiv('job', 'Thanks for watching'));
   credits.games.forEach((game) => { wrapper.appendChild(createDiv('game', game)); });
-  wrapper.appendChild(createDiv('job', 'Présenté par'));
-  wrapper.appendChild(createDiv('name', 'Deetz'));
+  wrapper.appendChild(createDiv('job', 'Hosted by'));
+  wrapper.appendChild(createDiv('name', window.config.channel));
   addAchievements(wrapper, credits.achievements);
-  addCategory(wrapper, 'Soutiens', credits.donators);
-  addCategory(wrapper, 'Couronnements', credits.subscribes);
-  addCategory(wrapper, 'Diffusions', credits.hosts);
-  addCategory(wrapper, 'Nouvelles chauves-souris', credits.follows);
-  addCategory(wrapper, 'Chauves-souris', credits.viewers);
+  addCategory(wrapper, 'Donators', credits.donators);
+  addCategory(wrapper, 'Subscribes', credits.subscribes);
+  addCategory(wrapper, 'Hosts', credits.hosts);
+  addCategory(wrapper, 'Follows', credits.follows);
+  addCategory(wrapper, 'Viewers', credits.viewers);
   window.document.body.appendChild(wrapper);
 };
 

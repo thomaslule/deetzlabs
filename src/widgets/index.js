@@ -15,8 +15,8 @@ module.exports = (options) => {
       next(err);
     }
   });
-  if (options.achievement_widget_folder) {
-    router.use('/achievement', express.static(options.achievement_widget_folder));
+  if (options.widgets_folder) {
+    router.use(express.static(options.widgets_folder));
   }
   router.use(express.static(`${__dirname}/public`));
 
