@@ -39,13 +39,17 @@ module.exports = (closet, options) => {
     validationMiddleware,
     (req, res, next) => {
       try {
-        const { username, password } = req.validParams;
-        const { logins } = options;
-        if (logins[username] && logins[username] === crypto.createHash('sha256').update(password).digest('base64')) {
-          const token = jwt.sign({ username }, options.secret, { expiresIn: ONE_DAY });
-          res.send(token);
+        if (options.protect_api) {
+          const { username, password } = req.validParams;
+          const { logins } = options;
+          if (logins[username] && logins[username] === crypto.createHash('sha256').update(password).digest('base64')) {
+            const token = jwt.sign({ username }, options.secret, { expiresIn: ONE_DAY });
+            res.send(token);
+          } else {
+            res.sendStatus(401);
+          }
         } else {
-          res.sendStatus(401);
+          res.send('DUMMY_TOKEN');
         }
       } catch (err) {
         next(err);
