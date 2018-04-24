@@ -8,5 +8,5 @@ beforeEach(() => {
 
 test('GET /all_achievements returns all the possible achievements', async () => {
   const response = await request(app).get('/api/all_achievements').expect(200);
-  expect(response.body.testing.name).toBe('Testeuse');
+  expect(response.body.testing.name).toBe('Testing');
 });

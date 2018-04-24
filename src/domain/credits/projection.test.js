@@ -3,6 +3,24 @@ const { get } = require('./projection');
 const viewerEvts = require('../viewer/events');
 const streamEvts = require('../stream/events');
 
+const achievements = {
+  testing: {
+    name: 'Testing',
+    text: '%USER% tests something',
+    reducer: () => ({ distribute: false }),
+  },
+  cheerleader: {
+    name: 'Cheerleader',
+    text: 'Thank you %USER%!',
+    reducer: (state, event) => {
+      if (event.aggregate === 'viewer' && (event.type === 'cheered')) {
+        return { distribute: true };
+      }
+      return { distribute: false };
+    },
+  },
+};
+
 const getDisplayName = id => id;
 
 const addStreamFields = event => ({
@@ -26,8 +44,8 @@ test('add games and viewers in credits', () => {
     addViewerFields(viewerEvts.sentChatMessage('wesh'), 'viewer2'),
     addViewerFields(viewerEvts.sentChatMessage('yo'), 'viewer1'),
   ].reduce(projection, undefined);
-  expect(get(state, getDisplayName).games).toEqual(['Tetris', 'Mario']);
-  expect(get(state, getDisplayName).viewers).toEqual(['viewer1', 'viewer2']);
+  expect(get(state, getDisplayName, achievements).games).toEqual(['Tetris', 'Mario']);
+  expect(get(state, getDisplayName, achievements).viewers).toEqual(['viewer1', 'viewer2']);
 });
 
 test('dont add viewers who speak before the stream started', () => {
@@ -36,18 +54,18 @@ test('dont add viewers who speak before the stream started', () => {
     addStreamFields(streamEvts.begun('Tetris')),
     addViewerFields(viewerEvts.sentChatMessage(), 'viewer2'),
   ].reduce(projection, undefined);
-  expect(get(state, getDisplayName).viewers).toEqual(['viewer2']);
+  expect(get(state, getDisplayName, achievements).viewers).toEqual(['viewer2']);
 });
 
 test('get the display names and the achievements names', () => {
   const state = [
     addStreamFields(streamEvts.begun('Tetris')),
     addViewerFields(viewerEvts.sentChatMessage(), 'someone'),
-    addViewerFields(viewerEvts.gotAchievement('elder'), 'someone'),
+    addViewerFields(viewerEvts.gotAchievement('cheerleader'), 'someone'),
   ].reduce(projection, undefined);
   const getDisplayName2 = () => 'Someone';
-  expect(get(state, getDisplayName2).viewers).toEqual(['Someone']);
-  expect(get(state, getDisplayName2).achievements).toEqual([{ viewer: 'Someone', achievement: 'Doyenne' }]);
+  expect(get(state, getDisplayName2, achievements).viewers).toEqual(['Someone']);
+  expect(get(state, getDisplayName2, achievements).achievements).toEqual([{ viewer: 'Someone', achievement: 'Cheerleader' }]);
 });
 
 test('add cheers in credits', () => {
@@ -55,7 +73,7 @@ test('add cheers in credits', () => {
     addStreamFields(streamEvts.begun('Tetris')),
     addViewerFields(viewerEvts.cheered(20), 'someone'),
   ].reduce(projection, undefined);
-  expect(get(state, getDisplayName).donators).toEqual(['someone']);
+  expect(get(state, getDisplayName, achievements).donators).toEqual(['someone']);
 });
 
 test('add donations in credits', () => {
@@ -63,5 +81,5 @@ test('add donations in credits', () => {
     addStreamFields(streamEvts.begun('Tetris')),
     addViewerFields(viewerEvts.donated(20), 'someone'),
   ].reduce(projection, undefined);
-  expect(get(state, getDisplayName).donators).toEqual(['someone']);
+  expect(get(state, getDisplayName, achievements).donators).toEqual(['someone']);
 });

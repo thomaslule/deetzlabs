@@ -1,21 +1,20 @@
-const config = require('config');
 const Channel = require('./twitch-channel');
 const { log } = require('../logger');
 
-module.exports = () => {
+module.exports = (options) => {
   const bot = Channel({
-    channel: config.get('channel'),
-    username: config.get('bot_name'),
-    token: config.get('bot_token'),
-    clientId: config.get('client_id'),
-    clientSecret: config.get('client_secret'),
+    channel: options.channel,
+    username: options.bot_name,
+    token: options.bot_token,
+    clientId: options.client_id,
+    clientSecret: options.client_secret,
     logger: log,
   });
 
   const streamer = Channel({
-    channel: config.get('channel'),
-    username: config.get('channel'),
-    token: config.get('streamer_token'),
+    channel: options.channel,
+    username: options.channel,
+    token: options.streamer_token,
     poll: false,
     logger: log,
   });

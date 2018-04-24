@@ -3,9 +3,8 @@ const { log } = require('../../../logger');
 const { isCommand } = require('../../util');
 const displayNamesProjection = require('../projections/displayNames');
 const distributedAchievementsProjection = require('../projections/distributedAchievements');
-const achievements = require('../achievements');
 
-module.exports = (closet, sendChatMessage) => async (event) => {
+module.exports = (closet, achievements, sendChatMessage) => async (event) => {
   try {
     if (event.type === eventsTypes.sentChatMessage && (
       isCommand('!succès', event.message) || isCommand('!succes', event.message)

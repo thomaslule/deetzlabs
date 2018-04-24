@@ -5,9 +5,7 @@ const { validationResult } = require('express-validator/check');
 const { matchedData } = require('express-validator/filter');
 const jwt = require('jsonwebtoken');
 const expressjwt = require('express-jwt');
-const config = require('config');
 const crypto = require('crypto');
-const achievements = require('../domain/viewer/achievements');
 const distributedAchievementsProjection = require('../domain/viewer/projections/distributedAchievements');
 const displayNamesProjection = require('../domain/viewer/projections/displayNames');
 const settingsProjection = require('../domain/settings/projections/settings');
@@ -25,12 +23,12 @@ const validationMiddleware = (req, res, next) => {
   next();
 };
 
-module.exports = (closet) => {
+module.exports = (closet, options) => {
   const router = Router();
 
-  if (config.get('protect_api')) {
+  if (options.protect_api) {
     router.use(expressjwt({
-      secret: config.get('secret'),
+      secret: options.secret,
     }).unless({ path: ['/api/login', '/api/followers_goal', '/api/credits'] }));
   }
 
@@ -42,9 +40,9 @@ module.exports = (closet) => {
     (req, res, next) => {
       try {
         const { username, password } = req.validParams;
-        const logins = config.get('logins');
+        const { logins } = options;
         if (logins[username] && logins[username] === crypto.createHash('sha256').update(password).digest('base64')) {
-          const token = jwt.sign({ username }, config.get('secret'), { expiresIn: ONE_DAY });
+          const token = jwt.sign({ username }, options.secret, { expiresIn: ONE_DAY });
           res.send(token);
         } else {
           res.sendStatus(401);
@@ -84,9 +82,9 @@ module.exports = (closet) => {
 
   router.get('/all_achievements', (req, res, next) => {
     try {
-      const all = Object.keys(achievements)
+      const all = Object.keys(options.achievements)
         .reduce((result, a) => (
-          { ...result, [a]: { name: achievements[a].name } }
+          { ...result, [a]: { name: options.achievements[a].name } }
         ), {});
       res.send(all);
     } catch (err) {
@@ -118,7 +116,11 @@ module.exports = (closet) => {
         closet.getProjection('credits'),
         closet.getProjection('displayNames'),
       ]);
-      res.send(creditsProjection.get(credits, id => displayNamesProjection.get(displayNames, id)));
+      res.send(creditsProjection.get(
+        credits,
+        id => displayNamesProjection.get(displayNames, id),
+        options.achievements,
+      ));
     } catch (err) {
       next(err);
     }
@@ -160,7 +162,7 @@ module.exports = (closet) => {
     '/show_test_achievement',
     async (req, res, next) => {
       try {
-        await closet.handleCommand('viewer', 'berzingator2000', 'replayAchievement', { achievement: 'testing' });
+        await closet.handleCommand('viewer', options.bot_name.toLowerCase(), 'replayAchievement', { achievement: 'testing' });
         res.sendStatus(200);
       } catch (err) {
         next(err);

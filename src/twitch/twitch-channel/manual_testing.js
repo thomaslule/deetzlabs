@@ -1,12 +1,12 @@
-const config = require('config');
 const Channel = require('.');
+const config = require('./config');
 
 const channel = Channel({
-  channel: config.get('channel'),
-  username: config.get('bot_name'),
-  token: config.get('bot_token'),
-  clientId: config.get('client_id'),
-  clientSecret: config.get('client_secret'),
+  channel: config.channel,
+  username: config.bot_name,
+  token: config.bot_token,
+  clientId: config.client_id,
+  clientSecret: config.client_secret,
 });
 
 channel.on('chat', (...args) => { console.log('chat', args); });

@@ -1,6 +1,5 @@
 const viewerEvtsTypes = require('../viewer/events').eventsTypes;
 const streamEvtsTypes = require('../stream/events').eventsTypes;
-const achievements = require('../viewer/achievements');
 
 const emptyCredits = game => ({
   games: [game],
@@ -61,7 +60,7 @@ const proj = (state = emptyCredits(''), event) => {
   return state;
 };
 
-const get = (state, getDisplayName) => ({
+const get = (state, getDisplayName, achievements) => ({
   ...state,
   viewers: state.viewers.map(getDisplayName),
   hosts: state.hosts.map(getDisplayName),

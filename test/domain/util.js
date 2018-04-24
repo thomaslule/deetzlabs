@@ -1,12 +1,19 @@
 const configureCloset = require('../../src/domain');
 const { configureLogger } = require('../../src/logger');
+const config = require('../config');
 
 const setup = () => {
-  configureLogger();
+  configureLogger(config);
   const showAchievement = jest.fn();
   const sendChatMessage = jest.fn();
-  const closet = configureCloset({ showAchievement, sendChatMessage });
-  return { closet, showAchievement, sendChatMessage };
+  const closet = configureCloset({
+    showAchievement,
+    sendChatMessage,
+    achievements: config.achievements,
+  });
+  return {
+    closet, showAchievement, sendChatMessage,
+  };
 };
 
 const postAchievement = async (closet, achievement, viewer = 'someone') => {

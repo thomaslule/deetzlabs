@@ -1,10 +1,10 @@
 const { Pool } = require('pg');
-const config = require('config');
 const toArray = require('stream-to-array');
-const Storage = require('./storage');
+const Storage = require('../src/storage');
+const config = require('./config');
 
 let db;
-beforeEach(() => { db = new Pool({ connectionString: config.get('db_url') }); });
+beforeEach(() => { db = new Pool({ connectionString: config.db_url }); });
 afterEach(async () => {
   await db.query('truncate table events');
   await db.query('truncate table snapshots');

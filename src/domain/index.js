@@ -7,6 +7,7 @@ const configureCredits = require('./credits');
 
 const defaultOptions = {
   closetOptions: {},
+  achievements: {},
   sendChatMessage: () => {},
   showAchievement: () => {},
 };
@@ -18,7 +19,7 @@ module.exports = (options = {}) => {
   };
   const closet = Closet(opts.closetOptions);
   closet.onEvent((e) => { log.info('Event happened: %s %s %s', e.aggregate, e.id, e.type); });
-  configureViewer(closet, opts.sendChatMessage, opts.showAchievement);
+  configureViewer(closet, opts.achievements, opts.sendChatMessage, opts.showAchievement);
   configureStream(closet);
   configureSettings(closet);
   configureCredits(closet);

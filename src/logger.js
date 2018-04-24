@@ -1,4 +1,3 @@
-const config = require('config');
 const winston = require('winston');
 require('winston-daily-rotate-file');
 
@@ -13,18 +12,18 @@ const log = {
   error: (...args) => logger.error(...args),
 };
 
-const configureLogger = () => {
+const configureLogger = (options) => {
   const tsFormat = () => (new Date()).toLocaleString();
 
   logger = new (winston.Logger)();
 
-  if (config.get('log_to_console')) {
+  if (options.log_to_console) {
     logger.add(winston.transports.Console, {
       timestamp: tsFormat,
     });
   }
 
-  if (config.get('log_to_file')) {
+  if (options.log_to_file) {
     logger.add(winston.transports.DailyRotateFile, {
       json: false,
       timestamp: tsFormat,

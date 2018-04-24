@@ -6,10 +6,10 @@ beforeEach(() => {
 });
 
 test('post to /give_achievement gives it to user', (done) => {
-  postAchievement(app, 'benefactor')
+  postAchievement(app, 'cheerleader')
     .then(() => {
-      expect(showAchievement).toHaveBeenCalledWith('Mécène', 'Cool ! Merci pour ton soutien %USER%', 'someone', 0.5);
-      return userHasAchievement(app, 'benefactor');
+      expect(showAchievement).toHaveBeenCalledWith('Cheerleader', 'Thank you %USER%!', 'someone', 0.5);
+      return userHasAchievement(app, 'cheerleader');
     })
     .then((hasAchievement) => {
       expect(hasAchievement).toBeTruthy();

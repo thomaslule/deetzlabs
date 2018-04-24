@@ -1,7 +1,6 @@
 const events = require('./events');
-const achievements = require('./achievements');
 
-module.exports = {
+module.exports = achievements => ({
   chatMessage: (projection, { message, displayName }) =>
     events.sentChatMessage(message, displayName),
 
@@ -64,4 +63,4 @@ module.exports = {
   host: (projection, { nbViewers }) => events.hosted(nbViewers),
 
   follow: () => events.followed(),
-};
+});

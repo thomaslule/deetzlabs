@@ -15,33 +15,33 @@ test('!succès with 0 achievement', (done) => {
 });
 
 test('!succès with 1 achievement', (done) => {
-  postAchievement(closet, 'gravedigger')
+  postAchievement(closet, 'cheerleader')
     .then(() => postMessage(closet, '!succès'))
     .then(() => new Promise(setImmediate))
     .then(() => {
-      expect(sendChatMessage).toHaveBeenCalledWith('Bravo Someone pour tes succès : Fossoyeuse !');
+      expect(sendChatMessage).toHaveBeenCalledWith('Bravo Someone pour tes succès : Cheerleader !');
       done();
     });
 });
 
 test('!succès with 2 achievement', (done) => {
-  postAchievement(closet, 'gravedigger')
-    .then(() => postAchievement(closet, 'swedish'))
+  postAchievement(closet, 'cheerleader')
+    .then(() => postAchievement(closet, 'testing'))
     .then(() => postMessage(closet, '!succès'))
     .then(() => new Promise(setImmediate))
     .then(() => {
-      expect(sendChatMessage).toHaveBeenCalledWith('Bravo Someone pour tes succès : Fossoyeuse, Suédois LV1 !');
+      expect(sendChatMessage).toHaveBeenCalledWith('Bravo Someone pour tes succès : Cheerleader, Testing !');
       done();
     });
 });
 
 test('!succès reads only caller achievements', (done) => {
-  postAchievement(closet, 'gravedigger')
-    .then(() => postAchievement(closet, 'swedish', 'other'))
+  postAchievement(closet, 'cheerleader')
+    .then(() => postAchievement(closet, 'testing', 'other'))
     .then(() => postMessage(closet, '!succès'))
     .then(() => new Promise(setImmediate))
     .then(() => {
-      expect(sendChatMessage).toHaveBeenCalledWith('Bravo Someone pour tes succès : Fossoyeuse !');
+      expect(sendChatMessage).toHaveBeenCalledWith('Bravo Someone pour tes succès : Cheerleader !');
       done();
     });
 });

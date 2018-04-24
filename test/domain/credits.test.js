@@ -3,13 +3,14 @@ const {
 } = require('./util');
 const getCredits = require('../../src/domain/credits/projection').get;
 const getDisplayName = require('../../src/domain/viewer/projections/displayNames').get;
+const config = require('../config');
 
 let closet;
 beforeEach(() => {
   ({ closet } = setup());
 });
 
-test('get the credits with GET /credits', async () => {
+test('credits work', async () => {
   await beginStream(closet);
   await postMessage(closet);
   await cheer(closet);
@@ -19,12 +20,12 @@ test('get the credits with GET /credits', async () => {
     closet.getProjection('credits'),
     closet.getProjection('displayNames'),
   ]);
-  expect(getCredits(credits, id => getDisplayName(displayNames, id)))
+  expect(getCredits(credits, id => getDisplayName(displayNames, id), config.achievements))
     .toEqual({
       games: ['Tetris'],
       viewers: ['Someone'],
       hosts: [],
-      achievements: [{ viewer: 'Someone', achievement: 'Mécène' }],
+      achievements: [{ viewer: 'Someone', achievement: 'Cheerleader' }],
       subscribes: [],
       donators: ['Someone'],
       follows: [],

@@ -14,7 +14,7 @@ test('volume modified on POST /change_achievement_volume', (done) => {
     .expect(200)
     .then(() => showTestAchievement(app))
     .then(() => {
-      expect(showAchievement).toHaveBeenCalledWith('Testeuse', '%USER% bidouille des trucs', 'berzingator2000', 0.8);
+      expect(showAchievement).toHaveBeenCalledWith('Testing', '%USER% tests something', 'berzingator2000', 0.8);
       done();
     });
 });
@@ -22,7 +22,7 @@ test('volume modified on POST /change_achievement_volume', (done) => {
 test('if never set volume is 0.5', (done) => {
   showTestAchievement(app)
     .then(() => {
-      expect(showAchievement).toHaveBeenCalledWith('Testeuse', '%USER% bidouille des trucs', 'berzingator2000', 0.5);
+      expect(showAchievement).toHaveBeenCalledWith('Testing', '%USER% tests something', 'berzingator2000', 0.5);
       done();
     });
 });
