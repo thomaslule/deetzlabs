@@ -1,4 +1,4 @@
-const socket = window.io(window.location.origin, { path: '/socket.io' });
+const socket = window.io();
 
 let endsAt = new Date();
 
