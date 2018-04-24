@@ -1,10 +1,10 @@
-const welldone = new Audio('welldone.mp3');
+const ding = new Audio('ding.mp3');
 
 function showAchievement(achievement) {
-  welldone.volume = Number(achievement.volume);
+  ding.volume = Number(achievement.volume);
   $('#achievement-name').text(achievement.achievement);
   $('#achievement-text').html($(`<div>${achievement.text}</div>`).text().replace('%USER%', `<strong>${achievement.username}</strong>`));
-  setTimeout(() => welldone.play(), 1000);
+  setTimeout(() => ding.play(), 1000);
 
   $('#achievement .circle').removeClass('rotate');
   // Run the animations
