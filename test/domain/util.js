@@ -2,7 +2,7 @@ const configureCloset = require('../../src/domain');
 const { configureLogger } = require('../../src/logger');
 const config = require('../config');
 
-const setup = () => {
+const setup = (options = {}) => {
   configureLogger(config);
   const showAchievement = jest.fn();
   const sendChatMessage = jest.fn();
@@ -10,6 +10,7 @@ const setup = () => {
     showAchievement,
     sendChatMessage,
     achievements: config.achievements,
+    ...options,
   });
   return {
     closet, showAchievement, sendChatMessage,

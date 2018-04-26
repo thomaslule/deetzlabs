@@ -23,6 +23,15 @@ const defaultOptions = {
   bot_name: '',
   bot_token: '',
   secret: '',
+  achievements_command: {
+    command: '!achievements',
+    answer: 'Congratulations %USER% for your achievements: %ACHIEVEMENTS%',
+    answer_none: '%USER% doesn\'t have any achievement but their time will come!',
+  },
+  commands_command: {
+    command: '!commands',
+    answer: 'Say !achievements to see your current achievements',
+  },
   protect_api: true,
   logins: {
     test: 'n4bQgYhMfWWaL+qgxVrQFaO/TxsrC4Is0V1sFbDwCgg=', // test
@@ -52,6 +61,8 @@ const Deetzlabs = (options = {}) => {
     achievements: opts.achievements,
     sendChatMessage: twitch.say,
     showAchievement: (...args) => { bus.emit('show', ...args); },
+    achievements_command: opts.achievements_command,
+    commands_command: opts.commands_command,
   });
   addListeners(twitch, closet);
   const widgets = Widgets(opts);

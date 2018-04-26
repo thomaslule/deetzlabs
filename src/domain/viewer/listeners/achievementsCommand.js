@@ -1,22 +1,20 @@
 const { eventsTypes } = require('../events');
 const { log } = require('../../../logger');
-const { isCommand } = require('../../util');
 const displayNamesProjection = require('../projections/displayNames');
 const distributedAchievementsProjection = require('../projections/distributedAchievements');
 
-module.exports = (closet, achievements, sendChatMessage) => async (event) => {
+module.exports = (closet, achievements, commandParams, sendChatMessage) => async (event) => {
   try {
-    if (event.type === eventsTypes.sentChatMessage && (
-      isCommand('!succès', event.message) || isCommand('!succes', event.message)
-    )) {
+    if (event.type === eventsTypes.sentChatMessage
+      && event.message.trim().toLowerCase() === commandParams.command) {
       const displayName = displayNamesProjection.get(await closet.getProjection('displayNames'), event.id);
       const viewerAchievements = distributedAchievementsProjection.getForViewer(
         await closet.getProjection('distributedAchievements'),
         event.id,
       );
       const message = viewerAchievements.length > 0 ?
-        `Bravo ${displayName} pour tes succès : ${viewerAchievements.map(a => achievements[a].name).join(', ')} !`
-        : `${displayName} n'a pas encore de succès, déso.`;
+        commandParams.answer.replace('%USER%', displayName).replace('%ACHIEVEMENTS%', viewerAchievements.map(a => achievements[a].name).join(', '))
+        : commandParams.answer_none.replace('%USER%', displayName);
       await sendChatMessage(message);
     }
   } catch (err) {

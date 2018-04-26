@@ -6,9 +6,12 @@ const achievementProgressionProjection = require('./projections/achievementsProg
 const distributeAchievementListener = require('./listeners/distributeAchievement');
 const showAchievementListener = require('./listeners/showAchievement');
 const commandsCommandListener = require('./listeners/commandsCommand');
-const succesCommandListener = require('./listeners/succesCommand');
+const achievementsCommandListener = require('./listeners/achievementsCommand');
 
-module.exports = (closet, achievements, sendChatMessage, showAchievement) => {
+module.exports = (
+  closet, achievements, sendChatMessage,
+  showAchievement, achievementsCommand, commandsCommand,
+) => {
   closet.registerAggregate('viewer', decProj);
   const commands = Commands(achievements);
   Object.keys(commands).forEach((command) => { closet.registerCommand('viewer', command, commands[command]); });
@@ -18,6 +21,11 @@ module.exports = (closet, achievements, sendChatMessage, showAchievement) => {
     onChange: distributeAchievementListener(closet),
   });
   closet.onEvent(showAchievementListener(closet, achievements, showAchievement));
-  closet.onEvent(commandsCommandListener(sendChatMessage));
-  closet.onEvent(succesCommandListener(closet, achievements, sendChatMessage));
+  closet.onEvent(commandsCommandListener(commandsCommand, sendChatMessage));
+  closet.onEvent(achievementsCommandListener(
+    closet,
+    achievements,
+    achievementsCommand,
+    sendChatMessage,
+  ));
 };
