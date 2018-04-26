@@ -1,16 +1,16 @@
 # deetzlabs
-Add achievements and credits to a twitch stream.
+Add viewer achievements and credits to a twitch stream.
 
-## prerequisites
- * A postgresl database initialized with `db/schema.sql`
+# usage
+```javascript
+const Deetzlabs = require('deetzlabs').default;
 
-## install
-```bash
-git clone https://github.com/thomaslule/deetzlabs.git
-cp config/default.json config/production.js # customize config here
-npm install
-npm start
+const deetzlabs = Deetzlabs(options);
+
+deetzlabs.start()
+  .then(() => { console.log('ready!'); });
 ```
 
-## configure achievements
-Edit the `domain/viewer/achievements` file to create your own achievements.
+To start with a project already pre-configured clone the [boilerplate repository](https://github.com/thomaslule/deetzlabs-boilerplate).
+
+To get the list of available config options see [this file](https://github.com/thomaslule/deetzlabs/blob/master/src/index.js).
