@@ -30,12 +30,17 @@ module.exports = (options = {}) => {
 
   // get current broadcasted game or null if not broadcasting
   const fetchBroadcast = async () => {
-    const stream = await helix.getStreamInfoByUsername(options.channel);
-    if (stream) {
-      const game = await helix.sendHelixRequest(`games?id=${stream.game_id}`);
-      return game[0].name;
+    try {
+      const stream = await helix.getStreamInfoByUsername(options.channel);
+      if (stream) {
+        const game = await helix.sendHelixRequest(`games?id=${stream.game_id}`);
+        return game[0].name;
+      }
+      return null;
+    } catch (err) {
+      opts.logger.error(err);
+      return null;
     }
-    return null;
   };
 
   const onBroadcastChange = (currentGame, previousGame) => {
@@ -49,11 +54,16 @@ module.exports = (options = {}) => {
   });
 
   const fetchTopClipper = async () => {
-    const res = await krakenTopClips({ channel: opts.channel, period: 'week', limit: 1 });
-    if (res.clips.length > 0) {
-      return res.clips[0].curator.name;
+    try {
+      const res = await krakenTopClips({ channel: opts.channel, period: 'week', limit: 1 });
+      if (res.clips.length > 0) {
+        return res.clips[0].curator.name;
+      }
+      return null;
+    } catch (err) {
+      opts.logger.error(err);
+      return null;
     }
-    return null;
   };
 
   const onTopClipperChange = (topClipper) => {
