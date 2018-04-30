@@ -96,5 +96,7 @@ const Deetzlabs = (options = {}) => {
 };
 
 module.exports = {
-  default: Deetzlabs, configureCloset, viewerEvents, streamEvents,
+  default: Deetzlabs,
+  viewerEvents,
+  streamEvents,
 };
