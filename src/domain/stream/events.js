@@ -1,6 +1,6 @@
 const eventsTypes = {
   begun: 'begun',
-  changedGame: 'changedGame',
+  changedGame: 'changed-game',
   ended: 'ended',
 };
 
