@@ -1,6 +1,7 @@
 const { EventEmitter } = require('events');
+const TwitchHelix = require('twitch-helix');
 const tmi = require('tmi.js');
-const Poller = require('./poller');
+const poll = require('./poll');
 
 const defaultOptions = {
   channel: null,
@@ -14,14 +15,35 @@ const defaultOptions = {
 
 const tmiEvents = ['action', 'ban', 'chat', 'cheer', 'clearchat', 'connected', 'connecting', 'disconnected', 'emoteonly', 'emotesets', 'followersonly', 'hosted', 'hosting', 'join', 'logon', 'message', 'mod', 'mods', 'notice', 'part', 'ping', 'pong', 'r9kbeta', 'reconnect', 'resub', 'roomstate', 'serverchange', 'slowmode', 'subscribers', 'subscription', 'timeout', 'unhost', 'unmod', 'whisper'];
 
-const noop = () => {};
-
 module.exports = (options = {}) => {
   const opts = { ...defaultOptions, ...options };
   const bus = new EventEmitter();
-  let intervalId;
 
-  const poller = opts.poll ? Poller(bus, opts) : { poll: noop };
+  const helix = new TwitchHelix({
+    clientId: options.clientId,
+    clientSecret: options.clientSecret,
+  });
+
+  // get current broadcasted game or null if not broadcasting
+  const fetchBroadcast = async () => {
+    const stream = await helix.getStreamInfoByUsername(options.channel);
+    if (stream) {
+      const game = await helix.sendHelixRequest(`games?id=${stream.game_id}`);
+      return game[0].name;
+    }
+    return null;
+  };
+
+  const onBroadcastChange = (currentGame, previousGame) => {
+    if (previousGame && currentGame) bus.emit('stream-change-game', currentGame);
+    else if (currentGame) bus.emit('stream-begin', currentGame);
+    else bus.emit('stream-end');
+  };
+
+  const pollBroadcast = poll(fetchBroadcast, onBroadcastChange, {
+    auto_start: false,
+    interval: 5000,
+  });
 
   const TmiClient = tmi.client;
   const user = new TmiClient({
@@ -41,13 +63,16 @@ module.exports = (options = {}) => {
 
   const connect = async () => {
     await user.connect();
-    intervalId = setInterval(poller.poll, 5 * 60 * 1000); // poll every 5 minutes
-    poller.poll();
+    if (opts.poll) {
+      pollBroadcast.start();
+    }
   };
 
   const disconnect = async () => {
     await user.disconnect();
-    clearInterval(intervalId);
+    if (opts.poll) {
+      pollBroadcast.stop();
+    }
   };
 
   const say = (message) => {
