@@ -11,6 +11,8 @@ const eventsTypes = {
   left: 'left',
   hosted: 'hosted',
   followed: 'followed',
+  becameTopClipper: 'became-top-clipper',
+  lostTopClipper: 'lost-top-clipper',
 };
 
 const createEvent = (type, content = {}) => ({
@@ -53,6 +55,10 @@ module.exports = {
   left: () => createEvent(eventsTypes.left),
 
   followed: () => createEvent(eventsTypes.followed),
+
+  becameTopClipper: () => createEvent(eventsTypes.becameTopClipper),
+
+  lostTopClipper: () => createEvent(eventsTypes.lostTopClipper),
 
   migratedData: data => createEvent(eventsTypes.migratedData, data),
 };

@@ -101,4 +101,16 @@ module.exports = (twitch, closet) => {
       log.error(error);
     }
   });
+
+  twitch.on('top-clipper-change', async (viewer) => {
+    try {
+      const oldTopClipper = await closet.getProjection('topClipper');
+      if (oldTopClipper !== viewer) {
+        await closet.handleCommand('viewer', oldTopClipper, 'loseTopClipper');
+        await closet.handleCommand('viewer', viewer, 'becomeTopClipper');
+      }
+    } catch (error) {
+      log.error(error);
+    }
+  });
 };

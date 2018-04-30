@@ -4,6 +4,7 @@ const distributedAchievementsProjection = require('./projections/distributedAchi
 const displayNamesProjection = require('./projections/displayNames').default;
 const achievementProgressionProjection = require('./projections/achievementsProgression');
 const distributeAchievementListener = require('./listeners/distributeAchievement');
+const topClipperProjection = require('./projections/topClipper');
 const showAchievementListener = require('./listeners/showAchievement');
 const commandsCommandListener = require('./listeners/commandsCommand');
 const achievementsCommandListener = require('./listeners/achievementsCommand');
@@ -20,6 +21,7 @@ module.exports = (
   closet.registerProjection('achievementsProgression', ['viewer', 'stream'], achievementProgressionProjection(achievements), {
     onChange: distributeAchievementListener(closet),
   });
+  closet.registerProjection('topClipper', ['viewer'], topClipperProjection);
   closet.onEvent(showAchievementListener(closet, achievements, showAchievement));
   closet.onEvent(commandsCommandListener(commandsCommand, sendChatMessage));
   closet.onEvent(achievementsCommandListener(
