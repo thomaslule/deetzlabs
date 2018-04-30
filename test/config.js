@@ -21,4 +21,13 @@ module.exports = {
       },
     },
   },
+  achievements_command: {
+    command: '!achievements',
+    answer: 'Congratulations %USER% for your achievements: %ACHIEVEMENTS%',
+    answer_none: '%USER% doesn\'t have any achievement but their time will come!',
+  },
+  commands_command: {
+    command: '!commands',
+    answer: 'Say !achievements to see your current achievements',
+  },
 };

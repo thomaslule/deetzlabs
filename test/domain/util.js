@@ -10,6 +10,9 @@ const setup = (options = {}) => {
     showAchievement,
     sendChatMessage,
     achievements: config.achievements,
+    achievements_command: config.achievements_command,
+    commands_command: config.commands_command,
+    closetOptions: {},
     ...options,
   });
   return {
