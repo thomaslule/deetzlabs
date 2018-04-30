@@ -23,11 +23,11 @@ module.exports = (options = {}) => {
 
   // get current broadcasted game or null if not broadcasting
   const fetchBroadcast = async () => {
-    const helix = new TwitchHelix({
-      clientId: opts.clientId,
-      clientSecret: opts.clientSecret,
-    });
     try {
+      const helix = new TwitchHelix({
+        clientId: opts.clientId,
+        clientSecret: opts.clientSecret,
+      });
       const stream = await helix.getStreamInfoByUsername(opts.channel);
       if (stream) {
         const game = await helix.sendHelixRequest(`games?id=${stream.game_id}`);
@@ -51,9 +51,9 @@ module.exports = (options = {}) => {
   });
 
   const fetchTopClipper = async () => {
-    kraken.clientID = opts.clientId;
-    const krakenTopClips = promisify(kraken.clips.top);
     try {
+      kraken.clientID = opts.clientId;
+      const krakenTopClips = promisify(kraken.clips.top);
       const res = await krakenTopClips({ channel: opts.channel, period: 'week', limit: 1 });
       if (res.clips.length > 0) {
         return res.clips[0].curator.name;
@@ -93,18 +93,30 @@ module.exports = (options = {}) => {
   const on = (event, handler) => bus.on(event, handler);
 
   const connect = async () => {
-    await user.connect();
-    if (opts.poll) {
-      pollBroadcast.start();
-      pollTopClipper.start();
+    try {
+      if (user.readyState() !== 'CONNECTING' && user.readyState() !== 'OPEN') {
+        await user.connect();
+      }
+      if (opts.poll) {
+        pollBroadcast.start();
+        pollTopClipper.start();
+      }
+    } catch (err) {
+      opts.logger.error(err);
     }
   };
 
   const disconnect = async () => {
-    await user.disconnect();
-    if (opts.poll) {
-      pollBroadcast.stop();
-      pollTopClipper.stop();
+    try {
+      if (user.readyState() !== 'CLOSING' && user.readyState() !== 'CLOSED') {
+        await user.disconnect();
+      }
+      if (opts.poll) {
+        pollBroadcast.stop();
+        pollTopClipper.stop();
+      }
+    } catch (err) {
+      opts.logger.error(err);
     }
   };
 
