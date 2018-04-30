@@ -39,6 +39,7 @@
     "pg-query-stream": "^1.1.1",
     "socket.io": "^2.1.0",
     "tmi.js": "^1.2.1",
+    "twitch-api-v5": "^2.0.2",
     "twitch-helix": "^1.0.7",
     "winston": "^2.3.1",
     "winston-daily-rotate-file": "^1.7.2"

@@ -1,6 +1,8 @@
 const { EventEmitter } = require('events');
 const TwitchHelix = require('twitch-helix');
+const kraken = require('twitch-api-v5');
 const tmi = require('tmi.js');
+const { promisify } = require('util');
 const poll = require('./poll');
 
 const defaultOptions = {
@@ -23,6 +25,8 @@ module.exports = (options = {}) => {
     clientId: options.clientId,
     clientSecret: options.clientSecret,
   });
+  kraken.clientID = options.clientId;
+  const krakenTopClips = promisify(kraken.clips.top);
 
   // get current broadcasted game or null if not broadcasting
   const fetchBroadcast = async () => {
@@ -42,7 +46,25 @@ module.exports = (options = {}) => {
 
   const pollBroadcast = poll(fetchBroadcast, onBroadcastChange, {
     auto_start: false,
-    interval: 5000,
+  });
+
+  const fetchTopClipper = async () => {
+    const res = await krakenTopClips({ channel: opts.channel, period: 'week', limit: 1 });
+    if (res.clips.length > 0) {
+      return res.clips[0].curator.name;
+    }
+    return null;
+  };
+
+  const onTopClipperChange = (topClipper) => {
+    if (topClipper !== null) {
+      bus.emit('top-clipper-change', topClipper);
+    }
+  };
+
+  const pollTopClipper = poll(fetchTopClipper, onTopClipperChange, {
+    auto_start: false,
+    interval: 60 * 60 * 1000,
   });
 
   const TmiClient = tmi.client;
@@ -65,6 +87,7 @@ module.exports = (options = {}) => {
     await user.connect();
     if (opts.poll) {
       pollBroadcast.start();
+      pollTopClipper.start();
     }
   };
 
@@ -72,6 +95,7 @@ module.exports = (options = {}) => {
     await user.disconnect();
     if (opts.poll) {
       pollBroadcast.stop();
+      pollTopClipper.stop();
     }
   };
 
