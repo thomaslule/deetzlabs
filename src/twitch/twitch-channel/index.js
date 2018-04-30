@@ -21,17 +21,14 @@ module.exports = (options = {}) => {
   const opts = { ...defaultOptions, ...options };
   const bus = new EventEmitter();
 
-  const helix = new TwitchHelix({
-    clientId: options.clientId,
-    clientSecret: options.clientSecret,
-  });
-  kraken.clientID = options.clientId;
-  const krakenTopClips = promisify(kraken.clips.top);
-
   // get current broadcasted game or null if not broadcasting
   const fetchBroadcast = async () => {
+    const helix = new TwitchHelix({
+      clientId: opts.clientId,
+      clientSecret: opts.clientSecret,
+    });
     try {
-      const stream = await helix.getStreamInfoByUsername(options.channel);
+      const stream = await helix.getStreamInfoByUsername(opts.channel);
       if (stream) {
         const game = await helix.sendHelixRequest(`games?id=${stream.game_id}`);
         return game[0].name;
@@ -54,6 +51,8 @@ module.exports = (options = {}) => {
   });
 
   const fetchTopClipper = async () => {
+    kraken.clientID = opts.clientId;
+    const krakenTopClips = promisify(kraken.clips.top);
     try {
       const res = await krakenTopClips({ channel: opts.channel, period: 'week', limit: 1 });
       if (res.clips.length > 0) {

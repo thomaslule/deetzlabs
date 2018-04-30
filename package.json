@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --runInBand",
-    "twitch_test": "node ./src/twitch/twitch-channel/manual_testing.js"
+    "test_twitch": "node ./src/twitch/twitch-channel/manual_testing.js"
   },
   "repository": {
     "type": "git",
