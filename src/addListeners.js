@@ -106,7 +106,7 @@ module.exports = (twitch, closet) => {
     try {
       const oldTopClipper = await closet.getProjection('topClipper');
       if (oldTopClipper !== viewer) {
-        await closet.handleCommand('viewer', oldTopClipper, 'loseTopClipper');
+        if (oldTopClipper) await closet.handleCommand('viewer', oldTopClipper, 'loseTopClipper');
         await closet.handleCommand('viewer', viewer, 'becomeTopClipper');
       }
     } catch (error) {
