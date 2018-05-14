@@ -113,4 +113,12 @@ module.exports = (twitch, closet) => {
       log.error(error);
     }
   });
+
+  twitch.on('follow', async (viewer) => {
+    try {
+      await closet.handleCommand('viewer', viewer, 'follow');
+    } catch (error) {
+      log.error(error);
+    }
+  });
 };

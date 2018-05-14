@@ -6,10 +6,11 @@ const { log } = require('./logger');
 
 const stream = { write: message => log.info(message.slice(0, -1)) };
 
-module.exports = (api, widgets, admin) => {
+module.exports = (api, widgets, admin, twitchProxy) => {
   const app = express();
-  app.use(bodyParser.json());
   app.use(morgan(':remote-addr ":method :url" - :status - :response-time ms', { stream }));
+  app.use('/twitch-callback', twitchProxy);
+  app.use(bodyParser.json());
 
   app.use('/api', api);
   app.use('/widgets', widgets);

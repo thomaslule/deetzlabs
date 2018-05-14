@@ -1,13 +1,18 @@
-const Channel = require('./twitch-channel');
-const { log } = require('../logger');
+const Channel = require('twitch-channel');
+const proxy = require('express-http-proxy');
+
+const { log } = require('./logger');
 
 module.exports = (options) => {
   const bot = Channel({
     channel: options.channel,
     username: options.bot_name,
     token: options.bot_token,
-    clientId: options.client_id,
-    clientSecret: options.client_secret,
+    client_id: options.client_id,
+    client_secret: options.client_secret,
+    callback_url: `${options.self_url}/twitch-callback`,
+    port: options.webhook_port,
+    secret: options.secret,
     logger: log,
   });
 
@@ -15,7 +20,8 @@ module.exports = (options) => {
     channel: options.channel,
     username: options.channel,
     token: options.streamer_token,
-    poll: false,
+    activate_polling: false,
+    activate_webhook: false,
     logger: log,
   });
 
@@ -43,5 +49,16 @@ module.exports = (options) => {
     await bot.connect();
   };
 
-  return { say, on, connect };
+  const disconnect = async () => {
+    await Promise.all([
+      bot.disconnect(),
+      streamer.disconnect(),
+    ]);
+  };
+
+  const getProxy = () => proxy(`http://localhost:${options.webhook_port}`);
+
+  return {
+    say, on, connect, getProxy, disconnect,
+  };
 };

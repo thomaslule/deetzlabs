@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --runInBand",
-    "test_twitch": "node ./src/twitch/twitch-channel/manual_testing.js"
+    "test": "jest --runInBand"
   },
   "repository": {
     "type": "git",
@@ -31,6 +30,7 @@
     "deetzlabs-web": "^0.1.2",
     "event-closet": "^0.2.0",
     "express": "^4.15.5",
+    "express-http-proxy": "^1.2.0",
     "express-jwt": "^5.3.1",
     "express-validator": "^4.3.0",
     "jsonwebtoken": "^8.2.1",
@@ -38,9 +38,7 @@
     "pg": "^7.4.0",
     "pg-query-stream": "^1.1.1",
     "socket.io": "^2.1.0",
-    "tmi.js": "^1.2.1",
-    "twitch-api-v5": "^2.0.2",
-    "twitch-helix": "^1.0.7",
+    "twitch-channel": "^0.1.0",
     "winston": "^2.3.1",
     "winston-daily-rotate-file": "^1.7.2"
   }

@@ -23,6 +23,8 @@ const defaultOptions = {
   bot_name: '',
   bot_token: '',
   secret: '',
+  self_url: 'http://localhost',
+  webhook_port: 3333,
   achievements_command: {
     command: '!achievements',
     answer: 'Congratulations %USER% for your achievements: %ACHIEVEMENTS%',
@@ -68,7 +70,7 @@ const Deetzlabs = (options = {}) => {
   const widgets = Widgets(opts);
   const api = Api(closet, opts);
   const admin = Admin();
-  const server = Server(api, widgets, admin);
+  const server = Server(api, widgets, admin, twitch.getProxy());
 
   const start = async () => {
     try {
@@ -92,7 +94,11 @@ const Deetzlabs = (options = {}) => {
     }
   };
 
-  return { start };
+  const stop = async () => {
+    await twitch.disconnect();
+  };
+
+  return { start, stop };
 };
 
 module.exports = {
