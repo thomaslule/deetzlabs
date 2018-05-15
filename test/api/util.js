@@ -12,7 +12,7 @@ const setup = () => {
   const showAchievement = jest.fn();
   const closet = configureCloset({ showAchievement, achievements: config.achievements });
   const api = Api(closet, config);
-  const app = Server(api, noopMiddleware, noopMiddleware);
+  const app = Server(api, noopMiddleware, noopMiddleware, noopMiddleware);
   return { app, showAchievement, closet };
 };
 
