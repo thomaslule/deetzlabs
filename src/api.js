@@ -6,10 +6,10 @@ const { matchedData } = require('express-validator/filter');
 const jwt = require('jsonwebtoken');
 const expressjwt = require('express-jwt');
 const crypto = require('crypto');
-const distributedAchievementsProjection = require('../domain/viewer/projections/distributedAchievements');
-const displayNamesProjection = require('../domain/viewer/projections/displayNames');
-const settingsProjection = require('../domain/settings/projections/settings');
-const creditsProjection = require('../domain/credits/projection');
+const distributedAchievementsProjection = require('./domain/viewer/projections/distributedAchievements');
+const displayNamesProjection = require('./domain/viewer/projections/displayNames');
+const settingsProjection = require('./domain/settings/projections/settings');
+const creditsProjection = require('./domain/credits/projection');
 
 const ONE_DAY = 60 * 60 * 24;
 
