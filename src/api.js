@@ -11,7 +11,7 @@ const displayNamesProjection = require('./domain/viewer/projections/displayNames
 const settingsProjection = require('./domain/settings/projections/settings');
 const creditsProjection = require('./domain/credits/projection');
 
-const ONE_DAY = 60 * 60 * 24;
+const LOGIN_DURATION = 60 * 60 * 24 * 30;
 
 const validationMiddleware = (req, res, next) => {
   const errors = validationResult(req);
@@ -43,8 +43,9 @@ module.exports = (closet, options) => {
           const { username, password } = req.validParams;
           const { logins } = options;
           if (logins[username] && logins[username] === crypto.createHash('sha256').update(password).digest('base64')) {
-            const token = jwt.sign({ username }, options.secret, { expiresIn: ONE_DAY });
-            res.send(token);
+            const token = jwt.sign({ username }, options.secret, { expiresIn: LOGIN_DURATION });
+            const expiresAt = Date.now() + (LOGIN_DURATION * 1000);
+            res.send({ token, expiresAt });
           } else {
             res.sendStatus(401);
           }
