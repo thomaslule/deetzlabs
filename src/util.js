@@ -1,7 +1,7 @@
 const normalizeHandle = str => str
-  .normalize('NFD')
-  .replace(/[\u0300-\u036f]/g, '')
-  .replace(/[^a-zA-Z0-9_]/g, '_')
-  .toLowerCase();
+  .normalize('NFD') // split accented characters : è => e`
+  .toLowerCase()
+  .replace(/ /g, '_')
+  .replace(/[^a-z0-9_]/g, '');
 
 module.exports = { normalizeHandle };
