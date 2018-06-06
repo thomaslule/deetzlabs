@@ -11,6 +11,7 @@ const Server = require('./server');
 const Api = require('./api');
 const Widgets = require('./widgets');
 const Admin = require('./admin');
+const Streamlabs = require('./streamlabs');
 const addListeners = require('./addListeners');
 
 const defaultOptions = {
@@ -22,6 +23,7 @@ const defaultOptions = {
   streamer_token: '',
   bot_name: '',
   bot_token: '',
+  streamlabs_socket_token: '',
   secret: '',
   self_url: 'http://localhost',
   webhook_port: 3333,
@@ -69,6 +71,7 @@ const Deetzlabs = (options = {}) => {
   addListeners(twitch, closet);
   const widgets = Widgets(opts);
   const api = Api(closet, opts);
+  const streamlabs = Streamlabs(closet, opts);
   const admin = Admin();
   const server = Server(api, widgets, admin, twitch.getProxy());
 
@@ -76,6 +79,7 @@ const Deetzlabs = (options = {}) => {
     configureLogger(opts);
     await closet.rebuild();
     await twitch.connect();
+    streamlabs.start();
     const socket = socketio.listen(server);
     bus.on('show', (achievement, text, username, volume) => {
       socket.emit('achievement', {
@@ -89,6 +93,7 @@ const Deetzlabs = (options = {}) => {
   };
 
   const stop = async () => {
+    streamlabs.stop();
     await twitch.disconnect();
   };
 
