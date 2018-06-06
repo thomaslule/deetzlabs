@@ -73,25 +73,19 @@ const Deetzlabs = (options = {}) => {
   const server = Server(api, widgets, admin, twitch.getProxy());
 
   const start = async () => {
-    try {
-      configureLogger(opts);
-      await closet.rebuild();
-      await twitch.connect();
-      const socket = socketio.listen(server);
-      bus.on('show', (achievement, text, username, volume) => {
-        socket.emit('achievement', {
-          achievement, username, text, volume,
-        });
+    configureLogger(opts);
+    await closet.rebuild();
+    await twitch.connect();
+    const socket = socketio.listen(server);
+    bus.on('show', (achievement, text, username, volume) => {
+      socket.emit('achievement', {
+        achievement, username, text, volume,
       });
+    });
 
-      server.listen(opts.port, () => {
-        log.info(`listening on ${opts.port}`);
-      });
-    } catch (err) {
-      console.error(err);
-      log.error(err);
-      process.exit(1);
-    }
+    server.listen(opts.port, () => {
+      log.info(`listening on ${opts.port}`);
+    });
   };
 
   const stop = async () => {
