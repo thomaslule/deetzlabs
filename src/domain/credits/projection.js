@@ -47,6 +47,10 @@ const proj = (state = emptyCredits(''), event) => {
       || event.type === viewerEvtsTypes.resubscribed) {
       return addItem(state, 'subscribes', event.id);
     }
+    if (event.type === viewerEvtsTypes.gaveSub) {
+      const intermediateState = addItem(state, 'subscribes', event.recipient);
+      return addItem(intermediateState, 'donators', event.id);
+    }
     if (event.type === viewerEvtsTypes.cheered) {
       return addItem(state, 'donators', event.id);
     }

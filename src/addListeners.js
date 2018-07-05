@@ -51,6 +51,17 @@ module.exports = (twitch, closet) => {
     }
   });
 
+  twitch.on('subgift', async (channel, username, recipient, method) => {
+    try {
+      await closet.handleCommand('viewer', username.toLowerCase(), 'giveSub', {
+        recipient,
+        method,
+      });
+    } catch (error) {
+      log.error(error);
+    }
+  });
+
   twitch.on('join', async (channel, username, isSelf) => {
     try {
       if (isSelf) return;

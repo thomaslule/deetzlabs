@@ -5,6 +5,7 @@ const eventsTypes = {
   replayedAchievement: 'replayed-achievement',
   subscribed: 'subscribed',
   resubscribed: 'resubscribed',
+  gaveSub: 'gave-sub',
   cheered: 'cheered',
   donated: 'donated',
   joined: 'joined',
@@ -43,6 +44,8 @@ module.exports = {
       method,
       months,
     }),
+
+  gaveSub: (recipient, method) => createEvent(eventsTypes.gaveSub, { recipient, method }),
 
   cheered: amount => createEvent(eventsTypes.cheered, { amount }),
 

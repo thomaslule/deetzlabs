@@ -39,6 +39,8 @@ module.exports = achievements => ({
     return resubEvent;
   },
 
+  giveSub: (projection, { recipient, method }) => events.gaveSub(recipient, method),
+
   cheer: (projection, { message, amount, displayName }) => [
     events.cheered(amount),
     events.sentChatMessage(message, displayName),
