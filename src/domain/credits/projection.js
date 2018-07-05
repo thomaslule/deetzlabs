@@ -31,7 +31,8 @@ const proj = (state = emptyCredits(''), event) => {
     if (event.type === viewerEvtsTypes.sentChatMessage) {
       return addItem(state, 'viewers', event.id);
     }
-    if (event.type === viewerEvtsTypes.hosted) {
+    if (event.type === viewerEvtsTypes.hosted
+      || event.type === viewerEvtsTypes.raided) {
       return addItem(state, 'hosts', event.id);
     }
     if (event.type === viewerEvtsTypes.gotAchievement) {

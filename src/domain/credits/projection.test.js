@@ -92,3 +92,11 @@ test('add sub gifts in credits', () => {
   expect(get(state, getDisplayName, achievements).subscribes).toEqual(['lucky_one']);
   expect(get(state, getDisplayName, achievements).donators).toEqual(['someone']);
 });
+
+test('add raids in credits', () => {
+  const state = [
+    addStreamFields(streamEvts.begun('Tetris')),
+    addViewerFields(viewerEvts.raided(20), 'someone'),
+  ].reduce(projection, undefined);
+  expect(get(state, getDisplayName, achievements).hosts).toEqual(['someone']);
+});

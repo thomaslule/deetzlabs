@@ -64,6 +64,8 @@ module.exports = achievements => ({
 
   host: (projection, { nbViewers }) => events.hosted(nbViewers),
 
+  raid: (projection, { nbViewers }) => events.raided(nbViewers),
+
   follow: () => events.followed(),
 
   becomeTopClipper: () => events.becameTopClipper(),

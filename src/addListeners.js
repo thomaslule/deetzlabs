@@ -89,6 +89,14 @@ module.exports = (twitch, closet) => {
     }
   });
 
+  twitch.on('raid', async (channel, username, nbViewers) => {
+    try {
+      await closet.handleCommand('viewer', username.toLowerCase(), 'raid', { nbViewers });
+    } catch (error) {
+      log.error(error);
+    }
+  });
+
   twitch.on('stream-begin', async (game) => {
     try {
       await closet.handleCommand('stream', 'stream', 'begin', { game });

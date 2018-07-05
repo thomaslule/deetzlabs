@@ -11,6 +11,7 @@ const eventsTypes = {
   joined: 'joined',
   left: 'left',
   hosted: 'hosted',
+  raided: 'raided',
   followed: 'followed',
   becameTopClipper: 'became-top-clipper',
   lostTopClipper: 'lost-top-clipper',
@@ -52,6 +53,8 @@ module.exports = {
   donated: amount => createEvent(eventsTypes.donated, { amount }),
 
   hosted: nbViewers => createEvent(eventsTypes.hosted, { nbViewers }),
+
+  raided: nbViewers => createEvent(eventsTypes.raided, { nbViewers }),
 
   joined: () => createEvent(eventsTypes.joined),
 
