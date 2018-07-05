@@ -4,7 +4,7 @@ const { log } = require('../../../logger');
 module.exports = (commandParams, sendChatMessage) => async (event) => {
   try {
     if (event.type === eventsTypes.sentChatMessage
-      && event.message.trim().toLowerCase() === commandParams.command) {
+      && commandParams.isCommand(event.message)) {
       await sendChatMessage(commandParams.answer);
     }
   } catch (err) {

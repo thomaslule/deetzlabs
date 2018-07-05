@@ -27,12 +27,12 @@ test('persist data in db', async () => {
     sendChatMessage: () => {},
     showAchievement: () => {},
     achievements_command: {
-      command: '!achievements',
+      isCommand: message => message === '!achievements',
       answer: 'Congratulations %USER% for your achievements: %ACHIEVEMENTS%',
       answer_none: '%USER% doesn\'t have any achievement but their time will come!',
     },
     commands_command: {
-      command: '!commands',
+      isCommand: message => message === '!commands',
       answer: 'Say !achievements to see your current achievements',
     },
   });

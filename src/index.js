@@ -28,12 +28,12 @@ const defaultOptions = {
   self_url: 'http://localhost',
   webhook_port: 3333,
   achievements_command: {
-    command: '!achievements',
+    isCommand: message => message === '!achievements',
     answer: 'Congratulations %USER% for your achievements: %ACHIEVEMENTS%',
     answer_none: '%USER% doesn\'t have any achievement but their time will come!',
   },
   commands_command: {
-    command: '!commands',
+    isCommand: message => message === '!commands',
     answer: 'Say !achievements to see your current achievements',
   },
   protect_api: true,

@@ -6,7 +6,7 @@ const distributedAchievementsProjection = require('../projections/distributedAch
 module.exports = (closet, achievements, commandParams, sendChatMessage) => async (event) => {
   try {
     if (event.type === eventsTypes.sentChatMessage
-      && event.message.trim().toLowerCase() === commandParams.command) {
+      && commandParams.isCommand(event.message)) {
       const displayName = displayNamesProjection.get(await closet.getProjection('displayNames'), event.id);
       const viewerAchievements = distributedAchievementsProjection.getForViewer(
         await closet.getProjection('distributedAchievements'),

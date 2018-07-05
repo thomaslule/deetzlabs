@@ -24,7 +24,7 @@ test('doesnt send anything if its !commands followed by something', (done) => {
 test('can customize !commands command', (done) => {
   const setupObj = setup({
     commands_command: {
-      command: '!komands',
+      isCommand: message => message === '!komands',
       answer: 'wat?',
     },
   });

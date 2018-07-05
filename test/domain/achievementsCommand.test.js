@@ -46,10 +46,19 @@ test('!achievements reads only caller achievements', (done) => {
     });
 });
 
+test('!success works too', (done) => {
+  postMessage(closet, '!success')
+    .then(() => new Promise(setImmediate))
+    .then(() => {
+      expect(sendChatMessage).toHaveBeenCalledWith('Someone doesn\'t have any achievement but their time will come!');
+      done();
+    });
+});
+
 test('can customize !achievements command', (done) => {
   const setupObj = setup({
     achievements_command: {
-      command: '!medals',
+      isCommand: message => message === '!medals',
       answer: 'Congratulations %USER% for your medals: %ACHIEVEMENTS%',
       answer_none: '%USER% doesn\'t have any medal but their time will come!',
     },
