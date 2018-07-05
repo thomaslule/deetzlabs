@@ -4,8 +4,6 @@ const socketio = require('socket.io');
 const { configureLogger, log } = require('./logger');
 const closetStorage = require('./storage');
 const configureCloset = require('./domain');
-const viewerEvents = require('./domain/viewer/events').eventsTypes;
-const streamEvents = require('./domain/stream/events').eventsTypes;
 const Twitch = require('./twitch');
 const Server = require('./server');
 const Api = require('./api');
@@ -52,7 +50,7 @@ const defaultOptions = {
   widgets_folder: null,
 };
 
-const Deetzlabs = (options = {}) => {
+module.exports = (options = {}) => {
   const opts = {
     ...defaultOptions,
     ...options,
@@ -98,10 +96,4 @@ const Deetzlabs = (options = {}) => {
   };
 
   return { start, stop };
-};
-
-module.exports = {
-  default: Deetzlabs,
-  viewerEvents,
-  streamEvents,
 };
