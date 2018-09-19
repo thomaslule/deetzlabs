@@ -1,5 +1,5 @@
 import { EventBus, KeyValueStorage, Store, StoredDecisionProvider } from "es-objects";
-import { eventsTypes } from "./events";
+import { CommandsCommandListenener } from "./listeners/commands-command-listener";
 import { decisionReducer, DecisionState, Viewer } from "./viewer";
 
 export class ViewerDomain {
@@ -17,15 +17,8 @@ export class ViewerDomain {
       (e) => e.aggregate === "viewer",
     );
     this.store = new Store<Viewer, DecisionState>("viewer", Viewer, viewerDecisionProvider, eventBus);
-    eventBus.onEvent((e) => {
-      if (
-        e.aggregate === "viewer"
-        && e.type === eventsTypes.sentChatMessage
-        && e.message.commandsCommand
-      ) {
-        sendChatMessage(options.commands_answer);
-      }
-    });
+    const commandsCommandListener = new CommandsCommandListenener(sendChatMessage, options);
+    eventBus.onEvent((event) => commandsCommandListener.handleEvent(event));
   }
 
   public get(id: string) {
