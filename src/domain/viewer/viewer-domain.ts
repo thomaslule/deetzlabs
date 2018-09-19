@@ -1,9 +1,9 @@
 import { EventBus, KeyValueStorage, Store, StoredDecisionProvider } from "es-objects";
 import { eventsTypes } from "./events";
-import { decisionReducer, Viewer } from "./viewer";
+import { decisionReducer, DecisionState, Viewer } from "./viewer";
 
 export class ViewerDomain {
-  private store: Store<Viewer, any>;
+  private store: Store<Viewer, DecisionState>;
 
   constructor(
     eventBus: EventBus,
@@ -16,14 +16,14 @@ export class ViewerDomain {
       decisionStorage,
       (e) => e.aggregate === "viewer",
     );
-    this.store = new Store<Viewer, any>("viewer", Viewer, viewerDecisionProvider, eventBus);
+    this.store = new Store<Viewer, DecisionState>("viewer", Viewer, viewerDecisionProvider, eventBus);
     eventBus.onEvent((e) => {
       if (
         e.aggregate === "viewer"
         && e.type === eventsTypes.sentChatMessage
-        && e.commandsCommand
+        && e.message.commandsCommand
       ) {
-        sendChatMessage(options.commands_command.answer);
+        sendChatMessage(options.commands_answer);
       }
     });
   }

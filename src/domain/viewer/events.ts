@@ -23,10 +23,10 @@ const createEvent = (type: string, content: any = {}) => ({
   ...content,
 });
 
-export const sentChatMessage = (characteristics: any, displayName: string) =>
+export const sentChatMessage = (message: any, displayName: string) =>
   createEvent(eventsTypes.sentChatMessage, {
+    message,
     displayName,
-    ...characteristics,
   });
 
 export const gotAchievement = (achievement: string) =>

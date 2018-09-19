@@ -3,11 +3,7 @@ import { donated, eventsTypes, sentChatMessage } from "./events";
 
 export class Viewer extends Entity<DecisionState> {
   public async chatMessage(message: string, displayName: string, options: any) {
-    const characteristics: any = {};
-    if (options.commands_command.isCommand(message)) {
-      characteristics.commandsCommand = true;
-    }
-    await this.publishAndApply(sentChatMessage(characteristics, displayName));
+    await this.publishAndApply(sentChatMessage(options.messageToObject(message), displayName));
   }
 
   public async donate(amount: number) {

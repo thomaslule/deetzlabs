@@ -11,15 +11,13 @@ const defaultOptions = {
   secret: "",
   self_url: "http://localhost",
   webhook_port: 3333,
-  achievements_command: {
-    isCommand: (message: string) => message === "!achievements",
-    answer: "Congratulations %USER% for your achievements: %ACHIEVEMENTS%",
-    answer_none: "%USER% doesn't have any achievement but their time will come!",
-  },
-  commands_command: {
-    isCommand: (message: string) => message === "!commands",
-    answer: "Say !achievements to see your current achievements",
-  },
+  messageToObject: (message: string) => ({
+    commandsCommand: message === "!commands" ? true : undefined,
+    achievementsCommand: message === "!achievements" ? true : undefined,
+  }),
+  achievements_answer: "Congratulations %USER% for your achievements: %ACHIEVEMENTS%",
+  achievements_answer_none: "%USER% doesn't have any achievement but their time will come!",
+  commands_answer: "Say !achievements to see your current achievements",
   protect_api: true,
   logins: {
     test: "n4bQgYhMfWWaL+qgxVrQFaO/TxsrC4Is0V1sFbDwCgg=", // test
