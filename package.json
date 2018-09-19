@@ -3,44 +3,31 @@
   "version": "0.4.0",
   "description": "",
   "main": "index.js",
+  "typings": "./lib/index.d.ts",
   "scripts": {
-    "test": "jest --runInBand"
+    "build": "rimraf ./lib && tsc",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/thomaslule/deetzlabs.git"
   },
   "author": "thomaslule",
-  "license": "MIT",
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/thomaslule/deetzlabs/issues"
   },
   "homepage": "https://github.com/thomaslule/deetzlabs#readme",
   "devDependencies": {
-    "eslint": "^4.7.2",
-    "eslint-config-airbnb-base": "^12.0.0",
-    "eslint-plugin-import": "^2.7.0",
-    "eslint-plugin-jest": "^21.2.0",
-    "jest": "^21.2.1",
-    "stream-to-array": "^2.3.0",
-    "supertest": "^3.0.0"
+    "@types/jest": "^23.3.2",
+    "@types/node": "^10.10.0",
+    "babel-core": "^6.26.3",
+    "babel-jest": "^23.6.0",
+    "jest": "^23.6.0",
+    "rimraf": "^2.6.2",
+    "ts-jest": "^23.1.4",
+    "tslint": "^5.11.0",
+    "typescript": "^3.0.3"
   },
-  "dependencies": {
-    "body-parser": "^1.18.2",
-    "deetzlabs-web": "^0.1.3",
-    "event-closet": "^0.2.0",
-    "express": "^4.15.5",
-    "express-http-proxy": "^1.2.0",
-    "express-jwt": "^5.3.1",
-    "express-validator": "^4.3.0",
-    "jsonwebtoken": "^8.2.1",
-    "morgan": "^1.9.0",
-    "pg": "^7.4.0",
-    "pg-query-stream": "^1.1.1",
-    "socket.io": "^2.1.0",
-    "socket.io-client": "^2.1.1",
-    "twitch-channel": "^0.1.3",
-    "winston": "^2.3.1",
-    "winston-daily-rotate-file": "^1.7.2"
-  }
+  "dependencies": {}
 }
