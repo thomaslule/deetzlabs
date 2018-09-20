@@ -14,13 +14,19 @@ export class Viewer extends Entity<DecisionState> {
     super(decisionState, getDecisionReducer(options), createAndPublish);
   }
 
-  public getAggregate() {
-    return "viewer";
-  }
-
   public async chatMessage(message: string, displayName: string) {
     const event = await this.publishAndApply(sentChatMessage(this.options.messageToObject(message), displayName));
     await this.distributeAchievements(event);
+  }
+
+  public async giveAchievement(achievement: string) {
+    if (this.getDecision().achievementsReceived.includes(achievement)) {
+      throw new Error("bad_request user already has achievement");
+    }
+    if (!this.options.achievements[achievement]) {
+      throw new Error("bad_request achievement doesnt exist");
+    }
+    await this.publishAndApply(gotAchievement(achievement));
   }
 
   public async donate(amount: number) {
