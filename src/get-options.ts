@@ -1,3 +1,5 @@
+import { Event, Reducer } from "es-objects";
+import { Dictionary } from "lodash";
 import { Obj } from "./util";
 
 const defaultOptions = {
@@ -35,5 +37,16 @@ export function getOptions(providedOptions: Obj = {}): Options {
 }
 
 export interface Options {
+  achievements: Dictionary<AchievementOption>;
+  achievements_answer: string;
+  achievements_answer_none: string;
+  commands_answer: string;
   [x: string]: any;
+}
+
+interface AchievementOption {
+  name: string;
+  text: string;
+  reducer: Reducer<any>;
+  distributeWhen: (state: any, event: Event) => boolean;
 }
