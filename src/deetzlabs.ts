@@ -23,7 +23,7 @@ export class Deetzlabs {
       try {
         if (isSelf) { return; }
         const viewer = await domain.viewer.get(userstate.username);
-        await viewer.chatMessage(message, userstate["display-name"], opts);
+        await viewer.chatMessage(message, userstate["display-name"]);
       } catch (error) {
         // TODO
       }

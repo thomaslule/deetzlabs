@@ -1,6 +1,6 @@
 import { EventBus, KeyValueStorage, Store, StoredDecisionProvider } from "es-objects";
 import { CommandsCommandListenener } from "./listeners/commands-command-listener";
-import { decisionReducer, DecisionState, Viewer } from "./viewer";
+import { DecisionState, getDecisionReducer, Viewer } from "./viewer";
 
 export class ViewerDomain {
   private store: Store<Viewer, DecisionState>;
@@ -12,11 +12,16 @@ export class ViewerDomain {
     options: any,
   ) {
     const viewerDecisionProvider = new StoredDecisionProvider(
-      decisionReducer,
+      getDecisionReducer(options),
       decisionStorage,
       (e) => e.aggregate === "viewer",
     );
-    this.store = new Store<Viewer, DecisionState>("viewer", Viewer, viewerDecisionProvider, eventBus);
+    this.store = new Store<Viewer, DecisionState>(
+      "viewer",
+      (id, decisionState, createAndPublish) => new Viewer(id, decisionState, createAndPublish, options),
+      viewerDecisionProvider,
+      (event) => eventBus.publish(event),
+    );
     const commandsCommandListener = new CommandsCommandListenener(sendChatMessage, options);
     eventBus.onEvent((event) => commandsCommandListener.handleEvent(event));
   }

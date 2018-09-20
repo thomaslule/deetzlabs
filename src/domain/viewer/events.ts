@@ -1,3 +1,5 @@
+import { Obj } from "../../util";
+
 export const eventsTypes = {
   migratedData: "migrated-data",
   sentChatMessage: "sent-chat-message",
@@ -23,7 +25,7 @@ const createEvent = (type: string, content: any = {}) => ({
   ...content,
 });
 
-export const sentChatMessage = (message: any, displayName: string) =>
+export const sentChatMessage = (message: Obj, displayName: string) =>
   createEvent(eventsTypes.sentChatMessage, {
     message,
     displayName,

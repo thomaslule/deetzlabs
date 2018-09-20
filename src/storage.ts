@@ -1,10 +1,7 @@
 import {
   EventStorage, InMemoryEventStorage, InMemoryKeyValueStorage, InMemoryValueStorage, KeyValueStorage, ValueStorage,
 } from "es-objects";
-
-interface Dictionary<T> {
-  [id: string]: T;
-}
+import { Dictionary } from "./util";
 
 export class Storage {
   private eventStorage: EventStorage = new InMemoryEventStorage();

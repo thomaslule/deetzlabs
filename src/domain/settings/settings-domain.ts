@@ -15,7 +15,12 @@ export class SettingsDomain {
     achievementVolumeProjStorage: ValueStorage<any>,
     followersGoalProjStorage: ValueStorage<any>,
   ) {
-    this.store = new Store<Settings, undefined>("settings", Settings, new VoidDecisionProvider(), eventBus);
+    this.store = new Store<Settings, undefined>(
+      "settings",
+      (id, decisionState, createAndPublish) => new Settings(createAndPublish),
+      new VoidDecisionProvider(),
+      (event) => eventBus.publish(event),
+    );
     this.achievementVolumeProj = new AchievementVolumeProj(achievementVolumeProjStorage);
     this.followersGoalProj = new FollowersGoalProj(followersGoalProjStorage);
     eventBus.onEvent((e) => {

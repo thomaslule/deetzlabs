@@ -1,3 +1,5 @@
+import { Obj } from "./util";
+
 const defaultOptions = {
   port: 3100,
   db_url: "postgresql://postgres:admin@localhost:5432/deetzlabs",
@@ -24,16 +26,14 @@ const defaultOptions = {
   },
   log_to_console: true,
   log_to_file: true,
-  achievements: {
-    testing: {
-      name: "Testing",
-      text: "%USER% tests something",
-      reducer: () => ({ distribute: false }),
-    },
-  },
+  achievements: {},
   widgets_folder: undefined,
 };
 
-export function getOptions(providedOptions: any = {}) {
+export function getOptions(providedOptions: Obj = {}): Options {
   return { ...defaultOptions, ...providedOptions };
+}
+
+export interface Options {
+  [x: string]: any;
 }

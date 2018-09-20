@@ -29,5 +29,8 @@
     "tslint": "^5.11.0",
     "typescript": "^3.0.3"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@types/lodash.mapvalues": "^4.6.4",
+    "lodash.mapvalues": "^4.6.0"
+  }
 }
