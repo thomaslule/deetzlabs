@@ -4,6 +4,7 @@ import * as expressjwt from "express-jwt";
 import { check, validationResult } from "express-validator/check";
 import { matchedData } from "express-validator/filter";
 import { sign } from "jsonwebtoken";
+import mapValues = require("lodash.mapvalues");
 import { Domain } from "./domain";
 import { Options } from "./get-options";
 
@@ -75,6 +76,15 @@ export class Api {
     this.router.get("/viewer_names", async (req: Request, res: Response, next: NextFunction) => {
       try {
         res.send(await this.domain.viewer.getNames());
+      } catch (err) {
+        next(err);
+      }
+    });
+
+    this.router.get("/achievements", (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const achievements = mapValues(this.options.achievements, (achievement) => achievement.name);
+        res.send(achievements);
       } catch (err) {
         next(err);
       }
