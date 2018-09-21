@@ -79,5 +79,22 @@ export class Api {
         next(err);
       }
     });
+
+    this.router.post(
+      "/give_achievement",
+      check("achievement").not().isEmpty(),
+      check("viewerId").not().isEmpty(),
+      check("viewerName").not().isEmpty(),
+      validationMiddleware,
+      async (req: any, res: Response, next: NextFunction) => {
+        try {
+          const { achievement, viewerId, viewerName } = req.validParams;
+          const viewer = await this.domain.viewer.get(viewerId);
+          await viewer.giveAchievement(achievement, viewerName);
+          res.sendStatus(200);
+        } catch (err) {
+          next(err);
+        }
+      });
   }
 }
