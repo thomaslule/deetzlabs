@@ -29,10 +29,10 @@ export class Viewer extends Entity<DecisionState> {
 
   public async giveAchievement(achievement: string, viewerName?: string) {
     if (this.getDecision().achievementsReceived.includes(achievement)) {
-      throw new Error("bad_request user already has achievement");
+      throw new Error("user already has achievement");
     }
     if (!this.options.achievements[achievement]) {
-      throw new Error("bad_request achievement doesnt exist");
+      throw new Error("achievement doesnt exist");
     }
     if (viewerName) { await this.changeName(viewerName); }
     await this.publishAndApply(gotAchievement(achievement));
