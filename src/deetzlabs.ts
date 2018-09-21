@@ -22,7 +22,7 @@ export class Deetzlabs {
     twitch.on("chat", async (channel: any, userstate: any, message: string, isSelf: boolean) => {
       try {
         if (isSelf) { return; }
-        const viewer = await domain.viewer.get(userstate.username);
+        const viewer = await domain.viewer.get(userstate["user-id"]);
         await viewer.chatMessage(message, userstate["display-name"]);
       } catch (error) {
         // TODO
