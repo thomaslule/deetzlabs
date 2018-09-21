@@ -71,5 +71,13 @@ export class Api {
         next(err);
       }
     });
+
+    this.router.get("/viewer_names", async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        res.send(await this.domain.viewer.getNames());
+      } catch (err) {
+        next(err);
+      }
+    });
   }
 }
