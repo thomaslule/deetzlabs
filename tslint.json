@@ -6,6 +6,9 @@
     "jsRules": {},
     "rules": {
         "interface-name": false,
+        "max-classes-per-file": false,
+        "no-empty": false,
+        "no-null-keyword": true,
         "object-literal-sort-keys": false,
         "whitespace": {
             "options": [
@@ -17,9 +20,7 @@
                 "check-type",
                 "check-typecast"
             ]
-        },
-        "max-classes-per-file": false,
-        "no-null-keyword": true
+        }
     },
     "rulesDirectory": []
 }
