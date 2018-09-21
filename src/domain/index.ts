@@ -14,7 +14,7 @@ export class Domain {
     options: any,
   ) {
     const bus = new EventBus(storage.getEventStorage());
-    this.viewer = new ViewerDomain(bus, sendChatMessage, storage.getKeyValueStorage("viewer-decision"), options);
+    this.viewer = new ViewerDomain(bus, sendChatMessage, storage, options);
     this.settings = new SettingsDomain(
       bus,
       storage.getValueStorage("achievement-volume-proj"),
