@@ -1,3 +1,4 @@
+import * as assert from "assert";
 import { Event } from "es-objects";
 import { Options } from "../../../get-options";
 import { DisplayNameProjection } from "../projections/display-name-projection";
@@ -19,6 +20,7 @@ export class AchievementsCommandListenener {
       && event.message.achievementsCommand
     ) {
       const displayName = await this.displayNameProj.get(event.id);
+      assert(displayName, `couldnt get the displayName for viewer ${event.id}`);
       const achievements = await this.viewerAchievementsProjection.get(event.id);
       const achievementsNames = achievements.map((id) => this.options.achievements[id].name);
       const message = achievementsNames.length > 0

@@ -25,11 +25,11 @@ const createEvent = (type: string, content: any = {}) => ({
   ...content,
 });
 
-export const sentChatMessage = (message: Obj, displayName: string) =>
-  createEvent(eventsTypes.sentChatMessage, {
-    message,
-    displayName,
-  });
+export const changedDisplayName = (displayName: string) =>
+  createEvent("changed-display-name", { displayName });
+
+export const sentChatMessage = (message: Obj) =>
+  createEvent(eventsTypes.sentChatMessage, { message });
 
 export const gotAchievement = (achievement: string) =>
   createEvent(eventsTypes.gotAchievement, { achievement });

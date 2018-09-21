@@ -10,10 +10,10 @@ describe("ViewerDomain", () => {
     const domain = new ViewerDomain(bus, sendChatMessage, new Storage(), testOptions);
     const someone = await domain.get("123");
 
-    await someone.chatMessage("not the command", "Someone");
+    await someone.chatMessage("not the command");
     expect(sendChatMessage).not.toHaveBeenCalled();
 
-    await someone.chatMessage("!commands", "Someone");
+    await someone.chatMessage("!commands");
     expect(sendChatMessage).toHaveBeenCalledWith("Say !achievements to see your current achievements");
   });
 
@@ -22,11 +22,10 @@ describe("ViewerDomain", () => {
     const sendChatMessage = jest.fn();
     const domain = new ViewerDomain(bus, sendChatMessage, new Storage(), testOptions);
     const someone = await domain.get("123");
-    await someone.giveAchievement("cheerleader");
+    await someone.giveAchievement("cheerleader", "Someone");
 
-    await someone.chatMessage("!achievements", "Someone");
+    await someone.chatMessage("!achievements");
 
-    await new Promise((resolve) => setTimeout(resolve, 15)); // wait for DisplayNameProjection to be filled
     expect(sendChatMessage).toHaveBeenCalledWith("Congratulations Someone for your achievements: Cheerleader");
   });
 

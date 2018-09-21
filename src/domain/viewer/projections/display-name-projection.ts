@@ -1,7 +1,7 @@
 import { Event, KeyValueStorage, Reducer, StoredEntityProjection } from "es-objects";
 
 const reducer: Reducer<string> = (state = undefined, event) => {
-  if (event.displayName) {
+  if (event.type === "changed-display-name") {
     return event.displayName;
   }
   return state;

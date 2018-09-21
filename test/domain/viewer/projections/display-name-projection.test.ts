@@ -3,29 +3,21 @@ import { DisplayNameProjection } from "../../../../src/domain/viewer/projections
 
 describe("DisplayNameProjection", () => {
 
-  const chatEvent = {
+  const event = {
     aggregate: "viewer", id: "123", sequence: 0, insertDate: new Date().toISOString(),
-    type: "sent-chat-message", displayName: "Someone",
+    type: "changed-display-name", displayName: "Someone",
   };
 
-  test("it should return the displayName found in an event", async () => {
+  test("it should return the displayName found in the event", async () => {
     const proj = new DisplayNameProjection(new InMemoryKeyValueStorage());
-    await proj.handleEvent(chatEvent);
-    expect(await proj.get("123")).toEqual("Someone");
-  });
-
-  test("it should ignore events without displayName", async () => {
-    const proj = new DisplayNameProjection(new InMemoryKeyValueStorage());
-    const { displayName, ...rest } = chatEvent;
-    await proj.handleEvent(chatEvent);
-    await proj.handleEvent(rest);
+    await proj.handleEvent(event);
     expect(await proj.get("123")).toEqual("Someone");
   });
 
   test("it should do one retry when the displayName is currently unknown", async () => {
     const proj = new DisplayNameProjection(new InMemoryKeyValueStorage());
     const getPromise = proj.get("123");
-    await proj.handleEvent(chatEvent);
+    await proj.handleEvent(event);
 
     // the proj got the displayName from the event even if it was issued AFTER the get
     expect(await getPromise).toEqual("Someone");
