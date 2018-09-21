@@ -15,6 +15,14 @@ const defaultOptions = {
   secret: "",
   self_url: "http://localhost",
   webhook_port: 3333,
+  protect_api: true,
+  logins: {
+    test: "n4bQgYhMfWWaL+qgxVrQFaO/TxsrC4Is0V1sFbDwCgg=", // test
+  },
+  log_to_console: true,
+  log_to_file: true,
+  widgets_folder: undefined,
+  achievements: {},
   messageToObject: (message: string) => ({
     commandsCommand: message === "!commands" ? true : undefined,
     achievementsCommand: message === "!achievements" ? true : undefined,
@@ -22,31 +30,40 @@ const defaultOptions = {
   achievements_answer: "Congratulations %USER% for your achievements: %ACHIEVEMENTS%",
   achievements_answer_none: "%USER% doesn't have any achievement but their time will come!",
   commands_answer: "Say !achievements to see your current achievements",
-  protect_api: true,
-  logins: {
-    test: "n4bQgYhMfWWaL+qgxVrQFaO/TxsrC4Is0V1sFbDwCgg=", // test
-  },
-  log_to_console: true,
-  log_to_file: true,
-  achievements: {},
-  widgets_folder: undefined,
 };
 
-export function getOptions(providedOptions: Obj = {}): Options {
+export function getOptions(providedOptions: Partial<Options> = {}): Options {
   return { ...defaultOptions, ...providedOptions };
 }
 
 export interface Options {
+  port: number;
+  db_url: string;
+  channel: string;
+  client_id: string;
+  client_secret: string;
+  streamer_token: string;
+  bot_name: string;
+  bot_token: string;
+  streamlabs_socket_token: string;
+  secret: string;
+  self_url: string;
+  webhook_port: number;
+  protect_api: boolean;
+  logins: Dictionary<string>;
+  log_to_console: boolean;
+  log_to_file: boolean;
+  widgets_folder: string | undefined;
   achievements: Dictionary<AchievementOption>;
+  messageToObject: (message: string) => Obj;
   achievements_answer: string;
   achievements_answer_none: string;
   commands_answer: string;
-  [x: string]: any;
 }
 
 interface AchievementOption {
   name: string;
   text: string;
-  reducer: Reducer<any>;
+  reducer?: Reducer<any>;
   distributeWhen: (state: any, event: Event) => boolean;
 }
