@@ -1,12 +1,10 @@
 import { InMemoryKeyValueStorage } from "es-objects";
 import { DisplayNameProjection } from "../../../../src/domain/viewer/projections/display-name-projection";
+import { makeEvent } from "../../../test-util";
 
 describe("DisplayNameProjection", () => {
 
-  const event = {
-    aggregate: "viewer", id: "123", sequence: 0, insertDate: new Date().toISOString(),
-    type: "changed-display-name", displayName: "Someone",
-  };
+  const event = makeEvent({ type: "changed-display-name", displayName: "Someone" });
 
   test("it should return the displayName found in the event", async () => {
     const proj = new DisplayNameProjection(new InMemoryKeyValueStorage());
