@@ -1,5 +1,5 @@
 import { createHash } from "crypto";
-import { NextFunction, Response, Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 import * as expressjwt from "express-jwt";
 import { check, validationResult } from "express-validator/check";
 import { matchedData } from "express-validator/filter";
@@ -22,7 +22,7 @@ const validationMiddleware = (req: any, res: Response, next: NextFunction) => {
 export class Api {
   private router: Router;
 
-  constructor(domain: Domain, private options: Options) {
+  constructor(private domain: Domain, private options: Options) {
     this.router = Router();
     if (this.options.protect_api) {
       this.router.use(expressjwt({
@@ -55,12 +55,21 @@ export class Api {
               res.sendStatus(401);
             }
           } else {
-            res.send("DUMMY_TOKEN");
+            const expiresAt = Date.now() + (LOGIN_DURATION * 1000);
+            res.send({ token: "DUMMY_TOKEN", expiresAt });
           }
         } catch (err) {
           next(err);
         }
       },
     );
+
+    this.router.get("/distributed_achievements", async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        res.send(await this.domain.viewer.getDistributedAchievements());
+      } catch (err) {
+        next(err);
+      }
+    });
   }
 }

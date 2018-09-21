@@ -1,6 +1,6 @@
 import { Event, Reducer, StoredProjection, ValueStorage } from "es-objects";
 
-interface DistributedAchievement {
+export interface DistributedAchievement {
   viewer: string;
   achievement: string;
 }

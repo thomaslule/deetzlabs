@@ -3,6 +3,7 @@ import { Storage } from "../../storage";
 import { AchievementsCommandListenener } from "./listeners/achievements-command-listener";
 import { CommandsCommandListenener } from "./listeners/commands-command-listener";
 import { DisplayNameProjection } from "./projections/display-name-projection";
+import { DistributedAchievementsProjection } from "./projections/distributed-achievements-projection";
 import { ViewerAchievementsProjection } from "./projections/viewer-achievements-projection";
 import { DecisionState, getDecisionReducer, Viewer } from "./viewer";
 
@@ -10,6 +11,7 @@ export class ViewerDomain {
   private store: Store<Viewer, DecisionState>;
   private viewerAchsProj: ViewerAchievementsProjection;
   private displayNameProj: DisplayNameProjection;
+  private distributedAchsProj: DistributedAchievementsProjection;
 
   constructor(
     eventBus: EventBus,
@@ -35,6 +37,11 @@ export class ViewerDomain {
     this.displayNameProj = new DisplayNameProjection(storage.getKeyValueStorage("viewer-display-name"));
     eventBus.onEvent((event) => this.displayNameProj.handleEvent(event));
 
+    this.distributedAchsProj = new DistributedAchievementsProjection(
+      storage.getValueStorage("viewer-distributed-achievements"),
+    );
+    eventBus.onEvent((event) => this.distributedAchsProj.handleEvent(event));
+
     const commandsCmdListener = new CommandsCommandListenener(sendChatMessage, options);
     eventBus.onEvent((event) => commandsCmdListener.handleEvent(event));
 
@@ -49,5 +56,9 @@ export class ViewerDomain {
 
   public get(id: string) {
     return this.store.get(id);
+  }
+
+  public async getDistributedAchievements() {
+    return this.distributedAchsProj.get();
   }
 }
