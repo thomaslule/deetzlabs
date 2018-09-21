@@ -2,15 +2,15 @@ import { EventBus, Store, StoredDecisionProvider } from "es-objects";
 import { Storage } from "../../storage";
 import { AchievementsCommandListenener } from "./listeners/achievements-command-listener";
 import { CommandsCommandListenener } from "./listeners/commands-command-listener";
-import { DisplayNameProjection } from "./projections/display-name-projection";
 import { DistributedAchievementsProjection } from "./projections/distributed-achievements-projection";
 import { ViewerAchievementsProjection } from "./projections/viewer-achievements-projection";
+import { ViewerNameProjection } from "./projections/viewer-name-projection";
 import { DecisionState, getDecisionReducer, Viewer } from "./viewer";
 
 export class ViewerDomain {
   private store: Store<Viewer, DecisionState>;
   private viewerAchsProj: ViewerAchievementsProjection;
-  private displayNameProj: DisplayNameProjection;
+  private viewerNameProj: ViewerNameProjection;
   private distributedAchsProj: DistributedAchievementsProjection;
 
   constructor(
@@ -34,8 +34,8 @@ export class ViewerDomain {
     this.viewerAchsProj = new ViewerAchievementsProjection(storage.getKeyValueStorage("viewer-achievements"));
     eventBus.onEvent((event) => this.viewerAchsProj.handleEvent(event));
 
-    this.displayNameProj = new DisplayNameProjection(storage.getKeyValueStorage("viewer-display-name"));
-    eventBus.onEvent((event) => this.displayNameProj.handleEvent(event));
+    this.viewerNameProj = new ViewerNameProjection(storage.getKeyValueStorage("viewer-name"));
+    eventBus.onEvent((event) => this.viewerNameProj.handleEvent(event));
 
     this.distributedAchsProj = new DistributedAchievementsProjection(
       storage.getValueStorage("viewer-distributed-achievements"),
@@ -47,7 +47,7 @@ export class ViewerDomain {
 
     const achsCmdListener = new AchievementsCommandListenener(
       this.viewerAchsProj,
-      this.displayNameProj,
+      this.viewerNameProj,
       sendChatMessage,
       options,
     );

@@ -25,8 +25,8 @@ const createEvent = (type: string, content: any = {}) => ({
   ...content,
 });
 
-export const changedDisplayName = (displayName: string) =>
-  createEvent("changed-display-name", { displayName });
+export const changedName = (name: string) =>
+  createEvent("changed-name", { name });
 
 export const sentChatMessage = (message: Obj) =>
   createEvent(eventsTypes.sentChatMessage, { message });

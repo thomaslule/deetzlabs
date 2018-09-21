@@ -7,7 +7,7 @@ describe("Viewer", () => {
     test("it should publish deserved achievements", async () => {
       const publish = jest.fn().mockImplementation((event) => event);
       const someone = new Viewer(
-        "123", { displayName: "Someone", achievementsReceived: [], achievementsProgress: {} }, publish, testOptions,
+        "123", { name: "Someone", achievementsReceived: [], achievementsProgress: {} }, publish, testOptions,
       );
 
       await someone.cheer(500);
@@ -19,7 +19,7 @@ describe("Viewer", () => {
 
     test("it shouldnt publish already obtained achievements", async () => {
       const publish = jest.fn().mockImplementation((event) => event);
-      const decisionState = { displayName: "Someone", achievementsReceived: ["cheerleader"], achievementsProgress: {} };
+      const decisionState = { name: "Someone", achievementsReceived: ["cheerleader"], achievementsProgress: {} };
       const someone = new Viewer("123", decisionState, publish, testOptions);
 
       await someone.cheer(500);
@@ -30,23 +30,23 @@ describe("Viewer", () => {
 
   });
 
-  describe("changeDisplayName", () => {
-    test("it should set a new viewer's display name", async () => {
+  describe("changeName", () => {
+    test("it should set a new viewer's name", async () => {
       const publish = jest.fn().mockImplementation((event) => event);
-      const decisionState = { displayName: undefined, achievementsReceived: [], achievementsProgress: {} };
+      const decisionState = { name: undefined, achievementsReceived: [], achievementsProgress: {} };
       const someone = new Viewer("123", decisionState, publish, testOptions);
 
-      await someone.changeDisplayName("Someone");
+      await someone.changeName("Someone");
 
-      expect(publish).toHaveBeenCalledWith({ type: "changed-display-name", displayName: "Someone", version: 1 });
+      expect(publish).toHaveBeenCalledWith({ type: "changed-name", name: "Someone", version: 1 });
     });
 
-    test("it shouldnt do anything when the displayName is the same", async () => {
+    test("it shouldnt do anything when the name is the same", async () => {
       const publish = jest.fn().mockImplementation((event) => event);
-      const decisionState = { displayName: "Someone", achievementsReceived: [], achievementsProgress: {} };
+      const decisionState = { name: "Someone", achievementsReceived: [], achievementsProgress: {} };
       const someone = new Viewer("123", decisionState, publish, testOptions);
 
-      await someone.changeDisplayName("Someone");
+      await someone.changeName("Someone");
 
       expect(publish).not.toHaveBeenCalled();
     });
