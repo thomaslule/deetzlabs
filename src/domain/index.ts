@@ -23,5 +23,8 @@ export class Domain {
       storage.getValueStorage("achievement-volume-proj"),
       storage.getValueStorage("followers-goal-proj"),
     );
+    bus.onEvent((event) => {
+      log.info(`event happened: %s %s %s`, event.aggregate, event.id, event.type);
+    });
   }
 }
