@@ -13,7 +13,9 @@ export class Domain {
     showAchievement: (achievement: string) => void,
     options: any,
   ) {
-    const bus = new EventBus(storage.getEventStorage());
+    const bus = new EventBus(storage.getEventStorage(), (err) => {
+      console.log(err); // TODO
+    });
     this.viewer = new ViewerDomain(bus, sendChatMessage, storage, options);
     this.settings = new SettingsDomain(
       bus,

@@ -13,26 +13,22 @@ export class AchievementsCommandListenener {
   }
 
   public async handleEvent(event: Event) {
-    try {
-      if (
-        event.aggregate === "viewer"
-        && event.type === "sent-chat-message"
-        && event.message.achievementsCommand
-      ) {
-        const displayName = await this.displayNameProj.get(event.id);
-        const achievements = await this.viewerAchievementsProjection.get(event.id);
-        const achievementsNames = achievements.map((id) => this.options.achievements[id].name);
-        const message = achievementsNames.length > 0
-        ? this.options.achievements_answer
-          .replace("%USER%", displayName)
-          .replace("%ACHIEVEMENTS%", achievementsNames.join(", "))
-        : this.options.achievements_answer_none
-          .replace("%USER%", displayName);
+    if (
+      event.aggregate === "viewer"
+      && event.type === "sent-chat-message"
+      && event.message.achievementsCommand
+    ) {
+      const displayName = await this.displayNameProj.get(event.id);
+      const achievements = await this.viewerAchievementsProjection.get(event.id);
+      const achievementsNames = achievements.map((id) => this.options.achievements[id].name);
+      const message = achievementsNames.length > 0
+      ? this.options.achievements_answer
+        .replace("%USER%", displayName)
+        .replace("%ACHIEVEMENTS%", achievementsNames.join(", "))
+      : this.options.achievements_answer_none
+        .replace("%USER%", displayName);
 
-        this.sendChatMessage(message);
-      }
-    } catch (err) {
-      // TODO
+      this.sendChatMessage(message);
     }
   }
 }

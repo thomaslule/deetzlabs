@@ -5,16 +5,12 @@ export class CommandsCommandListenener {
   }
 
   public handleEvent(event: Event) {
-    try {
-      if (
-        event.aggregate === "viewer"
-        && event.type === "sent-chat-message"
-        && event.message.commandsCommand
-      ) {
-        this.sendChatMessage(this.options.commands_answer);
-      }
-    } catch (err) {
-      // TODO
+    if (
+      event.aggregate === "viewer"
+      && event.type === "sent-chat-message"
+      && event.message.commandsCommand
+    ) {
+      this.sendChatMessage(this.options.commands_answer);
     }
   }
 }

@@ -20,10 +20,10 @@ export class DisplayNameProjection {
   }
 
   public async handleEvent(event: Event) {
-    try {
-      await this.stored.handleEvent(event);
-    } catch (err) {
-      // TODO
-    }
+    await this.stored.handleEvent(event);
+  }
+
+  public getRebuilder() {
+    return this.stored.getRebuilder();
   }
 }

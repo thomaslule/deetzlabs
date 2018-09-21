@@ -21,12 +21,12 @@ export class SettingsDomain {
       new VoidDecisionProvider(),
       (event) => eventBus.publish(event),
     );
+
     this.achievementVolumeProj = new AchievementVolumeProj(achievementVolumeProjStorage);
+    eventBus.onEvent((event) => this.achievementVolumeProj.handleEvent(event));
+
     this.followersGoalProj = new FollowersGoalProj(followersGoalProjStorage);
-    eventBus.onEvent((e) => {
-      this.achievementVolumeProj.handleEvent(e).catch((err) => { /* TODO */ });
-      this.followersGoalProj.handleEvent(e).catch((err) => { /* TODO */ });
-    });
+    eventBus.onEvent((event) => this.followersGoalProj.handleEvent(event));
   }
 
   public async get(): Promise<Settings> {
