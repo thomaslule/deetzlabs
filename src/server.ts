@@ -2,8 +2,9 @@ import { json } from "body-parser";
 import { Express, NextFunction, Request, Response, Router } from "express";
 import * as express from "express";
 import * as morgan from "morgan";
+import { log } from "./log";
 
-const stream = { write: (message: string) => console.log(message.slice(0, -1)) }; // TODO real log
+const stream = { write: (message: string) => log.info(message.slice(0, -1)) };
 
 export class Server {
   private app: Express;
@@ -20,12 +21,8 @@ export class Server {
     this.app.get("/", (req, res) => { res.redirect("/admin"); });
 
     this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-      console.error(err); // TODO real log
-      if (err.message.startsWith("bad_request")) {
-        res.status(400).send({ error: err.message });
-      } else {
-        res.sendStatus(500);
-      }
+      log.error("Request error: %s", err);
+      res.sendStatus(500);
       next();
     });
   }

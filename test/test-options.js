@@ -1,6 +1,7 @@
 const isGG = (event) => event.type === "sent-chat-message" && event.message.gg;
 
 module.exports = {
+  log_to_file: false,
   messageToObject: (message) => ({
     commandsCommand: message === "!commands" ? true : undefined,
     achievementsCommand: message === "!achievements" ? true : undefined,

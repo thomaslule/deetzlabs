@@ -1,4 +1,5 @@
 import { EventBus } from "es-objects";
+import { log } from "../log";
 import { Storage } from "../storage";
 import { SettingsDomain } from "./settings/settings-domain";
 import { ViewerDomain } from "./viewer/viewer-domain";
@@ -14,7 +15,7 @@ export class Domain {
     options: any,
   ) {
     const bus = new EventBus(storage.getEventStorage(), (err) => {
-      console.log(err); // TODO
+      log.error("An error happened in an event handler: %s", err);
     });
     this.viewer = new ViewerDomain(bus, sendChatMessage, storage, options);
     this.settings = new SettingsDomain(
