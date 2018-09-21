@@ -2,7 +2,7 @@ import { createHash } from "crypto";
 import { NextFunction, Request, Response, Router } from "express";
 import * as expressjwt from "express-jwt";
 import { check, validationResult } from "express-validator/check";
-import { matchedData } from "express-validator/filter";
+import { matchedData, sanitize } from "express-validator/filter";
 import { sign } from "jsonwebtoken";
 import mapValues = require("lodash.mapvalues");
 import { Domain } from "./domain";
@@ -90,6 +90,15 @@ export class Api {
       }
     });
 
+    this.router.get("/achievement_alert_volume", async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const volume = await this.domain.settings.getAchievementVolume();
+        res.send({ volume });
+      } catch (err) {
+        next(err);
+      }
+    });
+
     this.router.post(
       "/give_achievement",
       check("achievement").not().isEmpty(),
@@ -105,6 +114,24 @@ export class Api {
         } catch (err) {
           next(err);
         }
-      });
+      },
+    );
+
+    this.router.post(
+      "/achievement_alert_volume",
+      check("volume").isFloat({ min: 0.1, max: 1 }),
+      sanitize("volume").toFloat(),
+      validationMiddleware,
+      async (req: any, res: Response, next: NextFunction) => {
+        try {
+          const { volume } = req.validParams;
+          const settings = await this.domain.settings.get();
+          settings.changeAchievementVolume(volume);
+          res.sendStatus(200);
+        } catch (err) {
+          next(err);
+        }
+      },
+    );
   }
 }
