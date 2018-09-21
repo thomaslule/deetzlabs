@@ -8,7 +8,7 @@ describe("ViewerDomain", () => {
     const bus = new EventBus(new InMemoryEventStorage());
     const sendChatMessage = jest.fn();
     const domain = new ViewerDomain(bus, sendChatMessage, new Storage(), testOptions);
-    const someone = await domain.get("someone");
+    const someone = await domain.get("123");
 
     await someone.chatMessage("not the command", "Someone");
     expect(sendChatMessage).not.toHaveBeenCalled();
@@ -21,12 +21,12 @@ describe("ViewerDomain", () => {
     const bus = new EventBus(new InMemoryEventStorage());
     const sendChatMessage = jest.fn();
     const domain = new ViewerDomain(bus, sendChatMessage, new Storage(), testOptions);
-    const someone = await domain.get("someone");
-    await someone.chatMessage("hi", "Someone");
+    const someone = await domain.get("123");
     await someone.giveAchievement("cheerleader");
 
     await someone.chatMessage("!achievements", "Someone");
 
+    await new Promise((resolve) => setTimeout(resolve, 15)); // wait for DisplayNameProjection to be filled
     expect(sendChatMessage).toHaveBeenCalledWith("Congratulations Someone for your achievements: Cheerleader");
   });
 
@@ -39,10 +39,10 @@ describe("ViewerDomain", () => {
         showAchievement(event.id, event.achievement);
       }
     });
-    const someone = await domain.get("someone");
+    const someone = await domain.get("123");
 
     await someone.cheer(500);
 
-    expect(showAchievement).toHaveBeenCalledWith("someone", "cheerleader");
+    expect(showAchievement).toHaveBeenCalledWith("123", "cheerleader");
   });
 });

@@ -5,7 +5,7 @@ import { testOptions } from "../../test-util";
 describe("Viewer", () => {
   test("it should publish deserved achievements", async () => {
     const publish = jest.fn().mockImplementation((event) => event);
-    const someone = new Viewer("someone", { achievementsReceived: [], achievementsProgress: {} }, publish, testOptions);
+    const someone = new Viewer("123", { achievementsReceived: [], achievementsProgress: {} }, publish, testOptions);
 
     await someone.cheer(500);
 
@@ -17,7 +17,7 @@ describe("Viewer", () => {
   test("it shouldnt publish already obtained achievements", async () => {
     const publish = jest.fn().mockImplementation((event) => event);
     const decisionState = { achievementsReceived: ["cheerleader"], achievementsProgress: {} };
-    const someone = new Viewer("someone", decisionState, publish, testOptions);
+    const someone = new Viewer("123", decisionState, publish, testOptions);
 
     await someone.cheer(500);
 
