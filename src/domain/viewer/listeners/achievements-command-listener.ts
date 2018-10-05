@@ -1,8 +1,5 @@
-import * as assert from "assert";
 import { Event } from "es-objects";
 import { Options } from "../../../get-options";
-import { ViewerAchievementsProjection } from "../projections/viewer-achievements-projection";
-import { ViewerNameProjection } from "../projections/viewer-name-projection";
 import { ViewersProjection } from "../projections/viewers-projection";
 
 export class AchievementsCommandListenener {
