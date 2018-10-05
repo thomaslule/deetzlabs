@@ -5,7 +5,7 @@ import { getOptions, Options } from "./get-options";
 import { configureLog, log } from "./log";
 import { Server } from "./server";
 // import { Server } from "./server";
-import { Storage } from "./storage";
+// import { Storage } from "./storage/storage";
 // import { Streamlabs } from "./streamlabs";
 import { Twitch } from "./twitch";
 import { Widgets } from "./widgets";
@@ -21,7 +21,7 @@ export class Deetzlabs {
     // const streamlabs = new Streamlabs();
     const widgets = new Widgets();
     // const admin = new Admin();
-    const domain = new Domain(new Storage(), (msg) => twitch.say(msg), () => widgets.showAchievement(), this.opts);
+    const domain = new Domain(undefined /* TODO */, (msg) => twitch.say(msg), () => widgets.showAchievement(), this.opts);
     const api = new Api(domain, this.opts);
     this.server = new Server(api.getRouter() /*widgets.getRouter(), admin.getRouter(), twitch.getRouter()*/);
   }

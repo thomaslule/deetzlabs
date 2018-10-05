@@ -1,10 +1,10 @@
 import { Event } from "es-objects";
-import { ViewersProjectionStorage } from "./viewers-projection-storage";
+import { ViewerState, ViewerStorage } from "../../../storage/storage";
 
 const durationOfWaitForRetry = 10;
 
 export class ViewersProjection {
-  constructor(private storage: ViewersProjectionStorage) {
+  constructor(private storage: ViewerStorage) {
   }
 
   public async handleEvent(event: Event): Promise<void> {
@@ -46,10 +46,4 @@ export class ViewersProjection {
     const viewer = await this.storage.get(id);
     return viewer !== undefined && viewer.name !== undefined ? viewer : undefined;
   }
-}
-
-export interface ViewerState {
-  id: string;
-  name: string;
-  achievements: string [];
 }

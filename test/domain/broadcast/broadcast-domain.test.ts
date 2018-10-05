@@ -1,11 +1,11 @@
 import { EventBus, InMemoryEventStorage } from "es-objects";
 import { BroadcastDomain } from "../../../src/domain/broadcast/broadcast-domain";
-import { Storage } from "../../../src/storage";
+import { InMemoryStorage } from "../../in-memory-storage";
 
 describe("BroadcastDomain", () => {
   test("it should track broadcasts", async () => {
     const bus = new EventBus(new InMemoryEventStorage());
-    const domain = new BroadcastDomain(bus, new Storage());
+    const domain = new BroadcastDomain(bus, new InMemoryStorage());
 
     expect(await domain.isBroadcasting()).toBeFalsy();
     await domain.begin("Tetris");

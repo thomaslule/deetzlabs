@@ -1,5 +1,5 @@
 import { EventBus, Store, StoredDecisionProvider } from "es-objects";
-import { Storage } from "../../storage";
+import { Storage } from "../../storage/storage";
 import { Broadcast, decisionReducer } from "./broadcast";
 import { BroadcastProjection } from "./broadcast-projection";
 

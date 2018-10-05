@@ -1,9 +1,8 @@
 import { EventBus, Store, StoredDecisionProvider } from "es-objects";
-import { Storage } from "../../storage";
+import { Storage } from "../../storage/storage";
 import { AchievementsCommandListenener } from "./listeners/achievements-command-listener";
 import { CommandsCommandListenener } from "./listeners/commands-command-listener";
 import { ViewersProjection } from "./projections/viewers-projection";
-import { ViewersProjectionStorage } from "./projections/viewers-projection-storage";
 import { DecisionState, getDecisionReducer, Viewer } from "./viewer";
 
 export class ViewerDomain {
@@ -28,7 +27,7 @@ export class ViewerDomain {
       (event) => eventBus.publish(event),
     );
 
-    this.viewersProj = new ViewersProjection(new ViewersProjectionStorage());
+    this.viewersProj = new ViewersProjection(storage.getViewerStorage());
     eventBus.onEvent((event) => this.viewersProj.handleEvent(event));
 
     const commandsCmdListener = new CommandsCommandListenener(sendChatMessage, options);

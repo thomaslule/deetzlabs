@@ -1,6 +1,6 @@
 import { AchievementsCommandListenener } from "../../../../src/domain/viewer/listeners/achievements-command-listener";
 import { ViewersProjection } from "../../../../src/domain/viewer/projections/viewers-projection";
-import { ViewersProjectionStorage } from "../../../../src/domain/viewer/projections/viewers-projection-storage";
+import { InMemoryViewerStorage } from "../../../in-memory-storage";
 import { makeViewerEvent, testOptions } from "../../../test-util";
 
 describe("AchievementsCommandListener", () => {
@@ -8,7 +8,7 @@ describe("AchievementsCommandListener", () => {
     const sendChatMessage = jest.fn();
     const listener = new AchievementsCommandListenener(
       new ViewersProjection(
-        new ViewersProjectionStorage({ 123: { id: "123", name: "Someone", achievements: ["cheerleader"]}}),
+        new InMemoryViewerStorage({ 123: { id: "123", name: "Someone", achievements: ["cheerleader"]}}),
       ),
       sendChatMessage,
       testOptions,
@@ -23,7 +23,7 @@ describe("AchievementsCommandListener", () => {
     const sendChatMessage = jest.fn();
     const listener = new AchievementsCommandListenener(
       new ViewersProjection(
-        new ViewersProjectionStorage({ 123: { id: "123", name: "Someone", achievements: []}}),
+        new InMemoryViewerStorage({ 123: { id: "123", name: "Someone", achievements: []}}),
       ),
       sendChatMessage,
       testOptions,
@@ -36,7 +36,7 @@ describe("AchievementsCommandListener", () => {
 
   test("it should throw if it cannot get the viewer state", async () => {
     const listener = new AchievementsCommandListenener(
-      new ViewersProjection(new ViewersProjectionStorage()),
+      new ViewersProjection(new InMemoryViewerStorage()),
       jest.fn(),
       testOptions,
     );

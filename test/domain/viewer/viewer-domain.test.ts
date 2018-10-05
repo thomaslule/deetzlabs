@@ -1,13 +1,13 @@
 import { EventBus, InMemoryEventStorage } from "es-objects";
 import { ViewerDomain } from "../../../src/domain/viewer/viewer-domain";
-import { Storage } from "../../../src/storage";
+import { InMemoryStorage } from "../../in-memory-storage";
 import { testOptions } from "../../test-util";
 
 describe("ViewerDomain", () => {
   test("it should respond to !commands command", async () => {
     const bus = new EventBus(new InMemoryEventStorage());
     const sendChatMessage = jest.fn();
-    const domain = new ViewerDomain(bus, sendChatMessage, new Storage(), testOptions);
+    const domain = new ViewerDomain(bus, sendChatMessage, new InMemoryStorage(), testOptions);
     const someone = await domain.get("123");
 
     await someone.chatMessage("not the command");
@@ -20,7 +20,7 @@ describe("ViewerDomain", () => {
   test("it should respond to !achievements command", async () => {
     const bus = new EventBus(new InMemoryEventStorage());
     const sendChatMessage = jest.fn();
-    const domain = new ViewerDomain(bus, sendChatMessage, new Storage(), testOptions);
+    const domain = new ViewerDomain(bus, sendChatMessage, new InMemoryStorage(), testOptions);
     const someone = await domain.get("123");
     await someone.giveAchievement("cheerleader", "Someone");
 
@@ -31,7 +31,7 @@ describe("ViewerDomain", () => {
 
   test("it should show achievements", async () => {
     const bus = new EventBus(new InMemoryEventStorage());
-    const domain = new ViewerDomain(bus, () => {}, new Storage(), testOptions);
+    const domain = new ViewerDomain(bus, () => {}, new InMemoryStorage(), testOptions);
     const showAchievement = jest.fn();
     bus.onEvent((event) => {
       if (event.aggregate === "viewer" && event.type === "got-achievement") {

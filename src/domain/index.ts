@@ -1,6 +1,6 @@
 import { EventBus } from "es-objects";
 import { log } from "../log";
-import { Storage } from "../storage";
+import { Storage } from "../storage/storage";
 import { SettingsDomain } from "./settings/settings-domain";
 import { ViewerDomain } from "./viewer/viewer-domain";
 
