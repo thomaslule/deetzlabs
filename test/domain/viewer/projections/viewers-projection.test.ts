@@ -1,10 +1,10 @@
 import { ViewersProjection } from "../../../../src/domain/viewer/projections/viewers-projection";
 import { ViewersProjectionStorage } from "../../../../src/domain/viewer/projections/viewers-projection-storage";
-import { makeEvent } from "../../../test-util";
+import { makeViewerEvent } from "../../../test-util";
 
 describe("ViewersProjection", () => {
 
-  const changedNameEvent = makeEvent({ type: "changed-name", name: "Someone" });
+  const changedNameEvent = makeViewerEvent({ type: "changed-name", name: "Someone" });
 
   test("it should store name changes", async () => {
     const proj = new ViewersProjection(new ViewersProjectionStorage());
@@ -29,17 +29,17 @@ describe("ViewersProjection", () => {
 
     expect(await proj.get("123")).toEqual({ id: "123", name: "Someone", achievements: [] });
 
-    await proj.handleEvent(makeEvent({ type: "got-achievement", achievement: "cheerleader" }));
+    await proj.handleEvent(makeViewerEvent({ type: "got-achievement", achievement: "cheerleader" }));
     expect(await proj.get("123")).toEqual({ id: "123", name: "Someone", achievements: ["cheerleader"] });
 
-    await proj.handleEvent(makeEvent({ type: "got-achievement", achievement: "supporter" }));
+    await proj.handleEvent(makeViewerEvent({ type: "got-achievement", achievement: "supporter" }));
     expect(await proj.get("123")).toEqual({ id: "123", name: "Someone", achievements: ["cheerleader", "supporter"] });
   });
 
   test("getAll should return all the viewers states", async () => {
     const proj = new ViewersProjection(new ViewersProjectionStorage());
     await proj.handleEvent(changedNameEvent);
-    await proj.handleEvent(makeEvent({ type: "got-achievement", achievement: "cheerleader" }));
+    await proj.handleEvent(makeViewerEvent({ type: "got-achievement", achievement: "cheerleader" }));
     await proj.handleEvent({ ...changedNameEvent, id: "456", name: "Other" });
 
     expect(await proj.getAll()).toHaveLength(2);
@@ -50,7 +50,7 @@ describe("ViewersProjection", () => {
   test("it should return undefined for an unknown id or an unamed viewer", async () => {
     const proj = new ViewersProjection(new ViewersProjectionStorage());
     expect(await proj.get("123")).toBeUndefined();
-    await proj.handleEvent(makeEvent({ type: "got-achievement", achievement: "cheerleader" }));
+    await proj.handleEvent(makeViewerEvent({ type: "got-achievement", achievement: "cheerleader" }));
     expect(await proj.get("123")).toBeUndefined();
   });
 

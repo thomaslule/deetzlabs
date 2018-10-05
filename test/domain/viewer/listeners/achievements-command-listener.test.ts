@@ -1,10 +1,7 @@
-import { InMemoryKeyValueStorage } from "es-objects";
 import { AchievementsCommandListenener } from "../../../../src/domain/viewer/listeners/achievements-command-listener";
-import { ViewerAchievementsProjection } from "../../../../src/domain/viewer/projections/viewer-achievements-projection";
-import { ViewerNameProjection } from "../../../../src/domain/viewer/projections/viewer-name-projection";
 import { ViewersProjection } from "../../../../src/domain/viewer/projections/viewers-projection";
 import { ViewersProjectionStorage } from "../../../../src/domain/viewer/projections/viewers-projection-storage";
-import { makeEvent, testOptions } from "../../../test-util";
+import { makeViewerEvent, testOptions } from "../../../test-util";
 
 describe("AchievementsCommandListener", () => {
   test("it should list a viewer's achievements in chat", async () => {
@@ -17,7 +14,7 @@ describe("AchievementsCommandListener", () => {
       testOptions,
     );
 
-    await listener.handleEvent(makeEvent({ type: "sent-chat-message", message: { achievementsCommand: true } }));
+    await listener.handleEvent(makeViewerEvent({ type: "sent-chat-message", message: { achievementsCommand: true } }));
 
     expect(sendChatMessage).toHaveBeenCalledWith("Congratulations Someone for your achievements: Cheerleader");
   });
@@ -32,7 +29,7 @@ describe("AchievementsCommandListener", () => {
       testOptions,
     );
 
-    await listener.handleEvent(makeEvent({ type: "sent-chat-message", message: { achievementsCommand: true }}));
+    await listener.handleEvent(makeViewerEvent({ type: "sent-chat-message", message: { achievementsCommand: true }}));
 
     expect(sendChatMessage).toHaveBeenCalledWith("Someone doesn't have any achievement but their time will come!");
   });
@@ -44,7 +41,9 @@ describe("AchievementsCommandListener", () => {
       testOptions,
     );
 
-    await expect(listener.handleEvent(makeEvent({ type: "sent-chat-message", message: { achievementsCommand: true }})))
+    await expect(listener.handleEvent(
+      makeViewerEvent({ type: "sent-chat-message", message: { achievementsCommand: true }}),
+    ))
       .rejects.toThrow("couldnt get the viewer 123");
   });
 });

@@ -2,7 +2,7 @@ import { InMemoryValueStorage } from "es-objects";
 import {
   DistributedAchievementsProjection,
 } from "../../../../src/domain/viewer/projections/distributed-achievements-projection";
-import { makeEvent } from "../../../test-util";
+import { makeViewerEvent } from "../../../test-util";
 
 describe("ViewerAchievementsProjection", () => {
   test("it should store the distributed achievements", async () => {
@@ -10,12 +10,12 @@ describe("ViewerAchievementsProjection", () => {
 
     expect(await proj.get()).toEqual([]);
 
-    await proj.handleEvent(makeEvent({ type: "got-achievement", achievement: "cheerleader" }));
+    await proj.handleEvent(makeViewerEvent({ type: "got-achievement", achievement: "cheerleader" }));
     expect(await proj.get()).toEqual([
       { viewer: "123", achievement: "cheerleader" },
     ]);
 
-    await proj.handleEvent(makeEvent({ type: "got-achievement", achievement: "supporter" }));
+    await proj.handleEvent(makeViewerEvent({ type: "got-achievement", achievement: "supporter" }));
     expect(await proj.get()).toEqual([
       { viewer: "123", achievement: "cheerleader" },
       { viewer: "123", achievement: "supporter" },

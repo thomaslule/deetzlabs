@@ -1,10 +1,10 @@
 import { InMemoryKeyValueStorage } from "es-objects";
 import { ViewerNameProjection } from "../../../../src/domain/viewer/projections/viewer-name-projection";
-import { makeEvent } from "../../../test-util";
+import { makeViewerEvent } from "../../../test-util";
 
 describe("NameProjection", () => {
 
-  const event = makeEvent({ type: "changed-name", name: "Someone" });
+  const event = makeViewerEvent({ type: "changed-name", name: "Someone" });
 
   test("it should return the name found in the event", async () => {
     const proj = new ViewerNameProjection(new InMemoryKeyValueStorage());
