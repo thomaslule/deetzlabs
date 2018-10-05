@@ -4,6 +4,7 @@ import { Domain } from "./domain";
 import { getOptions, Options } from "./get-options";
 import { configureLog, log } from "./log";
 import { Server } from "./server";
+import { PgStorage } from "./storage/pg-storage";
 // import { Server } from "./server";
 // import { Storage } from "./storage/storage";
 // import { Streamlabs } from "./streamlabs";
@@ -21,7 +22,12 @@ export class Deetzlabs {
     // const streamlabs = new Streamlabs();
     const widgets = new Widgets();
     // const admin = new Admin();
-    const domain = new Domain(undefined /* TODO */, (msg) => twitch.say(msg), () => widgets.showAchievement(), this.opts);
+    const domain = new Domain(
+      new PgStorage(this.opts.db_url),
+      (msg) => twitch.say(msg),
+      () => widgets.showAchievement(),
+      this.opts,
+    );
     const api = new Api(domain, this.opts);
     this.server = new Server(api.getRouter() /*widgets.getRouter(), admin.getRouter(), twitch.getRouter()*/);
   }
