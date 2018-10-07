@@ -1,4 +1,4 @@
-import { Event, KeyValueStorage, Reducer, StoredEntityProjection } from "es-objects";
+import { Event, KeyValueStorage, PersistedEntityReduceProjection, Reducer } from "es-objects";
 
 const reducer: Reducer<string> = (state = undefined, event) => {
   if (event.type === "changed-name") {
@@ -10,10 +10,10 @@ const reducer: Reducer<string> = (state = undefined, event) => {
 const durationOfWaitForRetry = 10;
 
 export class ViewerNameProjection {
-  private stored: StoredEntityProjection<string>;
+  private stored: PersistedEntityReduceProjection<string>;
 
   constructor(storage: KeyValueStorage<any>) {
-    this.stored = new StoredEntityProjection<string>(reducer, storage, (event) => event.aggregate === "viewer");
+    this.stored = new PersistedEntityReduceProjection(reducer, storage, (event) => event.aggregate === "viewer");
   }
 
   public async get(id: string) {

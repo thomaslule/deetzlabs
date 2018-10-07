@@ -1,4 +1,4 @@
-import { Event, Reducer, StoredProjection, ValueStorage } from "es-objects";
+import { Event, PersistedReduceProjection, Reducer, ValueStorage } from "es-objects";
 
 export interface DistributedAchievement {
   viewer: string;
@@ -12,10 +12,10 @@ const reducer: Reducer<DistributedAchievement[]> = (state = [], event) => {
 };
 
 export class DistributedAchievementsProjection {
-  private stored: StoredProjection<DistributedAchievement[]>;
+  private stored: PersistedReduceProjection<DistributedAchievement[]>;
 
   constructor(storage: ValueStorage<any>) {
-    this.stored = new StoredProjection<DistributedAchievement[]>(
+    this.stored = new PersistedReduceProjection<DistributedAchievement[]>(
       reducer, storage, (event) => event.aggregate === "viewer",
     );
   }

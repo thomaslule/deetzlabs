@@ -1,4 +1,4 @@
-import { EventBus, Store, StoredDecisionProvider } from "es-objects";
+import { EventBus, PersistedDecisionProvider, Store } from "es-objects";
 import { Storage } from "../../storage/storage";
 import { AchievementsCommandListenener } from "./listeners/achievements-command-listener";
 import { CommandsCommandListenener } from "./listeners/commands-command-listener";
@@ -15,10 +15,10 @@ export class ViewerDomain {
     storage: Storage,
     options: any,
   ) {
-    const viewerDecisionProvider = new StoredDecisionProvider(
+    const viewerDecisionProvider = new PersistedDecisionProvider(
+      "viewer",
       getDecisionReducer(options),
       storage.getKeyValueStorage("viewer-decision"),
-      (e) => e.aggregate === "viewer",
     );
     this.store = new Store<Viewer, DecisionState>(
       "viewer",

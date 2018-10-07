@@ -1,5 +1,5 @@
 import {
-  DecisionProvider, DecisionSequence, EventBus, Projection, Store, ValueStorage,
+  DecisionProvider, DecisionSequence, EventBus, InMemoryReduceProjection, Store, ValueStorage,
 } from "es-objects";
 import { AchievementVolumeProj } from "./achievement-volume-proj";
 import { FollowersGoal, FollowersGoalProj } from "./followers-goal-proj";
@@ -43,7 +43,7 @@ export class SettingsDomain {
 }
 
 class VoidDecisionProvider implements DecisionProvider<undefined> {
-  public async getDecisionProjection(): Promise<Projection<DecisionSequence<undefined>>> {
-    return new Projection<DecisionSequence<undefined>>(() => ({ decision: undefined, sequence: 0 }));
+  public async getDecisionProjection(): Promise<InMemoryReduceProjection<DecisionSequence<undefined>>> {
+    return new InMemoryReduceProjection<DecisionSequence<undefined>>(() => ({ decision: undefined, sequence: 0 }));
   }
 }

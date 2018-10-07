@@ -1,7 +1,7 @@
-import { Event, Reducer, StoredProjection, ValueStorage } from "es-objects";
+import { Event, PersistedReduceProjection, Reducer, ValueStorage } from "es-objects";
 import { eventsTypes } from "./events";
 
-export class FollowersGoalProj extends StoredProjection<FollowersGoal> {
+export class FollowersGoalProj extends PersistedReduceProjection<FollowersGoal> {
   constructor(storage: ValueStorage<FollowersGoal>) {
     super(reducer, storage, (e) => e.aggregate === "settings");
   }

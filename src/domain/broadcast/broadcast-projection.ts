@@ -1,10 +1,10 @@
-import { Event, StoredProjection, ValueStorage } from "es-objects";
+import { Event, PersistedReduceProjection, ValueStorage } from "es-objects";
 
 export class BroadcastProjection {
-  private projection: StoredProjection<State>;
+  private projection: PersistedReduceProjection<State>;
 
   constructor(storage: ValueStorage<any>) {
-    this.projection = new StoredProjection(reducer, storage, (e) => e.aggregate === "broadcast");
+    this.projection = new PersistedReduceProjection(reducer, storage, (e) => e.aggregate === "broadcast");
   }
 
   public async handleEvent(event: Event) {

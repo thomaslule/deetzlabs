@@ -1,4 +1,4 @@
-import { Event, Reducer, StoredProjection, ValueStorage } from "es-objects";
+import { Event, PersistedReduceProjection, Reducer, ValueStorage } from "es-objects";
 import { Dictionary } from "../../../util";
 
 const reducer: Reducer<Dictionary<string>> = (state = {}, event) => {
@@ -8,10 +8,10 @@ const reducer: Reducer<Dictionary<string>> = (state = {}, event) => {
 };
 
 export class NamesProjection {
-  private stored: StoredProjection<Dictionary<string>>;
+  private stored: PersistedReduceProjection<Dictionary<string>>;
 
   constructor(storage: ValueStorage<any>) {
-    this.stored = new StoredProjection<Dictionary<string>>(
+    this.stored = new PersistedReduceProjection<Dictionary<string>>(
       reducer, storage, (event) => event.aggregate === "viewer",
     );
   }

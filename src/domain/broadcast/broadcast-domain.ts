@@ -1,4 +1,4 @@
-import { EventBus, Store, StoredDecisionProvider } from "es-objects";
+import { EventBus, PersistedDecisionProvider, Store } from "es-objects";
 import { Storage } from "../../storage/storage";
 import { Broadcast, decisionReducer } from "./broadcast";
 import { BroadcastProjection } from "./broadcast-projection";
@@ -8,10 +8,10 @@ export class BroadcastDomain {
   private projection: BroadcastProjection;
 
   constructor(eventBus: EventBus, storage: Storage) {
-    const decisionProvider = new StoredDecisionProvider(
+    const decisionProvider = new PersistedDecisionProvider(
+      "broadcast",
       decisionReducer,
       storage.getKeyValueStorage("broadcast-decision"),
-      (e) => e.aggregate === "broadcast",
     );
     this.store = new Store(
       "broadcast",

@@ -1,7 +1,7 @@
-import { Event, Reducer, StoredProjection, ValueStorage } from "es-objects";
+import { Event, PersistedReduceProjection, Reducer, ValueStorage } from "es-objects";
 import { eventsTypes } from "./events";
 
-export class AchievementVolumeProj extends StoredProjection<number> {
+export class AchievementVolumeProj extends PersistedReduceProjection<number> {
   constructor(storage: ValueStorage<number>) {
     super(reducer, storage, (e) => e.aggregate === "settings");
   }
