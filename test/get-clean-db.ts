@@ -13,5 +13,14 @@ export async function getCleanDb() {
       constraint uc_events unique(aggregate, id, sequence)
     );
   `);
+  await db.query("drop table if exists values");
+  await db.query(`
+    create table values(
+      name text not null,
+      key text not null,
+      value json not null,
+      primary key(name, key)
+    );
+  `);
   return db;
 }

@@ -29,13 +29,7 @@ export class PgEventStorage implements EventStorage {
   }
 
   private getStream(query: QueryStream) {
-    const stream = new Transform({
-      objectMode: true,
-      transform(row, encoding, callback) {
-        this.push(row);
-        callback();
-      },
-    });
+    const stream = identityTransform();
     this.db.connect()
     .then((client) => {
       client.query(query)
@@ -49,6 +43,16 @@ export class PgEventStorage implements EventStorage {
     .catch((err) => { stream.emit("error", err); });
     return stream;
   }
+}
+
+function identityTransform() {
+  return new Transform({
+    objectMode: true,
+    transform(row, encoding, callback) {
+      this.push(row);
+      callback();
+    },
+  });
 }
 
 function rowToEvent() {
