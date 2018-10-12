@@ -53,4 +53,20 @@ describe("ViewerDomain", () => {
 
     expect(showAchievement).toHaveBeenCalledWith("123", "cheerleader");
   });
+
+  test("getAllViewersState should return viewers with their names and achievements", async () => {
+    const storage = new PgStorage(db);
+    const bus = new EventBus(storage.getEventStorage());
+    const domain = new ViewerDomain(bus, () => {}, storage, testOptions);
+    const someone = await domain.get("123");
+    await someone.chatMessage("hi", "Someone");
+    await someone.cheer(500);
+    const other = await domain.get("456");
+    await other.chatMessage("hello", "Other");
+
+    expect(await domain.getAllViewersState()).toEqual({
+      123: { name: "Someone", achievements: ["cheerleader"] },
+      456: { name: "Other", achievements: [] },
+    });
+  });
 });

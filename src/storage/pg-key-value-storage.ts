@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import { KeyValueStorage } from "es-objects";
+import { Dictionary, KeyValueStorage } from "es-objects";
 import { Pool } from "pg";
 
 export class PgKeyValueStorage<T> implements KeyValueStorage<T> {
@@ -19,4 +19,10 @@ export class PgKeyValueStorage<T> implements KeyValueStorage<T> {
       on conflict (name, key) do update set value = $3
     `, [this.name, key, value]);
   }
+
+  public async getAll(): Promise<Dictionary<T>> {
+    const result = await this.db.query("select key, value from values where name = $1", [this.name]);
+    return result.rows.reduce((acc, row) => ({ ...acc, [row.key]: row.value }), {});
+  }
+
 }
