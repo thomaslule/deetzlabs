@@ -1,7 +1,7 @@
 import { Pool } from "pg";
 
-export async function getCleanDb() {
-  const db = new Pool({ connectionString: "postgresql://postgres:admin@localhost:5432/deetzlabs_test" });
+export async function resetDatabase(connectionString = "postgresql://postgres:admin@localhost:5432/deetzlabs_test") {
+  const db = new Pool({ connectionString });
   await db.query("drop table if exists events");
   await db.query(`
     create table events(
@@ -22,5 +22,5 @@ export async function getCleanDb() {
       primary key(name, key)
     );
   `);
-  return db;
+  await db.end();
 }

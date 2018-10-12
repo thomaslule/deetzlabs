@@ -1,6 +1,6 @@
 import { Pool } from "pg";
 import { PgKeyValueStorage } from "../../src/storage/pg-key-value-storage";
-import { getCleanDb } from "../get-clean-db";
+import { getCleanDb } from "../test-util";
 
 describe("PgKeyValueStorage", () => {
   let db: Pool;

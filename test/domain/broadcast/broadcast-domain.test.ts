@@ -2,8 +2,7 @@ import { EventBus } from "es-objects";
 import { Pool } from "pg";
 import { BroadcastDomain } from "../../../src/domain/broadcast/broadcast-domain";
 import { PgStorage } from "../../../src/storage/pg-storage";
-import { getCleanDb } from "../../get-clean-db";
-import { wait } from "../../test-util";
+import { getCleanDb, wait } from "../../test-util";
 
 describe("BroadcastDomain", () => {
   let db: Pool;

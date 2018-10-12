@@ -1,8 +1,7 @@
 import { Pool } from "pg";
 import * as toArray from "stream-to-array";
 import { PgEventStorage } from "../../src/storage/pg-event-storage";
-import { getCleanDb } from "../get-clean-db";
-import { makeViewerEvent } from "../test-util";
+import { getCleanDb, makeViewerEvent } from "../test-util";
 
 describe("SqliteEventStorage", () => {
   let db: Pool;
