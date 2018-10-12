@@ -1,13 +1,20 @@
-import { EventBus, InMemoryEventStorage } from "es-objects";
+import { EventBus } from "es-objects";
+import { Pool } from "pg";
 import { ViewerDomain } from "../../../src/domain/viewer/viewer-domain";
-import { InMemoryStorage } from "../../in-memory-storage";
+import { PgStorage } from "../../../src/storage/pg-storage";
+import { getCleanDb } from "../../get-clean-db";
 import { testOptions } from "../../test-util";
 
 describe("ViewerDomain", () => {
+  let db: Pool;
+  beforeEach(async () => { db = await getCleanDb(); });
+  afterEach(async () => { await db.end(); });
+
   test("it should respond to !commands command", async () => {
-    const bus = new EventBus(new InMemoryEventStorage());
+    const storage = new PgStorage(db);
+    const bus = new EventBus(storage.getEventStorage());
     const sendChatMessage = jest.fn();
-    const domain = new ViewerDomain(bus, sendChatMessage, new InMemoryStorage(), testOptions);
+    const domain = new ViewerDomain(bus, sendChatMessage, storage, testOptions);
     const someone = await domain.get("123");
 
     await someone.chatMessage("not the command");
@@ -18,9 +25,10 @@ describe("ViewerDomain", () => {
   });
 
   test("it should respond to !achievements command", async () => {
-    const bus = new EventBus(new InMemoryEventStorage());
+    const storage = new PgStorage(db);
+    const bus = new EventBus(storage.getEventStorage());
     const sendChatMessage = jest.fn();
-    const domain = new ViewerDomain(bus, sendChatMessage, new InMemoryStorage(), testOptions);
+    const domain = new ViewerDomain(bus, sendChatMessage, storage, testOptions);
     const someone = await domain.get("123");
     await someone.giveAchievement("cheerleader", "Someone");
 
@@ -30,8 +38,9 @@ describe("ViewerDomain", () => {
   });
 
   test("it should show achievements", async () => {
-    const bus = new EventBus(new InMemoryEventStorage());
-    const domain = new ViewerDomain(bus, () => {}, new InMemoryStorage(), testOptions);
+    const storage = new PgStorage(db);
+    const bus = new EventBus(storage.getEventStorage());
+    const domain = new ViewerDomain(bus, () => {}, storage, testOptions);
     const showAchievement = jest.fn();
     bus.onEvent((event) => {
       if (event.aggregate === "viewer" && event.type === "got-achievement") {

@@ -1,14 +1,14 @@
+import { InMemoryKeyValueStorage } from "es-objects";
 import { AchievementsCommandListenener } from "../../../../src/domain/viewer/listeners/achievements-command-listener";
-import { ViewersProjection } from "../../../../src/domain/viewer/projections/viewers-projection";
-import { InMemoryViewerStorage } from "../../../in-memory-storage";
+import { ViewerProjection } from "../../../../src/domain/viewer/projections/viewer-projection";
 import { makeViewerEvent, testOptions } from "../../../test-util";
 
 describe("AchievementsCommandListener", () => {
   test("it should list a viewer's achievements in chat", async () => {
     const sendChatMessage = jest.fn();
     const listener = new AchievementsCommandListenener(
-      new ViewersProjection(
-        new InMemoryViewerStorage({ 123: { id: "123", name: "Someone", achievements: ["cheerleader"]}}),
+      new ViewerProjection(
+        new InMemoryKeyValueStorage({ 123: { id: "123", name: "Someone", achievements: ["cheerleader"]}}),
       ),
       sendChatMessage,
       testOptions,
@@ -22,8 +22,8 @@ describe("AchievementsCommandListener", () => {
   test("it should respond to a viewer without achievements", async () => {
     const sendChatMessage = jest.fn();
     const listener = new AchievementsCommandListenener(
-      new ViewersProjection(
-        new InMemoryViewerStorage({ 123: { id: "123", name: "Someone", achievements: []}}),
+      new ViewerProjection(
+        new InMemoryKeyValueStorage({ 123: { id: "123", name: "Someone", achievements: []}}),
       ),
       sendChatMessage,
       testOptions,
@@ -36,7 +36,7 @@ describe("AchievementsCommandListener", () => {
 
   test("it should throw if it cannot get the viewer state", async () => {
     const listener = new AchievementsCommandListenener(
-      new ViewersProjection(new InMemoryViewerStorage()),
+      new ViewerProjection(new InMemoryKeyValueStorage()),
       jest.fn(),
       testOptions,
     );
