@@ -39,4 +39,11 @@ describe("SqliteEventStorage", () => {
     expect(events2).toEqual([event2]);
   });
 
+  test("store should throw in case of duplicate sequence", async () => {
+    const storage = new PgEventStorage(db);
+    const event = makeViewerEvent();
+    await storage.store(event);
+    await expect(storage.store(event)).rejects.toThrow();
+  });
+
 });
