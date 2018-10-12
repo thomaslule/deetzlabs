@@ -4,14 +4,8 @@ import { getCleanDb } from "../get-clean-db";
 
 describe("PgValueStorage", () => {
   let db: Pool;
-
-  beforeEach(async () => {
-    db = await getCleanDb();
-  });
-
-  afterEach(async () => {
-    await db.end();
-  });
+  beforeEach(async () => { db = await getCleanDb(); });
+  afterEach(async () => { await db.end(); });
 
   test("it should be able to store, update and retrieve values", async () => {
     const storage = new PgValueStorage<number>("test", db);

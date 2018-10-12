@@ -6,11 +6,9 @@ import { PgValueStorage } from "./pg-value-storage";
 import { Storage, ViewerStorage } from "./storage";
 
 export class PgStorage implements Storage {
-  private db: Pool;
   private eventStorage: EventStorage;
 
-  constructor(dbUrl: string) {
-    this.db = new Pool({ connectionString: dbUrl });
+  constructor(private db: Pool) {
     this.eventStorage = new PgEventStorage(this.db);
   }
 

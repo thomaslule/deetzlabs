@@ -22,3 +22,7 @@ export function makeBroadcastEvent(data: Obj = {}): Event {
     ...data,
   };
 }
+
+export async function wait(ms: number = 50) {
+  return new Promise((resolve) => { setTimeout(resolve, ms); });
+}

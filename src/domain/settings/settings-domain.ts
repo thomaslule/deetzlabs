@@ -1,6 +1,7 @@
 import {
   DecisionProvider, DecisionSequence, EventBus, InMemoryReduceProjection, Store, ValueStorage,
 } from "es-objects";
+import { PgStorage } from "../../storage/pg-storage";
 import { AchievementVolumeProj } from "./achievement-volume-proj";
 import { FollowersGoal, FollowersGoalProj } from "./followers-goal-proj";
 import { Settings } from "./settings";
@@ -12,8 +13,7 @@ export class SettingsDomain {
 
   constructor(
     eventBus: EventBus,
-    achievementVolumeProjStorage: ValueStorage<any>,
-    followersGoalProjStorage: ValueStorage<any>,
+    storage: PgStorage,
   ) {
     this.store = new Store<Settings, undefined>(
       "settings",
@@ -22,10 +22,10 @@ export class SettingsDomain {
       (event) => eventBus.publish(event),
     );
 
-    this.achievementVolumeProj = new AchievementVolumeProj(achievementVolumeProjStorage);
+    this.achievementVolumeProj = new AchievementVolumeProj(storage.getValueStorage("settings-volume"));
     eventBus.onEvent((event) => this.achievementVolumeProj.handleEvent(event));
 
-    this.followersGoalProj = new FollowersGoalProj(followersGoalProjStorage);
+    this.followersGoalProj = new FollowersGoalProj(storage.getValueStorage("settings-followers-goal"));
     eventBus.onEvent((event) => this.followersGoalProj.handleEvent(event));
   }
 

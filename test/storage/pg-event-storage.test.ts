@@ -6,14 +6,8 @@ import { makeViewerEvent } from "../test-util";
 
 describe("SqliteEventStorage", () => {
   let db: Pool;
-
-  beforeEach(async () => {
-    db = await getCleanDb();
-  });
-
-  afterEach(async () => {
-    await db.end();
-  });
+  beforeEach(async () => { db = await getCleanDb(); });
+  afterEach(async () => { await db.end(); });
 
   test("getAllEvents should retrieve all events", async () => {
     const storage = new PgEventStorage(db);
