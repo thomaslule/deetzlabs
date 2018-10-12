@@ -65,17 +65,17 @@ export class Api {
       },
     );
 
-    this.router.get("/distributed_achievements", async (req: Request, res: Response, next: NextFunction) => {
+    this.router.get("/viewers", async (req: Request, res: Response, next: NextFunction) => {
       try {
-        res.send(await this.domain.viewer.getDistributedAchievements());
+        res.send(await this.domain.viewer.getAllViewersState());
       } catch (err) {
         next(err);
       }
     });
 
-    this.router.get("/viewer_names", async (req: Request, res: Response, next: NextFunction) => {
+    this.router.get("/last_achievements", async (req: Request, res: Response, next: NextFunction) => {
       try {
-        res.send(await this.domain.viewer.getNames());
+        res.send(await this.domain.viewer.getLastAchievements());
       } catch (err) {
         next(err);
       }

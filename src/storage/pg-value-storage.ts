@@ -7,13 +7,13 @@ export class PgValueStorage<T> implements ValueStorage<T> {
 
   public async get(): Promise<T | undefined> {
     const result = await this.db.query("select value from values where name = $1 and key = ''", [this.name]);
-    return result.rowCount === 0 ? undefined : result.rows[0].value;
+    return result.rowCount === 0 ? undefined : result.rows[0].value.value;
   }
 
   public async store(value: T) {
     await this.db.query(`
       insert into values(name, key, value) values ($1, '', $2)
       on conflict (name, key) do update set value = $2
-    `, [this.name, value]);
+    `, [this.name, { value }]);
   }
 }

@@ -3,9 +3,8 @@ import { Pool } from "pg";
 import { PgEventStorage } from "./pg-event-storage";
 import { PgKeyValueStorage } from "./pg-key-value-storage";
 import { PgValueStorage } from "./pg-value-storage";
-import { Storage, ViewerStorage } from "./storage";
 
-export class PgStorage implements Storage {
+export class PgStorage {
   private eventStorage: EventStorage;
 
   constructor(private db: Pool) {
@@ -22,9 +21,5 @@ export class PgStorage implements Storage {
 
   public getKeyValueStorage<T>(name: string): KeyValueStorage<T> {
     return new PgKeyValueStorage(name, this.db);
-  }
-
-  public getViewerStorage(): ViewerStorage {
-
   }
 }

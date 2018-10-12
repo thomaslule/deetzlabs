@@ -1,5 +1,5 @@
 import {
-  DecisionProvider, DecisionSequence, EventBus, InMemoryReduceProjection, Store, ValueStorage,
+  DecisionProvider, DecisionSequence, EventBus, InMemoryReduceProjection, Store,
 } from "es-objects";
 import { PgStorage } from "../../storage/pg-storage";
 import { AchievementVolumeProj } from "./achievement-volume-proj";

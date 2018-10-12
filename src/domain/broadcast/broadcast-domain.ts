@@ -1,5 +1,5 @@
 import { EventBus, PersistedDecisionProvider, Store } from "es-objects";
-import { Storage } from "../../storage/storage";
+import { PgStorage } from "../../storage/pg-storage";
 import { Broadcast, decisionReducer } from "./broadcast";
 import { BroadcastProjection } from "./broadcast-projection";
 
@@ -7,7 +7,7 @@ export class BroadcastDomain {
   private store: Store<Broadcast, any>;
   private projection: BroadcastProjection;
 
-  constructor(eventBus: EventBus, storage: Storage) {
+  constructor(eventBus: EventBus, storage: PgStorage) {
     const decisionProvider = new PersistedDecisionProvider(
       "broadcast",
       decisionReducer,

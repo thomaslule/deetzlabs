@@ -1,5 +1,5 @@
 import { EventBus,  PersistedDecisionProvider, Store } from "es-objects";
-import { Storage } from "../../storage/storage";
+import { PgStorage } from "../../storage/pg-storage";
 import { AchievementsCommandListenener } from "./listeners/achievements-command-listener";
 import { CommandsCommandListenener } from "./listeners/commands-command-listener";
 import { LastAchievementsProjection } from "./projections/last-achievements-projection";
@@ -14,7 +14,7 @@ export class ViewerDomain {
   constructor(
     eventBus: EventBus,
     sendChatMessage: (msg: string) => void,
-    storage: Storage,
+    storage: PgStorage,
     options: any,
   ) {
     const viewerDecisionProvider = new PersistedDecisionProvider(

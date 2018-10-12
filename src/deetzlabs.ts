@@ -1,4 +1,5 @@
 // import { Admin } from "./admin";
+import { Pool } from "pg";
 import { Api } from "./api";
 import { Domain } from "./domain";
 import { getOptions, Options } from "./get-options";
@@ -23,7 +24,7 @@ export class Deetzlabs {
     const widgets = new Widgets();
     // const admin = new Admin();
     const domain = new Domain(
-      new PgStorage(this.opts.db_url),
+      new PgStorage(new Pool({ connectionString: this.opts.db_url })),
       (msg) => twitch.say(msg),
       () => widgets.showAchievement(),
       this.opts,

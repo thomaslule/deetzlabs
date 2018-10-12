@@ -7,7 +7,7 @@
   "scripts": {
     "build": "rimraf ./lib && tsc",
     "test": "jest -i",
-    "start-test": "npm run build && node ./test/start-test.js"
+    "live-test": "npm run build && node ./test/live-test.js"
   },
   "repository": {
     "type": "git",
