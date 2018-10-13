@@ -16,4 +16,8 @@ export class PgValueStorage<T> implements ValueStorage<T> {
       on conflict (name, key) do update set value = $2
     `, [this.name, { value }]);
   }
+
+  public async delete() {
+    await this.db.query("delete from values where name = $1 and key = ''", [this.name]);
+  }
 }

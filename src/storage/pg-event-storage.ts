@@ -1,7 +1,7 @@
 import { Event, EventStorage } from "es-objects";
 import { Pool } from "pg";
 import * as QueryStream from "pg-query-stream";
-import { Stream, Transform } from "stream";
+import { Readable, Transform } from "stream";
 
 export class PgEventStorage implements EventStorage {
 
@@ -15,14 +15,14 @@ export class PgEventStorage implements EventStorage {
     );
   }
 
-  public getEvents(aggregate: string, id: string, fromSequence?: number): Stream {
+  public getEvents(aggregate: string, id: string, fromSequence?: number): Readable {
     return this.getStream(new QueryStream(
       "select event from events where aggregate = $1 and id = $2 order by sequence",
       [aggregate, id],
     )).pipe(rowToEvent());
   }
 
-  public getAllEvents(): Stream {
+  public getAllEvents(): Readable {
     return this.getStream(new QueryStream(
       "select event from events order by event_id",
     )).pipe(rowToEvent());

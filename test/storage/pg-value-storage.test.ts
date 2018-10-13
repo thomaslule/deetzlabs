@@ -14,6 +14,8 @@ describe("PgValueStorage", () => {
     expect(await storage.get()).toBe(42);
     await storage.store(66);
     expect(await storage.get()).toBe(66);
+    await storage.delete();
+    expect(await storage.get()).toBeUndefined();
   });
 
 });

@@ -20,9 +20,17 @@ export class PgKeyValueStorage<T> implements KeyValueStorage<T> {
     `, [this.name, key, { value }]);
   }
 
+  public async delete(key: string) {
+    await this.db.query("delete from values where name = $1 and key = $2", [this.name, key]);
+  }
+
   public async getAll(): Promise<Dictionary<T>> {
     const result = await this.db.query("select key, value from values where name = $1", [this.name]);
     return result.rows.reduce((acc, row) => ({ ...acc, [row.key]: row.value.value }), {});
+  }
+
+  public async deleteAll() {
+    await this.db.query("truncate table values");
   }
 
 }
