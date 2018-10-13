@@ -16,6 +16,9 @@ export class Domain {
   ) {
     const bus = new EventBus(storage.getEventStorage(), (err) => {
       log.error("An error happened in an event handler: %s", err);
+      if (err.stack) {
+        log.error(err.stack);
+      }
     });
     this.viewer = new ViewerDomain(bus, sendChatMessage, storage, options);
     this.settings = new SettingsDomain(bus, storage);

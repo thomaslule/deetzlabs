@@ -5,7 +5,7 @@ module.exports = {
   messageToObject: (message) => ({
     commandsCommand: message === "!commands" ? true : undefined,
     achievementsCommand: message === "!achievements" ? true : undefined,
-    gg: message === "gg" ? true : undefined,
+    gg: message.startsWith("gg") ? true : undefined,
   }),
   achievements: {
     cheerleader: {
