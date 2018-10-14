@@ -21,9 +21,9 @@ export class Viewer extends Entity<DecisionState> {
     }
   }
 
-  public async chatMessage(message: string, viewerName?: string) {
+  public async chatMessage(message: string, viewerName?: string, broadcastNo?: number) {
     if (viewerName) { await this.changeName(viewerName); }
-    const event = await this.publishAndApply(sentChatMessage(this.options.messageToObject(message)));
+    const event = await this.publishAndApply(sentChatMessage(this.options.messageToObject(message), broadcastNo));
     await this.distributeAchievements(event);
   }
 

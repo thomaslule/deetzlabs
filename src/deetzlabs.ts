@@ -34,7 +34,10 @@ export class Deetzlabs {
       try {
         if (isSelf) { return; }
         const viewer = await domain.viewer.get(userstate["user-id"]);
-        viewer.chatMessage(message, userstate["display-name"]);
+        const broadcastNo = (await domain.broadcast.isBroadcasting())
+          ? await domain.broadcast.getBroadcastNumber()
+          : undefined;
+        viewer.chatMessage(message, userstate["display-name"], broadcastNo);
       } catch (error) {
         log.error(error);
       }

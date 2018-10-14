@@ -28,8 +28,8 @@ const createEvent = (type: string, content: any = {}) => ({
 export const changedName = (name: string) =>
   createEvent("changed-name", { name });
 
-export const sentChatMessage = (message: Obj) =>
-  createEvent(eventsTypes.sentChatMessage, { message });
+export const sentChatMessage = (message: Obj, broadcastNo?: number) =>
+  createEvent(eventsTypes.sentChatMessage, { message, broadcastNo });
 
 export const gotAchievement = (achievement: string) =>
   createEvent(eventsTypes.gotAchievement, { achievement });
