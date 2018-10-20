@@ -15,17 +15,24 @@ export class PgEventStorage implements EventStorage {
     );
   }
 
-  public getEvents(aggregate: string, id: string, fromSequence?: number): Readable {
-    return this.getStream(new QueryStream(
-      "select event from events where aggregate = $1 and id = $2 order by sequence",
-      [aggregate, id],
-    )).pipe(rowToEvent());
-  }
-
-  public getAllEvents(): Readable {
-    return this.getStream(new QueryStream(
-      "select event from events order by event_id",
-    )).pipe(rowToEvent());
+  public getEvents(aggregate?: string, id?: string, fromSequence?: number): Readable {
+    let query = "select event from events";
+    const params = [];
+    if (aggregate !== undefined) {
+      query += " where aggregate = $1";
+      params.push(aggregate);
+      if (id !== undefined) {
+        query += " and id = $2";
+        params.push(id);
+        if (fromSequence !== undefined) {
+          query += " and sequence >= $3";
+          params.push(fromSequence);
+        }
+      }
+    }
+    query += " order by event_id";
+    return this.getStream(new QueryStream(query, params))
+      .pipe(rowToEvent());
   }
 
   private getStream(query: QueryStream) {

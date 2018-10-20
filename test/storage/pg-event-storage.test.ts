@@ -1,26 +1,34 @@
 import { Pool } from "pg";
 import * as toArray from "stream-to-array";
 import { PgEventStorage } from "../../src/storage/pg-event-storage";
-import { getCleanDb, makeViewerEvent } from "../test-util";
+import { getCleanDb, makeBroadcastEvent, makeViewerEvent } from "../test-util";
 
-describe("SqliteEventStorage", () => {
+describe("PgEventStorage", () => {
   let db: Pool;
   beforeEach(async () => { db = await getCleanDb(); });
   afterEach(async () => { await db.end(); });
 
-  test("getAllEvents should retrieve all events", async () => {
+  test("getEvents with no arg should retrieve all events", async () => {
     const storage = new PgEventStorage(db);
     const event1 = makeViewerEvent();
-    const event2 = makeViewerEvent({ sequence: 1 });
-    const event3 = makeViewerEvent({ sequence: 2 });
+    const event2 = makeBroadcastEvent();
     await storage.store(event1);
     await storage.store(event2);
-    await storage.store(event3);
-    const events = await toArray(await storage.getAllEvents());
-    expect(events).toEqual([event1, event2, event3]);
+    const events = await toArray(await storage.getEvents());
+    expect(events).toEqual([event1, event2]);
   });
 
-  test("getEvents should retrieve events for a specified entity", async () => {
+  test("getEvents with aggregate should retrieve events from this aggregate only", async () => {
+    const storage = new PgEventStorage(db);
+    const event1 = makeViewerEvent();
+    const event2 = makeBroadcastEvent();
+    await storage.store(event1);
+    await storage.store(event2);
+    const events = await toArray(await storage.getEvents("viewer"));
+    expect(events).toEqual([event1]);
+  });
+
+  test("getEvents with aggregate and id should retrieve events from this entity only", async () => {
     const storage = new PgEventStorage(db);
     const event1 = makeViewerEvent();
     const event2 = makeViewerEvent({ id: "456" });
@@ -28,8 +36,18 @@ describe("SqliteEventStorage", () => {
     await storage.store(event2);
     const events = await toArray(await storage.getEvents("viewer", "123"));
     expect(events).toEqual([event1]);
-    const events2 = await toArray(await storage.getEvents("viewer", "456"));
-    expect(events2).toEqual([event2]);
+  });
+
+  test("getEvents with aggregate, id and fromSequence should retrieve events from the provided sequence", async () => {
+    const storage = new PgEventStorage(db);
+    const event1 = makeViewerEvent();
+    const event2 = makeViewerEvent({ sequence: 1 });
+    const event3 = makeViewerEvent({ sequence: 1, id: "456" });
+    await storage.store(event1);
+    await storage.store(event2);
+    await storage.store(event3);
+    const events = await toArray(await storage.getEvents("viewer", "123", 1));
+    expect(events).toEqual([event2]);
   });
 
   test("store should throw in case of duplicate sequence", async () => {
