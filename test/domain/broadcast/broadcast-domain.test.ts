@@ -2,7 +2,7 @@ import { EventBus } from "es-objects";
 import { Pool } from "pg";
 import { BroadcastDomain } from "../../../src/domain/broadcast/broadcast-domain";
 import { PgStorage } from "../../../src/storage/pg-storage";
-import { getCleanDb, wait } from "../../test-util";
+import { arrayToStream, getCleanDb, makeBroadcastEvent } from "../../test-util";
 
 describe("BroadcastDomain", () => {
   let db: Pool;
@@ -14,16 +14,32 @@ describe("BroadcastDomain", () => {
     const bus = new EventBus(storage.getEventStorage());
     const domain = new BroadcastDomain(bus, storage);
 
-    expect(await domain.isBroadcasting()).toBeFalsy();
-    await domain.begin("Tetris"); await wait();
-    expect(await domain.isBroadcasting()).toBeTruthy();
-    expect(await domain.getBroadcastNumber()).toBe(1);
-    expect(await domain.getGame()).toBe("Tetris");
-    await domain.end(); await wait();
-    expect(await domain.isBroadcasting()).toBeFalsy();
-    await domain.begin("Zelda"); await wait();
-    expect(await domain.isBroadcasting()).toBeTruthy();
-    expect(await domain.getBroadcastNumber()).toBe(2);
-    expect(await domain.getGame()).toBe("Zelda");
+    expect(domain.isBroadcasting()).toBeFalsy();
+    await domain.begin("Tetris");
+    expect(domain.isBroadcasting()).toBeTruthy();
+    expect(domain.getBroadcastNumber()).toBe(1);
+    expect(domain.getGame()).toBe("Tetris");
+    await domain.end();
+    expect(domain.isBroadcasting()).toBeFalsy();
+    expect(domain.getBroadcastNumber()).toBeUndefined();
+    await domain.begin("Zelda");
+    expect(domain.isBroadcasting()).toBeTruthy();
+    expect(domain.getBroadcastNumber()).toBe(2);
+    expect(domain.getGame()).toBe("Zelda");
+  });
+
+  test("initCache should init the projection", async () => {
+    const storage = new PgStorage(db);
+    const domain = new BroadcastDomain(new EventBus(storage.getEventStorage()), storage);
+
+    await domain.initCache(arrayToStream([
+      makeBroadcastEvent({ type: "begun", game: "Tetris" }),
+      makeBroadcastEvent({ type: "ended" }),
+      makeBroadcastEvent({ type: "begun", game: "Zelda" }),
+    ]));
+
+    expect(domain.isBroadcasting()).toBeTruthy();
+    expect(domain.getBroadcastNumber()).toBe(2);
+    expect(domain.getGame()).toBe("Zelda");
   });
 });

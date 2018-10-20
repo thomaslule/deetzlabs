@@ -1,4 +1,6 @@
-import { EventBus, PersistedDecisionProvider, Store } from "es-objects";
+import { Event, EventBus, PersistedDecisionProvider, Store } from "es-objects";
+import { Readable } from "stream";
+import * as filter from "stream-filter";
 import { PgStorage } from "../../storage/pg-storage";
 import { Broadcast, decisionReducer } from "./broadcast";
 import { BroadcastProjection } from "./broadcast-projection";
@@ -20,7 +22,7 @@ export class BroadcastDomain {
       (event) => eventBus.publish(event),
     );
 
-    this.projection = new BroadcastProjection(storage.getValueStorage("broadcast-number"));
+    this.projection = new BroadcastProjection();
     eventBus.onEvent((event) => this.projection.handleEvent(event));
   }
 
@@ -39,16 +41,20 @@ export class BroadcastDomain {
     await broadcast.end();
   }
 
-  public async isBroadcasting(): Promise<boolean> {
+  public isBroadcasting(): boolean {
     return this.projection.isBroadcasting();
   }
 
-  public async getBroadcastNumber(): Promise<number | undefined> {
+  public getBroadcastNumber(): number | undefined {
     return this.projection.getBroadcastNumber();
   }
 
-  public async getGame(): Promise<string> {
+  public getGame(): string {
     return this.projection.getGame();
+  }
+
+  public async initCache(events: Readable) {
+    await this.projection.rebuild(events.pipe(filter.obj((event: Event) => event.aggregate === "broadcast")));
   }
 
 }

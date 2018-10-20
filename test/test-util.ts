@@ -1,5 +1,6 @@
 import { Event } from "es-objects";
 import { Pool } from "pg";
+import { Readable } from "stream";
 import { resetDatabase } from "../src";
 import { getOptions } from "../src/get-options";
 import { Obj } from "../src/util";
@@ -33,4 +34,19 @@ export async function getCleanDb() {
   const connectionString = "postgresql://postgres:admin@localhost:5432/deetzlabs_test";
   await resetDatabase(connectionString);
   return new Pool({ connectionString });
+}
+
+export function arrayToStream(array: any[]): Readable {
+  let index = 0;
+  return new Readable({
+    objectMode: true,
+    read() {
+      if (index >= array.length) {
+        this.push(null); // tslint:disable-line:no-null-keyword
+      } else {
+        this.push(array[index]);
+        index++;
+      }
+    },
+  });
 }

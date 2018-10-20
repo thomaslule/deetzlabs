@@ -13,8 +13,9 @@ import { Twitch } from "./twitch";
 import { Widgets } from "./widgets";
 
 export class Deetzlabs {
-  private server: Server;
   private opts: Options;
+  private domain: Domain;
+  private server: Server;
   private twitch: Twitch;
 
   constructor(options?: Partial<Options>) {
@@ -24,7 +25,7 @@ export class Deetzlabs {
     // const streamlabs = new Streamlabs();
     const widgets = new Widgets();
     // const admin = new Admin();
-    const domain = new Domain(
+    this.domain = new Domain(
       new PgStorage(new Pool({ connectionString: this.opts.db_url })),
       (msg) => this.twitch.say(msg),
       () => widgets.showAchievement(),
@@ -33,21 +34,22 @@ export class Deetzlabs {
     this.twitch.on("chat", async (channel: string, userstate: any, message: string, isSelf: boolean) => {
       try {
         if (isSelf) { return; }
-        const viewer = await domain.viewer.get(userstate["user-id"]);
-        const broadcastNo = (await domain.broadcast.isBroadcasting())
-          ? await domain.broadcast.getBroadcastNumber()
-          : undefined;
+        const viewer = await this.domain.viewer.get(userstate["user-id"]);
+        const broadcastNo = this.domain.broadcast.getBroadcastNumber();
         viewer.chatMessage(message, userstate["display-name"], broadcastNo);
       } catch (error) {
         log.error(error);
       }
     });
-    const api = new Api(domain, this.opts);
+    const api = new Api(this.domain, this.opts);
     this.server = new Server(api.getRouter() /*widgets.getRouter(), admin.getRouter(), twitch.getRouter()*/);
   }
 
   public async start() {
-    await this.twitch.connect();
+    await Promise.all([
+      this.domain.init(),
+      this.twitch.connect(),
+    ]);
     this.server.get().listen(this.opts.port, () => {
       log.info(`listening on ${this.opts.port}`);
     });

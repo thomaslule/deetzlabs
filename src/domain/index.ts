@@ -11,22 +11,27 @@ export class Domain {
   public settings: SettingsDomain;
 
   constructor(
-    storage: PgStorage,
+    private storage: PgStorage,
     sendChatMessage: (msg: string) => void,
     showAchievement: (achievement: string) => void,
     options: any,
   ) {
-    const bus = new EventBus(storage.getEventStorage(), (err) => {
+    const bus = new EventBus(this.storage.getEventStorage(), (err) => {
       log.error("An error happened in an event handler: %s", err);
       if (err.stack) {
         log.error(err.stack);
       }
     });
-    this.viewer = new ViewerDomain(bus, sendChatMessage, storage, options);
-    this.broadcast = new BroadcastDomain(bus, storage);
-    this.settings = new SettingsDomain(bus, storage);
+    this.viewer = new ViewerDomain(bus, sendChatMessage, this.storage, options);
+    this.broadcast = new BroadcastDomain(bus, this.storage);
+    this.settings = new SettingsDomain(bus, this.storage);
     bus.onEvent((event) => {
       log.info(`event happened: %s %s %s`, event.aggregate, event.id, event.type);
     });
+  }
+
+  public async init() {
+    const events = this.storage.getEventStorage().getEvents("broadcast", "broadcast");
+    await this.broadcast.initCache(events);
   }
 }

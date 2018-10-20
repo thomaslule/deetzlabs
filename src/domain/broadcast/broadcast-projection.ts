@@ -1,26 +1,22 @@
-import { Event, PersistedReduceProjection, ValueStorage } from "es-objects";
+import { Event, InMemoryReduceProjection } from "es-objects";
 
-export class BroadcastProjection {
-  private projection: PersistedReduceProjection<State>;
-
-  constructor(storage: ValueStorage<any>) {
-    this.projection = new PersistedReduceProjection(reducer, storage, (e) => e.aggregate === "broadcast");
+export class BroadcastProjection extends InMemoryReduceProjection<State> {
+  constructor() {
+    super(reducer);
   }
 
-  public async handleEvent(event: Event) {
-    await this.projection.handleEvent(event);
+  public isBroadcasting(): boolean {
+    return this.getState().isBroadcasting;
   }
 
-  public async isBroadcasting() {
-    return (await this.projection.getState()).isBroadcasting;
+  public getBroadcastNumber(): number | undefined {
+    return this.getState().isBroadcasting
+      ? this.getState().number
+      : undefined;
   }
 
-  public async getBroadcastNumber() {
-    return (await this.projection.getState()).number;
-  }
-
-  public async getGame() {
-    return (await this.projection.getState()).game;
+  public getGame(): string {
+    return this.getState().game;
   }
 }
 
