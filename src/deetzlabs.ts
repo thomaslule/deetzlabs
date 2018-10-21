@@ -31,18 +31,9 @@ export class Deetzlabs {
       () => widgets.showAchievement(),
       this.opts,
     );
-    this.twitch.on("chat", async (channel: string, userstate: any, message: string, isSelf: boolean) => {
-      try {
-        if (isSelf) { return; }
-        const viewer = await this.domain.viewer.get(userstate["user-id"]);
-        const broadcastNo = this.domain.broadcast.getBroadcastNumber();
-        viewer.chatMessage(message, userstate["display-name"], broadcastNo);
-      } catch (error) {
-        log.error(error);
-      }
-    });
+    this.twitch.connectToDomain(this.domain);
     const api = new Api(this.domain, this.opts);
-    this.server = new Server(api.getRouter() /*widgets.getRouter(), admin.getRouter(), twitch.getRouter()*/);
+    this.server = new Server(api.getRouter(), /*widgets.getRouter(), admin.getRouter(),*/ this.twitch.getProxy());
   }
 
   public async start() {

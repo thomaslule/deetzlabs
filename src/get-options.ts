@@ -4,17 +4,16 @@ import { Obj } from "./util";
 
 const defaultOptions = {
   port: 3100,
+  self_url: "http://localhost",
+  webhook_port: 3333,
   db_url: "postgresql://postgres:admin@localhost:5432/deetzlabs",
   channel: "",
   client_id: "",
   client_secret: "",
-  streamer_token: "",
   bot_name: "",
   bot_token: "",
   streamlabs_socket_token: "",
   secret: "",
-  self_url: "http://localhost",
-  webhook_port: 3333,
   protect_api: true,
   logins: {
     test: "n4bQgYhMfWWaL+qgxVrQFaO/TxsrC4Is0V1sFbDwCgg=", // test
@@ -38,17 +37,16 @@ export function getOptions(providedOptions: Partial<Options> = {}): Options {
 
 export interface Options {
   port: number;
+  self_url: string;
+  webhook_port: number;
   db_url: string;
   channel: string;
   client_id: string;
   client_secret: string;
-  streamer_token: string;
   bot_name: string;
   bot_token: string;
   streamlabs_socket_token: string;
   secret: string;
-  self_url: string;
-  webhook_port: number;
   protect_api: boolean;
   logins: Dictionary<string>;
   log_to_console: boolean;

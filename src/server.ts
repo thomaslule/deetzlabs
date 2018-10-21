@@ -9,10 +9,10 @@ const stream = { write: (message: string) => log.info(message.slice(0, -1)) };
 export class Server {
   private app: Express;
 
-  constructor(apiRouter: Router /*widgetsRouter: any, adminRouter: any, twitchRouter: any*/) {
+  constructor(apiRouter: Router, /*widgetsRouter: any, adminRouter: any,*/ twitchProxy: any) {
     this.app = express();
     this.app.use(morgan(':remote-addr ":method :url" - :status - :response-time ms', { stream }));
-    // app.use('/twitch-callback', twitchProxy);
+    this.app.use("/twitch-callback", twitchProxy);
     this.app.use(json());
 
     this.app.use("/api", apiRouter);
