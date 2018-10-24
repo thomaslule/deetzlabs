@@ -65,16 +65,21 @@ export class Twitch {
       await viewer.giveSub(twitchRecipient.id);
     });
 
-    this.channel.on("host", async (event) => {
-      const twitchViewer = await this.channel.getTwitchUserByName(event.name);
+    this.channel.on("host", async ({ name, viewers }) => {
+      const twitchViewer = await this.channel.getTwitchUserByName(name);
       const viewer = await domain.viewer.get(twitchViewer.id);
-      await viewer.host(event.viewers);
+      await viewer.host(viewers);
     });
 
     this.channel.on("raid", async ({ raider, viewers }) => {
       const twitchViewer = await this.channel.getTwitchUserByName(raider);
       const viewer = await domain.viewer.get(twitchViewer.id);
       await viewer.raid(viewers);
+    });
+
+    this.channel.on("follow", async (viewerId) => {
+      const viewer = await domain.viewer.get(viewerId);
+      await viewer.follow();
     });
   }
 

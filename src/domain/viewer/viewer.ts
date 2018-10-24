@@ -4,7 +4,7 @@ import ow from "ow";
 import { Options } from "../../get-options";
 import { Obj } from "../../util";
 import {
-  changedName, cheered, donated, gaveSub, gotAchievement, hosted, raided, resubscribed, sentChatMessage, subscribed,
+  changedName, cheered, donated, followed, gaveSub, gotAchievement, hosted, raided, resubscribed, sentChatMessage, subscribed,
 } from "./events";
 
 export class Viewer extends Entity<DecisionState> {
@@ -86,6 +86,11 @@ export class Viewer extends Entity<DecisionState> {
   public async raid(nbViewers: number) {
     ow(nbViewers, ow.number);
     const event = await this.publishAndApply(raided(nbViewers));
+    await this.distributeAchievements(event);
+  }
+
+  public async follow() {
+    const event = await this.publishAndApply(followed());
     await this.distributeAchievements(event);
   }
 
