@@ -81,6 +81,18 @@ export class Twitch {
       const viewer = await domain.viewer.get(viewerId);
       await viewer.follow();
     });
+
+    this.channel.on("stream-begin", async (game) => {
+      await domain.broadcast.begin(game);
+    });
+
+    this.channel.on("stream-change-game", async (game) => {
+      await domain.broadcast.changeGame(game);
+    });
+
+    this.channel.on("stream-end", async () => {
+      await domain.broadcast.end();
+    });
   }
 
   public async connect(): Promise<void> {
