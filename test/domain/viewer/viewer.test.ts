@@ -92,6 +92,19 @@ describe("Viewer", () => {
     });
   });
 
+  describe("host", () => {
+    test("it should publish a hosted event", async () => {
+      const publish = jest.fn().mockImplementation((event) => event);
+      const someone = new Viewer(
+        "123", { name: "Someone", achievementsReceived: [], achievementsProgress: {} }, publish, testOptions,
+      );
+
+      await someone.host(15);
+
+      expect(publish.mock.calls[0][0]).toMatchObject({ type: "hosted", nbViewers: 15 });
+    });
+  });
+
 });
 
 describe("getDecisionReducer", () => {

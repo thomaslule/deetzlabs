@@ -64,6 +64,12 @@ export class Twitch {
       const viewer = await domain.viewer.get(twitchViewer.id);
       await viewer.giveSub(twitchRecipient.id);
     });
+
+    this.channel.on("host", async (event) => {
+      const twitchViewer = await this.channel.getTwitchUserByName(event.name);
+      const viewer = await domain.viewer.get(twitchViewer.id);
+      await viewer.host(event.viewers);
+    });
   }
 
   public async connect(): Promise<void> {
