@@ -105,6 +105,19 @@ describe("Viewer", () => {
     });
   });
 
+  describe("raid", () => {
+    test("it should publish a raided event", async () => {
+      const publish = jest.fn().mockImplementation((event) => event);
+      const someone = new Viewer(
+        "123", { name: "Someone", achievementsReceived: [], achievementsProgress: {} }, publish, testOptions,
+      );
+
+      await someone.raid(15);
+
+      expect(publish.mock.calls[0][0]).toMatchObject({ type: "raided", nbViewers: 15 });
+    });
+  });
+
 });
 
 describe("getDecisionReducer", () => {
