@@ -21,6 +21,7 @@ export class Twitch {
       secret: options.secret,
       port: options.webhook_port,
       logger: log,
+      error_handler: (err) => { log.error(err); },
     });
     this.proxy = proxy(`http://localhost:${options.webhook_port}`);
   }
@@ -31,14 +32,10 @@ export class Twitch {
 
   public connectToDomain(domain: Domain) {
     this.channel.on("chat", async (channel: string, userstate: any, message: string, isSelf: boolean) => {
-      try {
-        if (isSelf) { return; }
-        const viewer = await domain.viewer.get(userstate["user-id"]);
-        const broadcastNo = domain.broadcast.getBroadcastNumber();
-        viewer.chatMessage(message, userstate["display-name"], broadcastNo);
-      } catch (error) {
-        log.error(error);
-      }
+      if (isSelf) { return; }
+      const viewer = await domain.viewer.get(userstate["user-id"]);
+      const broadcastNo = domain.broadcast.getBroadcastNumber();
+      viewer.chatMessage(message, userstate["display-name"], broadcastNo);
     });
   }
 
