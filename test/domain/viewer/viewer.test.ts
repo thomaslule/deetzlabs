@@ -48,6 +48,21 @@ describe("Viewer", () => {
       expect(publish).not.toHaveBeenCalled();
     });
   });
+
+  describe("subscribe", () => {
+    test("it should publish a sent-chat-message and a subscribed event", async () => {
+      const publish = jest.fn().mockImplementation((event) => event);
+      const someone = new Viewer(
+        "123", { name: "Someone", achievementsReceived: [], achievementsProgress: {} }, publish, testOptions,
+      );
+
+      await someone.subscribe("hi");
+
+      expect(publish).toHaveBeenCalledTimes(2);
+      expect(publish.mock.calls[0][0]).toMatchObject({ type: "sent-chat-message" });
+      expect(publish.mock.calls[1][0]).toMatchObject({ type: "subscribed" });
+    });
+  });
 });
 
 describe("getDecisionReducer", () => {

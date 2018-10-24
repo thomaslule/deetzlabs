@@ -44,6 +44,12 @@ export class Twitch {
       await viewer.cheer(userstate.bits, message, userstate["display-name"], broadcastNo);
     });
 
+    this.channel.on("subscription", async (channel, username, method, message) => {
+      const twitchViewer = await this.channel.getTwitchUserByName(username);
+      const viewer = await domain.viewer.get(twitchViewer.id);
+      const broadcastNo = domain.broadcast.getBroadcastNumber();
+      await viewer.subscribe(message, username, broadcastNo);
+    });
   }
 
   public async connect(): Promise<void> {
