@@ -48,7 +48,7 @@ describe("ViewerDomain", () => {
     });
     const someone = await domain.get("123");
 
-    await someone.cheer(500);
+    await someone.cheer(500, "hi");
 
     expect(showAchievement).toHaveBeenCalledWith("123", "cheerleader");
   });
@@ -58,8 +58,7 @@ describe("ViewerDomain", () => {
     const bus = new EventBus(storage.getEventStorage());
     const domain = new ViewerDomain(bus, () => {}, storage, testOptions);
     const someone = await domain.get("123");
-    await someone.chatMessage("hi", "Someone");
-    await someone.cheer(500);
+    await someone.cheer(500, "hi", "Someone");
     const other = await domain.get("456");
     await other.chatMessage("hello", "Other");
 

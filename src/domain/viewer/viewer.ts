@@ -44,10 +44,12 @@ export class Viewer extends Entity<DecisionState> {
     await this.distributeAchievements(event);
   }
 
-  public async cheer(amount: number, viewerName?: string) {
+  public async cheer(amount: number, message: string, viewerName?: string, broadcastNo?: number) {
     if (viewerName) { await this.changeName(viewerName); }
-    const event = await this.publishAndApply(cheered(amount));
-    await this.distributeAchievements(event);
+    const cheerEvent = await this.publishAndApply(cheered(amount));
+    await this.distributeAchievements(cheerEvent);
+    const chatEvent = await this.publishAndApply(sentChatMessage(this.options.messageToObject(message), broadcastNo));
+    await this.distributeAchievements(chatEvent);
   }
 
   private async distributeAchievements(event: Event) {

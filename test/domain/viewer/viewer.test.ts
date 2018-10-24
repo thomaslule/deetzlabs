@@ -10,10 +10,8 @@ describe("Viewer", () => {
         "123", { name: "Someone", achievementsReceived: [], achievementsProgress: {} }, publish, testOptions,
       );
 
-      await someone.cheer(500);
+      await someone.cheer(500, "hi");
 
-      expect(publish).toHaveBeenCalledTimes(2);
-      expect(publish).toHaveBeenCalledWith({ type: "cheered", amount: 500, version: 1 });
       expect(publish).toHaveBeenCalledWith({ type: "got-achievement", achievement: "cheerleader", version: 1 });
     });
 
@@ -22,10 +20,9 @@ describe("Viewer", () => {
       const decisionState = { name: "Someone", achievementsReceived: ["cheerleader"], achievementsProgress: {} };
       const someone = new Viewer("123", decisionState, publish, testOptions);
 
-      await someone.cheer(500);
+      await someone.cheer(500, "hi");
 
-      expect(publish).toHaveBeenCalledTimes(1);
-      expect(publish).toHaveBeenCalledWith({ type: "cheered", amount: 500, version: 1 });
+      expect(publish).toHaveBeenCalledTimes(2); // cheered and sent-chat-message
     });
 
   });

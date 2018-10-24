@@ -35,8 +35,15 @@ export class Twitch {
       if (isSelf) { return; }
       const viewer = await domain.viewer.get(userstate["user-id"]);
       const broadcastNo = domain.broadcast.getBroadcastNumber();
-      viewer.chatMessage(message, userstate["display-name"], broadcastNo);
+      await viewer.chatMessage(message, userstate["display-name"], broadcastNo);
     });
+
+    this.channel.on("cheer", async (channel: string, userstate: any, message: string) => {
+      const viewer = await domain.viewer.get(userstate["user-id"]);
+      const broadcastNo = domain.broadcast.getBroadcastNumber();
+      await viewer.cheer(userstate.bits, message, userstate["display-name"], broadcastNo);
+    });
+
   }
 
   public async connect(): Promise<void> {
