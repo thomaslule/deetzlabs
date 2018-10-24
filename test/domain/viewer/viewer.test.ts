@@ -63,6 +63,35 @@ describe("Viewer", () => {
       expect(publish.mock.calls[1][0]).toMatchObject({ type: "subscribed" });
     });
   });
+
+  describe("resub", () => {
+    test("it should publish a sent-chat-message and a resubscribed event", async () => {
+      const publish = jest.fn().mockImplementation((event) => event);
+      const someone = new Viewer(
+        "123", { name: "Someone", achievementsReceived: [], achievementsProgress: {} }, publish, testOptions,
+      );
+
+      await someone.resub("hi", 6);
+
+      expect(publish).toHaveBeenCalledTimes(2);
+      expect(publish.mock.calls[0][0]).toMatchObject({ type: "sent-chat-message" });
+      expect(publish.mock.calls[1][0]).toMatchObject({ type: "resubscribed", months: 6 });
+    });
+  });
+
+  describe("giveSub", () => {
+    test("it should publish a gaveSub event", async () => {
+      const publish = jest.fn().mockImplementation((event) => event);
+      const someone = new Viewer(
+        "123", { name: "Someone", achievementsReceived: [], achievementsProgress: {} }, publish, testOptions,
+      );
+
+      await someone.giveSub("456");
+
+      expect(publish.mock.calls[0][0]).toMatchObject({ type: "gave-sub", recipient: "456" });
+    });
+  });
+
 });
 
 describe("getDecisionReducer", () => {

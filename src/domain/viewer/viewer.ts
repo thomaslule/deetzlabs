@@ -2,7 +2,9 @@ import { Entity, Event, Reducer } from "es-objects";
 import mapValues = require("lodash.mapvalues");
 import { Options } from "../../get-options";
 import { Obj } from "../../util";
-import { changedName, cheered, donated, gotAchievement, sentChatMessage, subscribed } from "./events";
+import {
+  changedName, cheered, donated, gaveSub, gotAchievement, resubscribed, sentChatMessage, subscribed,
+} from "./events";
 
 export class Viewer extends Entity<DecisionState> {
   public constructor(
@@ -53,6 +55,17 @@ export class Viewer extends Entity<DecisionState> {
   public async subscribe(message: string, viewerName?: string, broadcastNo?: number) {
     await this.chatMessage(message, viewerName, broadcastNo);
     const event = await this.publishAndApply(subscribed());
+    await this.distributeAchievements(event);
+  }
+
+  public async resub(message: string, months: number, viewerName?: string, broadcastNo?: number) {
+    await this.chatMessage(message, viewerName, broadcastNo);
+    const event = await this.publishAndApply(resubscribed(months));
+    await this.distributeAchievements(event);
+  }
+
+  public async giveSub(recipient: string) {
+    const event = await this.publishAndApply(gaveSub(recipient));
     await this.distributeAchievements(event);
   }
 

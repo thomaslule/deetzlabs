@@ -44,11 +44,25 @@ export class Twitch {
       await viewer.cheer(userstate.bits, message, userstate["display-name"], broadcastNo);
     });
 
-    this.channel.on("subscription", async (channel, username, method, message) => {
+    this.channel.on("subscription", async (channel, username: string, method, message: string) => {
       const twitchViewer = await this.channel.getTwitchUserByName(username);
       const viewer = await domain.viewer.get(twitchViewer.id);
       const broadcastNo = domain.broadcast.getBroadcastNumber();
       await viewer.subscribe(message, username, broadcastNo);
+    });
+
+    this.channel.on("resub", async (channel, username: string, months: number, message: string, userstate, methods) => {
+      const twitchViewer = await this.channel.getTwitchUserByName(username);
+      const viewer = await domain.viewer.get(twitchViewer.id);
+      const broadcastNo = domain.broadcast.getBroadcastNumber();
+      await viewer.resub(message, months, username, broadcastNo);
+    });
+
+    this.channel.on("subgift", async (channel, username, recipient, method) => {
+      const twitchViewer = await this.channel.getTwitchUserByName(username);
+      const twitchRecipient = await this.channel.getTwitchUserByName(recipient);
+      const viewer = await domain.viewer.get(twitchViewer.id);
+      await viewer.giveSub(twitchRecipient.id);
     });
   }
 

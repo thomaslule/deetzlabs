@@ -39,13 +39,9 @@ export const replayedAchievement = (achievement: string) =>
 
 export const subscribed = () => createEvent(eventsTypes.subscribed);
 
-export const resubscribed = (method: string, months: number) =>
-  createEvent(eventsTypes.resubscribed, {
-    method,
-    months,
-  });
+export const resubscribed = (months: number) => createEvent(eventsTypes.resubscribed, { months });
 
-export const gaveSub = (recipient: string, method: string) => createEvent(eventsTypes.gaveSub, { recipient, method });
+export const gaveSub = (recipient: string) => createEvent(eventsTypes.gaveSub, { recipient });
 
 export const cheered = (amount: number) => createEvent(eventsTypes.cheered, { amount });
 
