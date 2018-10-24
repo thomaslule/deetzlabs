@@ -1,4 +1,5 @@
 import { Entity, Event } from "es-objects";
+import ow from "ow";
 import { begun, changedGame, ended } from "./events";
 
 export class Broadcast extends Entity<DecisionState> {
@@ -7,6 +8,7 @@ export class Broadcast extends Entity<DecisionState> {
   }
 
   public async begin(game: string) {
+    ow(game, ow.string.minLength(1));
     if (this.isBroadcasting()) {
       throw new Error("cant begin broadcast, broadcast already live");
     }
@@ -14,6 +16,7 @@ export class Broadcast extends Entity<DecisionState> {
   }
 
   public async changeGame(game: string) {
+    ow(game, ow.string.minLength(1));
     if (!this.isBroadcasting()) {
       throw new Error("cant change game, broadcast not live");
     }

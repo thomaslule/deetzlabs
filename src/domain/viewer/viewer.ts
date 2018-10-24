@@ -1,5 +1,6 @@
 import { Entity, Event, Reducer } from "es-objects";
 import mapValues = require("lodash.mapvalues");
+import ow from "ow";
 import { Options } from "../../get-options";
 import { Obj } from "../../util";
 import {
@@ -17,6 +18,7 @@ export class Viewer extends Entity<DecisionState> {
   }
 
   public async changeName(name: string) {
+    ow(name, ow.string.minLength(1));
     if (name !== this.getDecision().name) {
       const event = await this.publishAndApply(changedName(name));
       await this.distributeAchievements(event);
@@ -24,6 +26,8 @@ export class Viewer extends Entity<DecisionState> {
   }
 
   public async chatMessage(message: string, viewerName?: string, broadcastNo?: number) {
+    ow(message, ow.string);
+    ow(broadcastNo, ow.any(ow.undefined, ow.number));
     if (viewerName) { await this.changeName(viewerName); }
     const event = await this.publishAndApply(sentChatMessage(this.options.messageToObject(message), broadcastNo));
     await this.distributeAchievements(event);
@@ -41,12 +45,14 @@ export class Viewer extends Entity<DecisionState> {
   }
 
   public async donate(amount: number, viewerName?: string) {
+    ow(amount, ow.number);
     if (viewerName) { await this.changeName(viewerName); }
     const event = await this.publishAndApply(donated(amount));
     await this.distributeAchievements(event);
   }
 
   public async cheer(amount: number, message: string, viewerName?: string, broadcastNo?: number) {
+    ow(amount, ow.number);
     await this.chatMessage(message, viewerName, broadcastNo);
     const event = await this.publishAndApply(cheered(amount));
     await this.distributeAchievements(event);
@@ -59,12 +65,14 @@ export class Viewer extends Entity<DecisionState> {
   }
 
   public async resub(message: string, months: number, viewerName?: string, broadcastNo?: number) {
+    ow(months, ow.number);
     await this.chatMessage(message, viewerName, broadcastNo);
     const event = await this.publishAndApply(resubscribed(months));
     await this.distributeAchievements(event);
   }
 
   public async giveSub(recipient: string) {
+    ow(recipient, ow.string);
     const event = await this.publishAndApply(gaveSub(recipient));
     await this.distributeAchievements(event);
   }

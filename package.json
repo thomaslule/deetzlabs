@@ -47,6 +47,7 @@
     "lodash.mapvalues": "^4.6.0",
     "logform": "^1.10.0",
     "morgan": "^1.9.1",
+    "ow": "^0.8.0",
     "pg": "^7.5.0",
     "pg-query-stream": "^1.1.1",
     "stream-filter": "^2.1.0",
