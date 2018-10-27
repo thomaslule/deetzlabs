@@ -67,6 +67,16 @@ export class Twitch {
       await viewer.giveSub(twitchRecipient.id);
     });
 
+    this.channel.on("donation", async ({ name, amount}) => {
+      const twitchViewer = await this.channel.getTwitchUserByName(name);
+      if (!twitchViewer) {
+        log.warn("donation from an unknown viewer: %s", name);
+      } else {
+        const viewer = await domain.viewer.get(twitchViewer.id);
+        await viewer.donate(amount);
+      }
+    });
+
     this.channel.on("host", async ({ name, viewers }) => {
       const twitchViewer = await this.channel.getTwitchUserByName(name);
       const viewer = await domain.viewer.get(twitchViewer.id);
