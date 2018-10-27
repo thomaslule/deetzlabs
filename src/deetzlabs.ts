@@ -32,7 +32,7 @@ export class Deetzlabs {
       this.opts,
     );
     this.twitch.connectToDomain(this.domain);
-    const api = new Api(this.domain, this.opts);
+    const api = new Api(this.domain, this.twitch, this.opts);
     this.server = new Server(api.getRouter(), /*widgets.getRouter(), admin.getRouter(),*/ this.twitch.getProxy());
   }
 

@@ -7,6 +7,7 @@ import { sign } from "jsonwebtoken";
 import mapValues = require("lodash.mapvalues");
 import { Domain } from "./domain";
 import { Options } from "./get-options";
+import { Twitch } from "./twitch";
 
 const LOGIN_DURATION = 60 * 60 * 24 * 30;
 
@@ -23,7 +24,7 @@ const validationMiddleware = (req: any, res: Response, next: NextFunction) => {
 export class Api {
   private router: Router;
 
-  constructor(private domain: Domain, private options: Options) {
+  constructor(private domain: Domain, private twitch: Twitch, private options: Options) {
     this.router = Router();
     if (this.options.protect_api) {
       this.router.use(expressjwt({
@@ -102,12 +103,15 @@ export class Api {
     this.router.post(
       "/give_achievement",
       check("achievement").not().isEmpty(),
-      check("viewerId").not().isEmpty(),
       check("viewerName").not().isEmpty(),
       validationMiddleware,
       async (req: any, res: Response, next: NextFunction) => {
         try {
-          const { achievement, viewerId, viewerName } = req.validParams;
+          const { achievement, viewerName } = req.validParams;
+          const viewerId = await this.twitch.getViewerId(viewerName);
+          if (viewerId === undefined) {
+            throw new Error(`couldnt give achievement to ${viewerName}, id not found`);
+          }
           const viewer = await this.domain.viewer.get(viewerId);
           await viewer.giveAchievement(achievement, viewerName);
           res.sendStatus(200);

@@ -101,6 +101,11 @@ export class Twitch {
     });
   }
 
+  public async getViewerId(viewerName: string): Promise<string | undefined> {
+    const twitchViewer = await this.channel.getTwitchUserByName(viewerName);
+    return twitchViewer ? twitchViewer.id : undefined;
+  }
+
   public async connect(): Promise<void> {
     await this.channel.connect();
     await this.fetchTopClipper();
