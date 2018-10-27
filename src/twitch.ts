@@ -2,7 +2,7 @@ import { EventEmitter } from "events";
 import * as proxy from "express-http-proxy";
 import * as TwitchChannel from "twitch-channel";
 import { TwitchChannelInstance } from "twitch-channel";
-import { Domain } from "./domain";
+import { Domain } from "./domain/domain";
 import { Options } from "./get-options";
 import { log } from "./log";
 

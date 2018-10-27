@@ -1,7 +1,7 @@
 // import { Admin } from "./admin";
 import { Pool } from "pg";
 import { Api } from "./api";
-import { Domain } from "./domain";
+import { Domain } from "./domain/domain";
 import { getOptions, Options } from "./get-options";
 import { configureLog, log } from "./log";
 import { Server } from "./server";

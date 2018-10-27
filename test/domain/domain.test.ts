@@ -1,5 +1,5 @@
 import { Pool } from "pg";
-import { Domain } from "../../src/domain";
+import { Domain } from "../../src/domain/domain";
 import { configureLog } from "../../src/log";
 import { PgStorage } from "../../src/storage/pg-storage";
 import { getCleanDb, testOptions } from "../test-util";
