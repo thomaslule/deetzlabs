@@ -130,6 +130,23 @@ export class Api {
     );
 
     this.router.post(
+      "/replay_achievement",
+      check("achievement").not().isEmpty(),
+      check("viewer").not().isEmpty(),
+      validationMiddleware,
+      async (req: any, res: Response, next: NextFunction) => {
+        try {
+          const { achievement, viewer } = req.validParams;
+          const viewerEntity = await this.domain.viewer.get(viewer);
+          await viewerEntity.replayAchievement(achievement);
+          res.sendStatus(200);
+        } catch (err) {
+          next(err);
+        }
+      },
+    );
+
+    this.router.post(
       "/achievement_alert_volume",
       check("volume").isFloat({ min: 0.1, max: 1 }),
       sanitize("volume").toFloat(),

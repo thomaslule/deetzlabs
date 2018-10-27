@@ -14,6 +14,7 @@ import {
   hosted,
   lostTopClipper,
   raided,
+  replayedAchievement,
   resubscribed,
   sentChatMessage,
   subscribed,
@@ -54,6 +55,13 @@ export class Viewer extends Entity<DecisionState> {
     }
     if (viewerName) { await this.changeName(viewerName); }
     await this.publishAndApply(gotAchievement(achievement));
+  }
+
+  public async replayAchievement(achievement: string) {
+    if (!this.options.achievements[achievement]) {
+      throw new Error("achievement doesnt exist");
+    }
+    await this.publishAndApply(replayedAchievement(achievement));
   }
 
   public async donate(amount: number, viewerName?: string) {
