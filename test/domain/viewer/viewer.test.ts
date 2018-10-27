@@ -124,6 +124,48 @@ describe("Viewer", () => {
     });
   });
 
+  describe("topClipper", () => {
+    test("it should publish a became-top-clipper event", async () => {
+      const publish = jest.fn().mockImplementation((event) => event);
+      const someone = getViewer(publish);
+
+      await someone.topClipper();
+
+      expect(publish.mock.calls[0][0]).toMatchObject({ type: "became-top-clipper" });
+      expect(someone.isTopClipper()).toBeTruthy();
+    });
+
+    test("it should not publish a became-top-clipper event if already top clipper", async () => {
+      const publish = jest.fn().mockImplementation((event) => event);
+      const someone = getViewer(publish, { topClipper: true });
+
+      await someone.topClipper();
+
+      expect(publish).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("notTopClipper", () => {
+    test("it should publish a lost-top-clipper event", async () => {
+      const publish = jest.fn().mockImplementation((event) => event);
+      const someone = getViewer(publish, { topClipper: true });
+
+      await someone.notTopClipper();
+
+      expect(publish.mock.calls[0][0]).toMatchObject({ type: "lost-top-clipper" });
+      expect(someone.isTopClipper()).toBeFalsy();
+    });
+
+    test("it should not publish a lost-top-clipper event if wasnt top clipper", async () => {
+      const publish = jest.fn().mockImplementation((event) => event);
+      const someone = getViewer(publish);
+
+      await someone.notTopClipper();
+
+      expect(publish).not.toHaveBeenCalled();
+    });
+  });
+
 });
 
 describe("getDecisionReducer", () => {

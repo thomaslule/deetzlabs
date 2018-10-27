@@ -4,7 +4,19 @@ import ow from "ow";
 import { Options } from "../../get-options";
 import { Obj } from "../../util";
 import {
-  changedName, cheered, donated, followed, gaveSub, gotAchievement, hosted, raided, resubscribed, sentChatMessage, subscribed,
+  becameTopClipper,
+  changedName,
+  cheered,
+  donated,
+  followed,
+  gaveSub,
+  gotAchievement,
+  hosted,
+  lostTopClipper,
+  raided,
+  resubscribed,
+  sentChatMessage,
+  subscribed,
 } from "./events";
 
 export class Viewer extends Entity<DecisionState> {
@@ -89,6 +101,24 @@ export class Viewer extends Entity<DecisionState> {
     await this.distributeAchievements(event);
   }
 
+  public async topClipper() {
+    if (!this.getDecision().topClipper) {
+      const event = await this.publishAndApply(becameTopClipper());
+      await this.distributeAchievements(event);
+    }
+  }
+
+  public async notTopClipper() {
+    if (this.getDecision().topClipper) {
+      const event = await this.publishAndApply(lostTopClipper());
+      await this.distributeAchievements(event);
+    }
+  }
+
+  public isTopClipper() {
+    return this.getDecision().topClipper;
+  }
+
   public async follow() {
     const event = await this.publishAndApply(followed());
     await this.distributeAchievements(event);
@@ -112,9 +142,16 @@ export interface DecisionState {
   name: string | undefined;
   achievementsReceived: string[];
   achievementsProgress: Obj;
+  topClipper: boolean;
 }
 
-const initialState = { name: undefined, achievementsReceived: [], achievementsProgress: {} };
+const initialState = { name: undefined, achievementsReceived: [], achievementsProgress: {}, topClipper: false };
+
+function topClipperReducer(state = false, event: Event) {
+  if (event.type === "became-top-clipper") { return true; }
+  if (event.type === "lost-top-clipper") { return false; }
+  return state;
+}
 
 export function getDecisionReducer(options: Options): Reducer<DecisionState> {
   function getProgressForAchievementsInProgress(state: DecisionState, event: Event): Obj {
@@ -133,6 +170,7 @@ export function getDecisionReducer(options: Options): Reducer<DecisionState> {
     const name = event.type === "changed-name"
       ? event.name
       : state.name;
-    return { name, achievementsProgress, achievementsReceived };
+    const topClipper = topClipperReducer(state.topClipper, event);
+    return { name, achievementsProgress, achievementsReceived, topClipper };
   };
 }
