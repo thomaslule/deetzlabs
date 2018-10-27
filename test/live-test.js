@@ -7,6 +7,7 @@ async function start() {
   const deetzlabs = new Deetzlabs({
     ...testOptions,
     ...secretOptions,
+    log_to_console: true,
     protect_api: false,
   });
   await deetzlabs.start();

@@ -12,6 +12,7 @@ export function configureLog(options: Options) {
       format.splat(),
       format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`),
     ),
+    silent: !options.log_to_console && !options.log_to_file,
   });
   if (options.log_to_console) {
     log.add(new transports.Console());
