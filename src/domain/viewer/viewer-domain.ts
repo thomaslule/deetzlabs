@@ -66,6 +66,10 @@ export class ViewerDomain {
     return this.store.get(id);
   }
 
+  public async getViewerName(id: string) {
+    return (await this.viewerProj.getState(id)).name;
+  }
+
   public async getAllViewersState() {
     return this.viewerProj.getAll();
   }

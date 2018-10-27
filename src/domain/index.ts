@@ -1,4 +1,5 @@
 import { EventBus } from "es-objects";
+import { Options } from "../get-options";
 import { log } from "../log";
 import { PgStorage } from "../storage/pg-storage";
 import { BroadcastDomain } from "./broadcast/broadcast-domain";
@@ -13,8 +14,8 @@ export class Domain {
   constructor(
     private storage: PgStorage,
     sendChatMessage: (msg: string) => void,
-    showAchievement: (achievement: string) => void,
-    options: any,
+    showAchievement: (achievement: string, username: string, text: string, volume: number) => void,
+    options: Options,
   ) {
     const bus = new EventBus(this.storage.getEventStorage(), (err) => {
       log.error("An error happened in an event handler: %s", err);
@@ -27,6 +28,19 @@ export class Domain {
     this.settings = new SettingsDomain(bus, this.storage);
     bus.onEvent((event) => {
       log.info(`event happened: %s %s %s`, event.aggregate, event.id, event.type);
+    });
+    bus.onEvent(async (event) => {
+      try {
+        if (event.aggregate === "viewer" &&
+          (event.type === "got-achievement" || event.type === "replayed-achievement")) {
+          const achievement = options.achievements[event.achievement];
+          const displayName = await this.viewer.getViewerName(event.id);
+          const volume = await this.settings.getAchievementVolume();
+          await showAchievement(achievement.name, displayName as string, achievement.text, volume);
+        }
+      } catch (err) {
+        log.error(err);
+      }
     });
   }
 
