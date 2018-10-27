@@ -100,6 +100,14 @@ export class Api {
       }
     });
 
+    this.router.get("/credits", async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        res.send(await this.domain.credits.get());
+      } catch (err) {
+        next(err);
+      }
+    });
+
     this.router.post(
       "/give_achievement",
       check("achievement").not().isEmpty(),
