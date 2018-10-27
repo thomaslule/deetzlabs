@@ -23,17 +23,18 @@ export class Deetzlabs {
     configureLog(this.opts);
     this.twitch = new Twitch(this.opts);
     // const streamlabs = new Streamlabs();
-    const widgets = new Widgets();
+    const widgets = new Widgets(this.opts);
     // const admin = new Admin();
     this.domain = new Domain(
       new PgStorage(new Pool({ connectionString: this.opts.db_url })),
       (msg) => this.twitch.say(msg),
-      () => widgets.showAchievement(),
+      (achievement, username, text, volume) => widgets.showAchievement(achievement, username, text, volume),
       this.opts,
     );
     this.twitch.connectToDomain(this.domain);
     const api = new Api(this.domain, this.twitch, this.opts);
-    this.server = new Server(api.getRouter(), /*widgets.getRouter(), admin.getRouter(),*/ this.twitch.getProxy());
+    this.server = new Server(api.getRouter(), widgets.getRouter(), /*admin.getRouter(),*/ this.twitch.getProxy());
+    widgets.setupSocket(this.server.get());
   }
 
   public async start() {
