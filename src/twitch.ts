@@ -1,3 +1,4 @@
+import { EventEmitter } from "events";
 import * as proxy from "express-http-proxy";
 import * as TwitchChannel from "twitch-channel";
 import { TwitchChannelInstance } from "twitch-channel";
@@ -8,6 +9,7 @@ import { log } from "./log";
 export class Twitch {
   private channel: TwitchChannelInstance;
   private proxy: any;
+  private bus = new EventEmitter();
 
   constructor(options: Options) {
     this.channel = TwitchChannel({
@@ -93,13 +95,29 @@ export class Twitch {
     this.channel.on("stream-end", async () => {
       await domain.broadcast.end();
     });
+
+    this.bus.on("top-clipper", async (viewerId: string) => {
+      await domain.viewer.topClipper(viewerId);
+    });
   }
 
   public async connect(): Promise<void> {
     await this.channel.connect();
+    await this.fetchTopClipper();
+    setInterval(async () => {
+      try { this.fetchTopClipper(); } catch (err) { log.error(err); }
+    }, 5 * 60 * 1000);
   }
 
   public getProxy(): any {
     return this.proxy;
+  }
+
+  private async fetchTopClipper() {
+    const topClipper = await this.channel.getTopClipper();
+    log.info("fetched top clipper: %s", topClipper);
+    if (topClipper !== undefined) {
+      this.bus.emit("top-clipper", topClipper);
+    }
   }
 }
