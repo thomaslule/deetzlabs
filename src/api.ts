@@ -100,6 +100,14 @@ export class Api {
       }
     });
 
+    this.router.get("/followers_goal", async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        res.send(await this.domain.settings.getFollowersGoal());
+      } catch (err) {
+        next(err);
+      }
+    });
+
     this.router.get("/credits", async (req: Request, res: Response, next: NextFunction) => {
       try {
         res.send(await this.domain.credits.get());
@@ -156,6 +164,25 @@ export class Api {
           const { volume } = req.validParams;
           const settings = await this.domain.settings.get();
           settings.changeAchievementVolume(volume);
+          res.sendStatus(200);
+        } catch (err) {
+          next(err);
+        }
+      },
+    );
+
+    this.router.post(
+      "/change_followers_goal",
+      check("goal").isInt({ min: 1 }),
+      check("html").exists(),
+      check("css").exists(),
+      sanitize("goal").toInt(),
+      validationMiddleware,
+      async (req: any, res: Response, next: NextFunction) => {
+        try {
+          const { goal, html, css } = req.validParams;
+          const settings = await this.domain.settings.get();
+          settings.changeFollowersGoal({ goal, html, css });
           res.sendStatus(200);
         } catch (err) {
           next(err);

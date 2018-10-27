@@ -24,7 +24,7 @@ describe("SettingsDomain", () => {
     const bus = new EventBus(storage.getEventStorage());
     const domain = new SettingsDomain(bus, storage);
 
-    expect((await domain.getFollowersGoal()).goal).toBe(10);
+    expect((await domain.getFollowersGoal()).goal).toBe(100);
     await (await domain.get()).changeFollowersGoal({ goal: 666, html: "", css: "" }); await wait();
     expect((await domain.getFollowersGoal()).goal).toBe(666);
   });

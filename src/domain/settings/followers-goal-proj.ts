@@ -92,7 +92,7 @@ const initCss = `
 }
 `;
 
-const reducer: Reducer<FollowersGoal> = (state = { goal: 10, html: initHtml, css: initCss }, event: Event) => {
+const reducer: Reducer<FollowersGoal> = (state = { goal: 100, html: initHtml, css: initCss }, event: Event) => {
   if (event.type === eventsTypes.followersGoalChanged) {
     return event.settings;
   }
