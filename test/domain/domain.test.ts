@@ -28,7 +28,7 @@ describe("Domain", () => {
     await (await domain.viewer.get("123")).chatMessage("yo", "Someone");
     await (await domain.viewer.get("123")).cheer(100, "hop");
 
-    expect(await domain.getCredits()).toEqual({
+    expect(await domain.credits.get()).toEqual({
       games: ["Tetris"],
       viewers: ["Someone"],
       hosts: [],

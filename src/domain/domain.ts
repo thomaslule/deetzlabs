@@ -3,7 +3,7 @@ import { Options } from "../get-options";
 import { log } from "../log";
 import { PgStorage } from "../storage/pg-storage";
 import { BroadcastDomain } from "./broadcast/broadcast-domain";
-import { Credits } from "./credits/credits";
+import { CreditsDomain } from "./credits/credits-domain";
 import { SettingsDomain } from "./settings/settings-domain";
 import { ViewerDomain } from "./viewer/viewer-domain";
 
@@ -11,7 +11,7 @@ export class Domain {
   public viewer: ViewerDomain;
   public broadcast: BroadcastDomain;
   public settings: SettingsDomain;
-  public credits: Credits;
+  public credits: CreditsDomain;
 
   constructor(
     private storage: PgStorage,
@@ -28,8 +28,7 @@ export class Domain {
     this.viewer = new ViewerDomain(bus, sendChatMessage, this.storage, options);
     this.broadcast = new BroadcastDomain(bus, this.storage);
     this.settings = new SettingsDomain(bus, this.storage);
-    this.credits = new Credits(this.storage.getValueStorage("credits"), options);
-    bus.onEvent((event) => this.credits.handleEvent(event));
+    this.credits = new CreditsDomain(bus, this.storage, this.viewer, options);
 
     bus.onEvent((event) => {
       log.info(`event happened: %s %s %s`, event.aggregate, event.id, event.type);
@@ -52,14 +51,5 @@ export class Domain {
   public async init() {
     const events = this.storage.getEventStorage().getEvents("broadcast", "broadcast");
     await this.broadcast.initCache(events);
-  }
-
-  public async getCredits() {
-    const viewers = await this.viewer.getAllViewersState();
-    const getViewerName = (id: string) => {
-      const viewer = viewers[id];
-      if (viewer !== undefined) { return viewer.name || ""; } else { return ""; }
-    };
-    return this.credits.getWithNames(getViewerName);
   }
 }

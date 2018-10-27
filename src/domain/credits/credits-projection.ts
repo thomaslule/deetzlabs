@@ -1,29 +1,12 @@
 import { Event, PersistedReduceProjection, ValueStorage } from "es-objects";
-import { Options } from "../../get-options";
 
-export class Credits extends PersistedReduceProjection<CreditsState> {
-  constructor(storage: ValueStorage<CreditsState>, private options: Options) {
+export class CreditsProjection extends PersistedReduceProjection<Credits> {
+  constructor(storage: ValueStorage<Credits>) {
     super(reducer, storage);
-  }
-
-  public async getWithNames(getDisplayName: (id: string) => string) {
-    const state = await this.getState();
-    return {
-      games: state.games,
-      viewers: state.viewers.map(getDisplayName),
-      hosts: state.hosts.map(getDisplayName),
-      subscribes: state.subscribes.map(getDisplayName),
-      donators: state.donators.map(getDisplayName),
-      follows: state.follows.map(getDisplayName),
-      achievements: state.achievements.map((a) => ({
-        viewer: getDisplayName(a.viewer),
-        achievement: this.options.achievements[a.achievement].name,
-      })),
-    };
   }
 }
 
-interface CreditsState {
+export interface Credits {
   games: string[];
   viewers: string[];
   hosts: string[];
@@ -33,7 +16,7 @@ interface CreditsState {
   follows: string[];
 }
 
-function emptyCredits(game: string): CreditsState {
+function emptyCredits(game: string): Credits {
   return {
     games: [game],
     viewers: [],
@@ -52,7 +35,7 @@ function addItem(state: any, type: string, item: string) {
   return { ...state, [type]: state[type].concat(item) };
 }
 
-function reducer(state = emptyCredits(""), event: Event): CreditsState {
+function reducer(state = emptyCredits(""), event: Event): Credits {
   if (event.aggregate === "broadcast") {
     if (event.type === "begun") {
       return emptyCredits(event.game);
