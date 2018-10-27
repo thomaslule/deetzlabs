@@ -20,4 +20,23 @@ describe("Domain", () => {
     expect(showAchievement).toHaveBeenCalledWith("Cheerleader", "Someone", "Thank you %USER%!", 0.5);
   });
 
+  test("credits work", async () => {
+    const storage = new PgStorage(db);
+    const domain = new Domain(storage, () => {}, () => {}, testOptions);
+
+    await domain.broadcast.begin("Tetris");
+    await (await domain.viewer.get("123")).chatMessage("yo", "Someone");
+    await (await domain.viewer.get("123")).cheer(100, "hop");
+
+    expect(await domain.getCredits()).toEqual({
+      games: ["Tetris"],
+      viewers: ["Someone"],
+      hosts: [],
+      achievements: [{ viewer: "Someone", achievement: "Cheerleader" }],
+      subscribes: [],
+      donators: ["Someone"],
+      follows: [],
+    });
+  });
+
 });
