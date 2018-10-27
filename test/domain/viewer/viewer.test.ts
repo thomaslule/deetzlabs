@@ -3,12 +3,20 @@ import { getDecisionReducer, Viewer } from "../../../src/domain/viewer/viewer";
 import { testOptions } from "../../test-util";
 
 describe("Viewer", () => {
+
+  function getViewer(publish, decisionState = {}) {
+    return new Viewer(
+      "123",
+      { name: "Someone", achievementsReceived: [], achievementsProgress: {}, topClipper: false, ...decisionState },
+      publish,
+      testOptions,
+    );
+  }
+
   describe("cheer", () => {
     test("it should publish deserved achievements", async () => {
       const publish = jest.fn().mockImplementation((event) => event);
-      const someone = new Viewer(
-        "123", { name: "Someone", achievementsReceived: [], achievementsProgress: {} }, publish, testOptions,
-      );
+      const someone = getViewer(publish);
 
       await someone.cheer(500, "hi");
 
@@ -17,8 +25,7 @@ describe("Viewer", () => {
 
     test("it shouldnt publish already obtained achievements", async () => {
       const publish = jest.fn().mockImplementation((event) => event);
-      const decisionState = { name: "Someone", achievementsReceived: ["cheerleader"], achievementsProgress: {} };
-      const someone = new Viewer("123", decisionState, publish, testOptions);
+      const someone = getViewer(publish, { achievementsReceived: ["cheerleader"] });
 
       await someone.cheer(500, "hi");
 
@@ -30,8 +37,7 @@ describe("Viewer", () => {
   describe("changeName", () => {
     test("it should set a new viewer's name", async () => {
       const publish = jest.fn().mockImplementation((event) => event);
-      const decisionState = { name: undefined, achievementsReceived: [], achievementsProgress: {} };
-      const someone = new Viewer("123", decisionState, publish, testOptions);
+      const someone = getViewer(publish, { name: undefined });
 
       await someone.changeName("Someone");
 
@@ -40,8 +46,7 @@ describe("Viewer", () => {
 
     test("it shouldnt do anything when the name is the same", async () => {
       const publish = jest.fn().mockImplementation((event) => event);
-      const decisionState = { name: "Someone", achievementsReceived: [], achievementsProgress: {} };
-      const someone = new Viewer("123", decisionState, publish, testOptions);
+      const someone = getViewer(publish);
 
       await someone.changeName("Someone");
 
@@ -52,9 +57,7 @@ describe("Viewer", () => {
   describe("subscribe", () => {
     test("it should publish a sent-chat-message and a subscribed event", async () => {
       const publish = jest.fn().mockImplementation((event) => event);
-      const someone = new Viewer(
-        "123", { name: "Someone", achievementsReceived: [], achievementsProgress: {} }, publish, testOptions,
-      );
+      const someone = getViewer(publish);
 
       await someone.subscribe("hi");
 
@@ -67,9 +70,7 @@ describe("Viewer", () => {
   describe("resub", () => {
     test("it should publish a sent-chat-message and a resubscribed event", async () => {
       const publish = jest.fn().mockImplementation((event) => event);
-      const someone = new Viewer(
-        "123", { name: "Someone", achievementsReceived: [], achievementsProgress: {} }, publish, testOptions,
-      );
+      const someone = getViewer(publish);
 
       await someone.resub("hi", 6);
 
@@ -82,9 +83,7 @@ describe("Viewer", () => {
   describe("giveSub", () => {
     test("it should publish a gaveSub event", async () => {
       const publish = jest.fn().mockImplementation((event) => event);
-      const someone = new Viewer(
-        "123", { name: "Someone", achievementsReceived: [], achievementsProgress: {} }, publish, testOptions,
-      );
+      const someone = getViewer(publish);
 
       await someone.giveSub("456");
 
@@ -95,9 +94,7 @@ describe("Viewer", () => {
   describe("host", () => {
     test("it should publish a hosted event", async () => {
       const publish = jest.fn().mockImplementation((event) => event);
-      const someone = new Viewer(
-        "123", { name: "Someone", achievementsReceived: [], achievementsProgress: {} }, publish, testOptions,
-      );
+      const someone = getViewer(publish);
 
       await someone.host(15);
 
@@ -108,9 +105,7 @@ describe("Viewer", () => {
   describe("raid", () => {
     test("it should publish a raided event", async () => {
       const publish = jest.fn().mockImplementation((event) => event);
-      const someone = new Viewer(
-        "123", { name: "Someone", achievementsReceived: [], achievementsProgress: {} }, publish, testOptions,
-      );
+      const someone = getViewer(publish);
 
       await someone.raid(15);
 
@@ -121,9 +116,7 @@ describe("Viewer", () => {
   describe("follow", () => {
     test("it should publish a followed event", async () => {
       const publish = jest.fn().mockImplementation((event) => event);
-      const someone = new Viewer(
-        "123", { name: "Someone", achievementsReceived: [], achievementsProgress: {} }, publish, testOptions,
-      );
+      const someone = getViewer(publish);
 
       await someone.follow();
 
