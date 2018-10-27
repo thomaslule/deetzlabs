@@ -64,7 +64,7 @@ export class Twitch {
       const twitchViewer = await this.channel.getTwitchUserByName(username);
       const twitchRecipient = await this.channel.getTwitchUserByName(recipient);
       const viewer = await domain.viewer.get(twitchViewer.id);
-      await viewer.giveSub(twitchRecipient.id);
+      await viewer.giveSub(twitchRecipient.id, username);
     });
 
     this.channel.on("donation", async ({ name, amount}) => {
@@ -73,20 +73,20 @@ export class Twitch {
         log.warn("donation from an unknown viewer: %s", name);
       } else {
         const viewer = await domain.viewer.get(twitchViewer.id);
-        await viewer.donate(amount);
+        await viewer.donate(amount, twitchViewer.display_name);
       }
     });
 
     this.channel.on("host", async ({ name, viewers }) => {
       const twitchViewer = await this.channel.getTwitchUserByName(name);
       const viewer = await domain.viewer.get(twitchViewer.id);
-      await viewer.host(viewers);
+      await viewer.host(viewers, twitchViewer.display_name);
     });
 
     this.channel.on("raid", async ({ raider, viewers }) => {
       const twitchViewer = await this.channel.getTwitchUserByName(raider);
       const viewer = await domain.viewer.get(twitchViewer.id);
-      await viewer.raid(viewers);
+      await viewer.raid(viewers, twitchViewer.display_name);
     });
 
     this.channel.on("follow", async (viewerId) => {
@@ -111,9 +111,9 @@ export class Twitch {
     });
   }
 
-  public async getViewerId(viewerName: string): Promise<string | undefined> {
+  public async getViewer(viewerName: string): Promise<any> {
     const twitchViewer = await this.channel.getTwitchUserByName(viewerName);
-    return twitchViewer ? twitchViewer.id : undefined;
+    return twitchViewer ? twitchViewer : undefined;
   }
 
   public async connect(): Promise<void> {

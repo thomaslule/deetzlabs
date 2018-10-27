@@ -108,12 +108,12 @@ export class Api {
       async (req: any, res: Response, next: NextFunction) => {
         try {
           const { achievement, viewerName } = req.validParams;
-          const viewerId = await this.twitch.getViewerId(viewerName);
-          if (viewerId === undefined) {
-            throw new Error(`couldnt give achievement to ${viewerName}, id not found`);
+          const twitchUser = await this.twitch.getViewer(viewerName);
+          if (!twitchUser) {
+            throw new Error(`couldnt give achievement to ${viewerName}, twitch user not found`);
           }
-          const viewer = await this.domain.viewer.get(viewerId);
-          await viewer.giveAchievement(achievement, viewerName);
+          const viewer = await this.domain.viewer.get(twitchUser.id);
+          await viewer.giveAchievement(achievement, twitchUser.display_name);
           res.sendStatus(200);
         } catch (err) {
           next(err);

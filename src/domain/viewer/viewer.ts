@@ -83,20 +83,23 @@ export class Viewer extends Entity<DecisionState> {
     await this.distributeAchievements(event);
   }
 
-  public async giveSub(recipient: string) {
+  public async giveSub(recipient: string, viewerName?: string) {
     ow(recipient, ow.string);
+    if (viewerName) { await this.changeName(viewerName); }
     const event = await this.publishAndApply(gaveSub(recipient));
     await this.distributeAchievements(event);
   }
 
-  public async host(nbViewers: number) {
+  public async host(nbViewers: number, viewerName?: string) {
     ow(nbViewers, ow.number);
+    if (viewerName) { await this.changeName(viewerName); }
     const event = await this.publishAndApply(hosted(nbViewers));
     await this.distributeAchievements(event);
   }
 
-  public async raid(nbViewers: number) {
+  public async raid(nbViewers: number, viewerName?: string) {
     ow(nbViewers, ow.number);
+    if (viewerName) { await this.changeName(viewerName); }
     const event = await this.publishAndApply(raided(nbViewers));
     await this.distributeAchievements(event);
   }
