@@ -1,7 +1,7 @@
 import { Event, EventStorage } from "es-objects";
 import { Pool } from "pg";
 import * as QueryStream from "pg-query-stream";
-import { Readable, Transform } from "stream";
+import { PassThrough, Readable, Transform } from "stream";
 
 export class PgEventStorage implements EventStorage {
 
@@ -36,7 +36,7 @@ export class PgEventStorage implements EventStorage {
   }
 
   private getStream(query: QueryStream) {
-    const stream = identityTransform();
+    const stream = new PassThrough({ objectMode: true });
     this.db.connect()
     .then((client) => {
       client.query(query)
@@ -50,16 +50,6 @@ export class PgEventStorage implements EventStorage {
     .catch((err) => { stream.emit("error", err); });
     return stream;
   }
-}
-
-function identityTransform() {
-  return new Transform({
-    objectMode: true,
-    transform(row, encoding, callback) {
-      this.push(row);
-      callback();
-    },
-  });
 }
 
 function rowToEvent() {
