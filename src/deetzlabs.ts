@@ -37,6 +37,10 @@ export class Deetzlabs {
     widgets.setupSocket(this.server.get());
   }
 
+  public async rebuild() {
+    await this.domain.rebuild();
+  }
+
   public async start() {
     await Promise.all([
       this.domain.init(),

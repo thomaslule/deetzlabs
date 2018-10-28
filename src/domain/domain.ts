@@ -1,4 +1,5 @@
 import { EventBus } from "es-objects";
+import { PassThrough } from "stream";
 import { Options } from "../get-options";
 import { log } from "../log";
 import { PgStorage } from "../storage/pg-storage";
@@ -51,5 +52,20 @@ export class Domain {
   public async init() {
     const events = this.storage.getEventStorage().getEvents("broadcast", "broadcast");
     await this.broadcast.initCache(events);
+  }
+
+  public async rebuild() {
+    // TODO need to change rebuild methods to make it work better
+    const events = this.storage.getEventStorage().getEvents();
+    const passthrough = new PassThrough({ objectMode: true });
+    const rebuild = Promise.all([
+      this.broadcast.rebuild(passthrough),
+      this.credits.rebuild(passthrough),
+      this.settings.rebuild(passthrough),
+      this.viewer.rebuild(passthrough),
+    ]);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    events.pipe(passthrough);
+    await rebuild;
   }
 }

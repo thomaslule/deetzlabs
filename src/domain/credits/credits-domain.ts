@@ -1,4 +1,5 @@
 import { EventBus } from "es-objects";
+import { Readable } from "stream";
 import { Options } from "../../get-options";
 import { PgStorage } from "../../storage/pg-storage";
 import { ViewerDomain } from "../viewer/viewer-domain";
@@ -31,5 +32,9 @@ export class CreditsDomain {
         achievement: this.options.achievements[a.achievement].name,
       })),
     };
+  }
+
+  public async rebuild(events: Readable) {
+    await this.projection.rebuild(events);
   }
 }

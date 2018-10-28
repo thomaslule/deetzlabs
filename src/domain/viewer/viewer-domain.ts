@@ -1,4 +1,5 @@
 import { EventBus,  PersistedDecisionProvider, Store } from "es-objects";
+import { Readable } from "stream";
 import { PgStorage } from "../../storage/pg-storage";
 import { AchievementsCommandListenener } from "./listeners/achievements-command-listener";
 import { CommandsCommandListenener } from "./listeners/commands-command-listener";
@@ -9,6 +10,7 @@ import { DecisionState, getDecisionReducer, Viewer } from "./viewer";
 
 export class ViewerDomain {
   private store: Store<Viewer, DecisionState>;
+  private viewerDecisionProvider: PersistedDecisionProvider<any>;
   private viewerProj: ViewerProjection;
   private lastAchievementsProj: LastAchievementsProjection;
   private topClipperProj: TopClipperProjection;
@@ -19,7 +21,7 @@ export class ViewerDomain {
     storage: PgStorage,
     options: any,
   ) {
-    const viewerDecisionProvider = new PersistedDecisionProvider(
+    this.viewerDecisionProvider = new PersistedDecisionProvider(
       "viewer",
       getDecisionReducer(options),
       storage.getKeyValueStorage("viewer-decision"),
@@ -27,7 +29,7 @@ export class ViewerDomain {
     this.store = new Store<Viewer, DecisionState>(
       "viewer",
       (id, decisionState, createAndPublish) => new Viewer(id, decisionState, createAndPublish, options),
-      viewerDecisionProvider,
+      this.viewerDecisionProvider,
       (event) => eventBus.publish(event),
     );
 
@@ -76,5 +78,14 @@ export class ViewerDomain {
 
   public async getLastAchievements() {
     return this.lastAchievementsProj.getWithNames(this.viewerProj);
+  }
+
+  public async rebuild(events: Readable) {
+    await Promise.all([
+      this.viewerDecisionProvider.rebuild(events),
+      this.viewerProj.rebuild(events),
+      this.lastAchievementsProj.rebuild(events),
+      this.topClipperProj.rebuild(events),
+    ]);
   }
 }

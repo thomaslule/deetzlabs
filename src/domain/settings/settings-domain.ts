@@ -1,6 +1,7 @@
 import {
   DecisionProvider, DecisionSequence, EventBus, InMemoryReduceProjection, Store,
 } from "es-objects";
+import { Readable } from "stream";
 import { PgStorage } from "../../storage/pg-storage";
 import { AchievementVolumeProj } from "./achievement-volume-proj";
 import { FollowersGoal, FollowersGoalProj } from "./followers-goal-proj";
@@ -39,6 +40,13 @@ export class SettingsDomain {
 
   public async getFollowersGoal(): Promise<FollowersGoal> {
     return this.followersGoalProj.getState();
+  }
+
+  public async rebuild(events: Readable) {
+    await Promise.all([
+      this.achievementVolumeProj.rebuild(events),
+      this.followersGoalProj.rebuild(events),
+    ]);
   }
 }
 

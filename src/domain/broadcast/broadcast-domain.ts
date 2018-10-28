@@ -7,10 +7,11 @@ import { BroadcastProjection } from "./broadcast-projection";
 
 export class BroadcastDomain {
   private store: Store<Broadcast, any>;
+  private decisionProvider: PersistedDecisionProvider<any>;
   private projection: BroadcastProjection;
 
   constructor(eventBus: EventBus, storage: PgStorage) {
-    const decisionProvider = new PersistedDecisionProvider(
+    this.decisionProvider = new PersistedDecisionProvider(
       "broadcast",
       decisionReducer,
       storage.getKeyValueStorage("broadcast-decision"),
@@ -18,7 +19,7 @@ export class BroadcastDomain {
     this.store = new Store(
       "broadcast",
       (id, decisionState, createAndPublish) => new Broadcast(decisionState, createAndPublish),
-      decisionProvider,
+      this.decisionProvider,
       (event) => eventBus.publish(event),
     );
 
@@ -55,6 +56,13 @@ export class BroadcastDomain {
 
   public async initCache(events: Readable) {
     await this.projection.rebuild(events.pipe(filter.obj((event: Event) => event.aggregate === "broadcast")));
+  }
+
+  public async rebuild(events: Readable) {
+    await Promise.all([
+      this.decisionProvider.rebuild(events),
+      this.projection.rebuild(events),
+    ]);
   }
 
 }
