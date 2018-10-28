@@ -27,6 +27,9 @@ interface State {
 }
 
 function reducer(state: State = { number: 0, isBroadcasting: false, game: "" }, event: Event): State {
+  if (event.aggregate !== "broadcast") {
+    return state;
+  }
   if (event.type === "begun") {
     return {
       number: state.number + 1,
