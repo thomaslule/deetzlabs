@@ -7,13 +7,15 @@ export class ViewerProjection implements Rebuildable {
   }
 
   public async handleEvent(event: Event) {
-    if (event.type === "changed-name") {
-      const state = await this.getStateImmediate(event.id);
-      await this.storage.store(event.id, { ...state, name: event.name });
-    }
-    if (event.type === "got-achievement") {
-      const state = await this.getStateImmediate(event.id);
-      await this.storage.store(event.id, { ...state, achievements: state.achievements.concat(event.achievement) });
+    if (event.aggregate === "viewer") {
+      if (event.type === "changed-name") {
+        const state = await this.getStateImmediate(event.id);
+        await this.storage.store(event.id, { ...state, name: event.name });
+      }
+      if (event.type === "got-achievement") {
+        const state = await this.getStateImmediate(event.id);
+        await this.storage.store(event.id, { ...state, achievements: state.achievements.concat(event.achievement) });
+      }
     }
   }
 
