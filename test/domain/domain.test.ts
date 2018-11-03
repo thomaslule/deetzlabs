@@ -2,7 +2,7 @@ import { Pool } from "pg";
 import { Domain } from "../../src/domain/domain";
 import { configureLog } from "../../src/log";
 import { PgStorage } from "../../src/storage/pg-storage";
-import { getCleanDb, makeBroadcastEvent, makeViewerEvent, testOptions } from "../test-util";
+import { getCleanDb, makeBroadcastEvent, makeViewerEvent, testOptions, wait } from "../test-util";
 
 describe("Domain", () => {
   let db: Pool;
@@ -15,7 +15,7 @@ describe("Domain", () => {
     const domain = new Domain(storage, () => {}, showAchievement, testOptions);
 
     const viewer = await domain.viewer.get("123");
-    await viewer.giveAchievement("cheerleader", "Someone");
+    await viewer.giveAchievement("cheerleader", "Someone"); await wait();
 
     expect(showAchievement).toHaveBeenCalledWith("Cheerleader", "Someone", "Thank you %USER%!", 0.5);
   });

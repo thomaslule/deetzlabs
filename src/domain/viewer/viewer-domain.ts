@@ -1,5 +1,4 @@
 import { EventBus,  PersistedDecisionProvider, Store } from "es-objects";
-import { Readable } from "stream";
 import { PgStorage } from "../../storage/pg-storage";
 import { AchievementsCommandListenener } from "./listeners/achievements-command-listener";
 import { CommandsCommandListenener } from "./listeners/commands-command-listener";
@@ -80,12 +79,12 @@ export class ViewerDomain {
     return this.lastAchievementsProj.getWithNames(this.viewerProj);
   }
 
-  public async rebuild(events: Readable) {
-    await Promise.all([
-      this.viewerDecisionProvider.rebuild(events),
-      this.viewerProj.rebuild(events),
-      this.lastAchievementsProj.rebuild(events),
-      this.topClipperProj.rebuild(events),
-    ]);
+  public rebuildStreams() {
+    return [
+      this.viewerDecisionProvider.rebuildStream(),
+      this.viewerProj.rebuildStream(),
+      this.lastAchievementsProj.rebuildStream(),
+      this.topClipperProj.rebuildStream(),
+    ];
   }
 }

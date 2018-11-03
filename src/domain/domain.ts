@@ -55,17 +55,19 @@ export class Domain {
   }
 
   public async rebuild() {
-    // TODO need to change rebuild methods to make it work better
+    const rebuildStreams = [
+      ...this.broadcast.rebuildStreams(),
+      ...this.credits.rebuildStreams(),
+      ...this.settings.rebuildStreams(),
+      ...this.viewer.rebuildStreams(),
+    ];
     const events = this.storage.getEventStorage().getEvents();
-    const passthrough = new PassThrough({ objectMode: true });
-    const rebuild = Promise.all([
-      this.broadcast.rebuild(passthrough),
-      this.credits.rebuild(passthrough),
-      this.settings.rebuild(passthrough),
-      this.viewer.rebuild(passthrough),
-    ]);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    events.pipe(passthrough);
-    await rebuild;
+    await Promise.all(
+      rebuildStreams.map((stream) => new Promise((resolve, reject) => {
+        events.pipe(stream);
+        stream.on("finish", resolve);
+        stream.on("error", reject);
+      })),
+    );
   }
 }

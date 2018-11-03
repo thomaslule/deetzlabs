@@ -55,14 +55,19 @@ export class BroadcastDomain {
   }
 
   public async initCache(events: Readable) {
-    await this.projection.rebuild(events.pipe(filter.obj((event: Event) => event.aggregate === "broadcast")));
+    await new Promise((resolve, reject) => {
+      events.pipe(filter.obj((event: Event) => event.aggregate === "broadcast"))
+        .pipe(this.projection.rebuildStream())
+        .on("finish", resolve)
+        .on("error", reject);
+    });
   }
 
-  public async rebuild(events: Readable) {
-    await Promise.all([
-      this.decisionProvider.rebuild(events),
-      this.projection.rebuild(events),
-    ]);
+  public rebuildStreams() {
+    return [
+      this.decisionProvider.rebuildStream(),
+      this.projection.rebuildStream(),
+    ];
   }
 
 }

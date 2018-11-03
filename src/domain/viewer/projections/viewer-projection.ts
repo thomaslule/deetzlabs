@@ -1,5 +1,5 @@
 import { Event, KeyValueStorage, Rebuildable } from "es-objects";
-import { Readable } from "stream";
+import { Readable, Writable } from "stream";
 import { consumeStream } from "../../../util";
 
 export class ViewerProjection implements Rebuildable {
@@ -35,8 +35,30 @@ export class ViewerProjection implements Rebuildable {
     return this.storage.getAll();
   }
 
-  public async rebuild(events: Readable) {
-    await consumeStream(events, (event) => this.handleEvent(event));
+  public rebuildStream() {
+    let deletedAll = false;
+    const deleteAll = () => this.storage.deleteAll();
+    const handleEvent = (event: Event) => this.handleEvent(event);
+    return new Writable({
+      objectMode: true,
+      async write(event, encoding, callback) {
+        try {
+          if (!deletedAll) { await deleteAll(); deletedAll = true; }
+          await handleEvent(event);
+          callback();
+        } catch (err) {
+          callback(err);
+        }
+      },
+      async final(callback) {
+        try {
+          if (!deletedAll) { await deleteAll(); }
+          callback();
+        } catch (err) {
+          callback(err);
+        }
+      },
+    });
   }
 
   private async getStateImmediate(id: string): Promise<ViewerState> {
