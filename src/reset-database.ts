@@ -13,9 +13,9 @@ export async function resetDatabase(connectionString = "postgresql://postgres:ad
       constraint uc_events unique(aggregate, id, sequence)
     );
   `);
-  await db.query("drop table if exists values");
+  await db.query("drop table if exists projections");
   await db.query(`
-    create table values(
+    create table projections(
       name text not null,
       key text not null,
       value json not null,
