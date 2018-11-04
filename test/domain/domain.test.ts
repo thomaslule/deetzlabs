@@ -46,7 +46,7 @@ describe("Domain", () => {
     expect(showAchievement).toHaveBeenCalledWith("Cheerleader", "Someone", "Thank you %USER%!", 0.5);
   });
 
-  test("credits work", async () => {
+  test("query.getCredits should return the credits with names", async () => {
     const storage = new PgStorage(db);
     const domain = new Domain(storage, () => {}, () => {}, testOptions);
 
@@ -64,6 +64,14 @@ describe("Domain", () => {
       donators: ["Someone"],
       follows: [],
     });
+  });
+
+  test("init should rebuild the memory projections", async () => {
+    const storage = new PgStorage(db);
+    await storage.getEventStorage().store(makeBroadcastEvent({ sequence: 0, type: "begun", game: "Tetris" }));
+    const domain = new Domain(storage, () => {}, () => {}, testOptions);
+    await domain.init();
+    expect(domain.query.isBroadcasting()).toBeTruthy();
   });
 
   test("rebuild should rebuild all projections", async () => {
