@@ -1,24 +1,5 @@
 import { Obj } from "../../util";
 
-export const eventsTypes = {
-  migratedData: "migrated-data",
-  sentChatMessage: "sent-chat-message",
-  gotAchievement: "got-achievement",
-  replayedAchievement: "replayed-achievement",
-  subscribed: "subscribed",
-  resubscribed: "resubscribed",
-  gaveSub: "gave-sub",
-  cheered: "cheered",
-  donated: "donated",
-  joined: "joined",
-  left: "left",
-  hosted: "hosted",
-  raided: "raided",
-  followed: "followed",
-  becameTopClipper: "became-top-clipper",
-  lostTopClipper: "lost-top-clipper",
-};
-
 const createEvent = (type: string, content: any = {}) => ({
   version: 1,
   type,
@@ -30,30 +11,30 @@ export const changedName = (name: string) =>
   createEvent("changed-name", { name });
 
 export const sentChatMessage = (message: Obj, broadcastNo?: number) =>
-  createEvent(eventsTypes.sentChatMessage, { message, broadcastNo });
+  createEvent("sent-chat-message", { message, broadcastNo });
 
 export const gotAchievement = (achievement: string) =>
-  createEvent(eventsTypes.gotAchievement, { achievement });
+  createEvent("got-achievement", { achievement });
 
 export const replayedAchievement = (achievement: string) =>
-  createEvent(eventsTypes.replayedAchievement, { achievement });
+  createEvent("replayed-achievement", { achievement });
 
-export const subscribed = () => createEvent(eventsTypes.subscribed);
+export const subscribed = () => createEvent("subscribed");
 
-export const resubscribed = (months: number) => createEvent(eventsTypes.resubscribed, { months });
+export const resubscribed = (months: number) => createEvent("resubscribed", { months });
 
-export const gaveSub = (recipient: string) => createEvent(eventsTypes.gaveSub, { recipient });
+export const gaveSub = (recipient: string) => createEvent("gave-sub", { recipient });
 
-export const cheered = (amount: number) => createEvent(eventsTypes.cheered, { amount });
+export const cheered = (amount: number) => createEvent("cheered", { amount });
 
-export const donated = (amount: number) => createEvent(eventsTypes.donated, { amount });
+export const donated = (amount: number) => createEvent("donated", { amount });
 
-export const hosted = (nbViewers: number) => createEvent(eventsTypes.hosted, { nbViewers });
+export const hosted = (nbViewers: number) => createEvent("hosted", { nbViewers });
 
-export const raided = (nbViewers: number) => createEvent(eventsTypes.raided, { nbViewers });
+export const raided = (nbViewers: number) => createEvent("raided", { nbViewers });
 
-export const followed = () => createEvent(eventsTypes.followed);
+export const followed = () => createEvent("followed");
 
-export const becameTopClipper = () => createEvent(eventsTypes.becameTopClipper);
+export const becameTopClipper = () => createEvent("became-top-clipper");
 
-export const lostTopClipper = () => createEvent(eventsTypes.lostTopClipper);
+export const lostTopClipper = () => createEvent("lost-top-clipper");
