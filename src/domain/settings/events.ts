@@ -6,6 +6,7 @@ export const eventsTypes = {
 const createEvent = (type: string, content = {}) => ({
   version: 1,
   type,
+  date: new Date().toISOString(),
   ...content,
 });
 

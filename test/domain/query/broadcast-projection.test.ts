@@ -1,5 +1,5 @@
-import { BroadcastProjection } from "../../../src/domain/broadcast/broadcast-projection";
 import { begun, ended } from "../../../src/domain/broadcast/events";
+import { BroadcastProjection } from "../../../src/domain/query/broadcast-projection";
 import { makeBroadcastEvent } from "../../test-util";
 
 describe("BroadcastProjection", () => {

@@ -35,35 +35,35 @@ export class Twitch {
   public connectToDomain(domain: Domain) {
     this.channel.on("chat", async (channel: string, userstate: any, message: string, isSelf: boolean) => {
       if (isSelf) { return; }
-      const viewer = await domain.viewer.get(userstate["user-id"]);
-      const broadcastNo = domain.broadcast.getBroadcastNumber();
+      const viewer = await domain.store.getViewer(userstate["user-id"]);
+      const broadcastNo = domain.query.getBroadcastNumber();
       await viewer.chatMessage(message, userstate["display-name"], broadcastNo);
     });
 
     this.channel.on("cheer", async (channel: string, userstate: any, message: string) => {
-      const viewer = await domain.viewer.get(userstate["user-id"]);
-      const broadcastNo = domain.broadcast.getBroadcastNumber();
+      const viewer = await domain.store.getViewer(userstate["user-id"]);
+      const broadcastNo = domain.query.getBroadcastNumber();
       await viewer.cheer(userstate.bits, message, userstate["display-name"], broadcastNo);
     });
 
     this.channel.on("subscription", async (channel, username: string, method, message: string) => {
       const twitchViewer = await this.channel.getTwitchUserByName(username);
-      const viewer = await domain.viewer.get(twitchViewer.id);
-      const broadcastNo = domain.broadcast.getBroadcastNumber();
+      const viewer = await domain.store.getViewer(twitchViewer.id);
+      const broadcastNo = domain.query.getBroadcastNumber();
       await viewer.subscribe(message, username, broadcastNo);
     });
 
     this.channel.on("resub", async (channel, username: string, months: number, message: string, userstate, methods) => {
       const twitchViewer = await this.channel.getTwitchUserByName(username);
-      const viewer = await domain.viewer.get(twitchViewer.id);
-      const broadcastNo = domain.broadcast.getBroadcastNumber();
+      const viewer = await domain.store.getViewer(twitchViewer.id);
+      const broadcastNo = domain.query.getBroadcastNumber();
       await viewer.resub(message, months, username, broadcastNo);
     });
 
     this.channel.on("subgift", async (channel, username, recipient, method) => {
       const twitchViewer = await this.channel.getTwitchUserByName(username);
       const twitchRecipient = await this.channel.getTwitchUserByName(recipient);
-      const viewer = await domain.viewer.get(twitchViewer.id);
+      const viewer = await domain.store.getViewer(twitchViewer.id);
       await viewer.giveSub(twitchRecipient.id, username);
     });
 
@@ -72,42 +72,45 @@ export class Twitch {
       if (!twitchViewer) {
         log.warn("donation from an unknown viewer: %s", name);
       } else {
-        const viewer = await domain.viewer.get(twitchViewer.id);
+        const viewer = await domain.store.getViewer(twitchViewer.id);
         await viewer.donate(amount, twitchViewer.display_name);
       }
     });
 
     this.channel.on("host", async ({ name, viewers }) => {
       const twitchViewer = await this.channel.getTwitchUserByName(name);
-      const viewer = await domain.viewer.get(twitchViewer.id);
+      const viewer = await domain.store.getViewer(twitchViewer.id);
       await viewer.host(viewers, twitchViewer.display_name);
     });
 
     this.channel.on("raid", async ({ raider, viewers }) => {
       const twitchViewer = await this.channel.getTwitchUserByName(raider);
-      const viewer = await domain.viewer.get(twitchViewer.id);
+      const viewer = await domain.store.getViewer(twitchViewer.id);
       await viewer.raid(viewers, twitchViewer.display_name);
     });
 
     this.channel.on("follow", async (viewerId) => {
-      const viewer = await domain.viewer.get(viewerId);
+      const viewer = await domain.store.getViewer(viewerId);
       await viewer.follow();
     });
 
     this.channel.on("stream-begin", async (game) => {
-      await domain.broadcast.begin(game);
+      const broadcast = await domain.store.getBroadcast();
+      await broadcast.begin(game);
     });
 
     this.channel.on("stream-change-game", async (game) => {
-      await domain.broadcast.changeGame(game);
+      const broadcast = await domain.store.getBroadcast();
+      await broadcast.changeGame(game);
     });
 
     this.channel.on("stream-end", async () => {
-      await domain.broadcast.end();
+      const broadcast = await domain.store.getBroadcast();
+      await broadcast.end();
     });
 
     this.bus.on("top-clipper", async (viewerId: string) => {
-      await domain.viewer.topClipper(viewerId);
+      await domain.service.setTopClipper(viewerId);
     });
   }
 

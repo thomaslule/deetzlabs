@@ -66,9 +66,17 @@ export class Api {
       },
     );
 
-    this.router.get("/viewers", async (req: Request, res: Response, next: NextFunction) => {
+    this.router.get("/viewer_names", async (req: Request, res: Response, next: NextFunction) => {
       try {
-        res.send(await this.domain.viewer.getAllViewersState());
+        res.send(await this.domain.query.getAllViewerNames());
+      } catch (err) {
+        next(err);
+      }
+    });
+
+    this.router.get("/viewer_achievements", async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        res.send(await this.domain.query.getAllViewerAchievements());
       } catch (err) {
         next(err);
       }
@@ -76,7 +84,7 @@ export class Api {
 
     this.router.get("/last_achievements", async (req: Request, res: Response, next: NextFunction) => {
       try {
-        res.send(await this.domain.viewer.getLastAchievements());
+        res.send(await this.domain.query.getLastViewerAchievements());
       } catch (err) {
         next(err);
       }
@@ -93,7 +101,7 @@ export class Api {
 
     this.router.get("/achievement_alert_volume", async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const volume = await this.domain.settings.getAchievementVolume();
+        const volume = (await this.domain.query.getSettings()).achievementVolume;
         res.send({ volume });
       } catch (err) {
         next(err);
@@ -102,7 +110,7 @@ export class Api {
 
     this.router.get("/followers_goal", async (req: Request, res: Response, next: NextFunction) => {
       try {
-        res.send(await this.domain.settings.getFollowersGoal());
+        res.send((await this.domain.query.getSettings()).followersGoal);
       } catch (err) {
         next(err);
       }
@@ -110,7 +118,7 @@ export class Api {
 
     this.router.get("/credits", async (req: Request, res: Response, next: NextFunction) => {
       try {
-        res.send(await this.domain.credits.get());
+        res.send(await this.domain.query.getCredits());
       } catch (err) {
         next(err);
       }
@@ -128,7 +136,7 @@ export class Api {
           if (!twitchUser) {
             throw new Error(`couldnt give achievement to ${viewerName}, twitch user not found`);
           }
-          const viewer = await this.domain.viewer.get(twitchUser.id);
+          const viewer = await this.domain.store.getViewer(twitchUser.id);
           await viewer.giveAchievement(achievement, twitchUser.display_name);
           res.sendStatus(200);
         } catch (err) {
@@ -145,7 +153,7 @@ export class Api {
       async (req: any, res: Response, next: NextFunction) => {
         try {
           const { achievement, viewer } = req.validParams;
-          const viewerEntity = await this.domain.viewer.get(viewer);
+          const viewerEntity = await this.domain.store.getViewer(viewer);
           await viewerEntity.replayAchievement(achievement);
           res.sendStatus(200);
         } catch (err) {
@@ -162,7 +170,7 @@ export class Api {
       async (req: any, res: Response, next: NextFunction) => {
         try {
           const { volume } = req.validParams;
-          const settings = await this.domain.settings.get();
+          const settings = await this.domain.store.getSettings();
           settings.changeAchievementVolume(volume);
           res.sendStatus(200);
         } catch (err) {
@@ -181,7 +189,7 @@ export class Api {
       async (req: any, res: Response, next: NextFunction) => {
         try {
           const { goal, html, css } = req.validParams;
-          const settings = await this.domain.settings.get();
+          const settings = await this.domain.store.getSettings();
           settings.changeFollowersGoal({ goal, html, css });
           res.sendStatus(200);
         } catch (err) {

@@ -1,18 +1,30 @@
 import { EventBus } from "es-objects";
-import { PassThrough } from "stream";
 import { Options } from "../get-options";
 import { log } from "../log";
 import { PgStorage } from "../storage/pg-storage";
+import { achievementsCommandListener } from "./achievements-command-listener";
+import { Broadcast } from "./broadcast/broadcast";
 import { BroadcastDomain } from "./broadcast/broadcast-domain";
-import { CreditsDomain } from "./credits/credits-domain";
+import { commandsCommandListenener } from "./commands-command-listener";
+import { displayAchievementListener } from "./display-achievement-listener";
+import { Query } from "./query/query";
+import { Settings } from "./settings/settings";
 import { SettingsDomain } from "./settings/settings-domain";
+import { Viewer } from "./viewer/viewer";
 import { ViewerDomain } from "./viewer/viewer-domain";
 
 export class Domain {
-  public viewer: ViewerDomain;
-  public broadcast: BroadcastDomain;
-  public settings: SettingsDomain;
-  public credits: CreditsDomain;
+  public query: Query;
+  public store: {
+    getBroadcast(): Promise<Broadcast>;
+    getSettings(): Promise<Settings>;
+    getViewer(id: string): Promise<Viewer>;
+  };
+  public service: {
+    setTopClipper(id: string): Promise<void>;
+  };
+  private broadcast: BroadcastDomain;
+  private viewer: ViewerDomain;
 
   constructor(
     private storage: PgStorage,
@@ -26,42 +38,46 @@ export class Domain {
         log.error(err.stack);
       }
     });
-    this.viewer = new ViewerDomain(bus, sendChatMessage, this.storage, options);
-    this.broadcast = new BroadcastDomain(bus, this.storage);
-    this.settings = new SettingsDomain(bus, this.storage);
-    this.credits = new CreditsDomain(bus, this.storage, this.viewer, options);
+    const broadcast = this.broadcast = new BroadcastDomain(bus, this.storage);
+    const settings = new SettingsDomain(bus);
+    const viewer = this.viewer = new ViewerDomain(bus, this.storage, options);
+
+    const query = this.query = new Query(this.storage, bus, options);
+    this.store = {
+      getBroadcast() { return broadcast.get(); },
+      getSettings() { return settings.get(); },
+      getViewer(id) { return viewer.get(id); },
+    };
+    this.service = {
+      async setTopClipper(id) { await viewer.setTopClipper(id, query); },
+    };
 
     bus.onEvent((event) => {
       log.info(`event happened: %s %s %s`, event.aggregate, event.id, event.type);
     });
-    bus.onEvent(async (event) => {
-      try {
-        if (event.aggregate === "viewer" &&
-          (event.type === "got-achievement" || event.type === "replayed-achievement")) {
-          const achievement = options.achievements[event.achievement];
-          const displayName = await this.viewer.getViewerName(event.id);
-          const volume = await this.settings.getAchievementVolume();
-          await showAchievement(achievement.name, displayName as string, achievement.text, volume);
-        }
-      } catch (err) {
-        log.error(err);
-      }
-    });
+    bus.onEvent(achievementsCommandListener(this.query, sendChatMessage, options));
+    bus.onEvent(commandsCommandListenener(sendChatMessage, options));
+    bus.onEvent(displayAchievementListener(this.query, showAchievement, options));
   }
 
   public async init() {
-    const events = this.storage.getEventStorage().getEvents("broadcast", "broadcast");
-    await this.broadcast.initCache(events);
+    return new Promise((resolve, reject) => {
+      const events = this.storage.getEventStorage().getEvents("broadcast", "broadcast");
+      const stream = this.query.rebuildMemoryStream();
+      events.pipe(stream);
+      stream.on("finish", resolve);
+      stream.on("error", reject);
+    });
   }
 
   public async rebuild() {
     const rebuildStreams = [
-      ...this.broadcast.rebuildStreams(),
-      ...this.credits.rebuildStreams(),
-      ...this.settings.rebuildStreams(),
-      ...this.viewer.rebuildStreams(),
+      this.broadcast.decisionRebuildStream(),
+      this.viewer.decisionRebuildStream(),
+      ...this.query.rebuildStreams(),
     ];
     const events = this.storage.getEventStorage().getEvents();
+    events.setMaxListeners(Infinity);
     await Promise.all(
       rebuildStreams.map((stream) => new Promise((resolve, reject) => {
         events.pipe(stream);
@@ -70,4 +86,5 @@ export class Domain {
       })),
     );
   }
+
 }

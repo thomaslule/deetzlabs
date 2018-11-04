@@ -11,7 +11,7 @@ describe("Broadcast", () => {
 
   test("it should be able to launch broadcast", async () => {
     await broadcast.begin("Tetris");
-    expect(publish).toHaveBeenCalledWith({ type: "begun", game: "Tetris", version: 1 });
+    expect(publish).toHaveBeenCalledWith({ type: "begun", game: "Tetris", version: 1, date: expect.anything() });
   });
 
   test("it shouldn't be able to launch broadcast twice", async () => {
@@ -22,7 +22,7 @@ describe("Broadcast", () => {
   test("it should be able to change game", async () => {
     await broadcast.begin("Tetris");
     await broadcast.changeGame("Zelda");
-    expect(publish).toHaveBeenCalledWith({ type: "changed-game", game: "Zelda", version: 1 });
+    expect(publish).toHaveBeenCalledWith({ type: "changed-game", game: "Zelda", version: 1, date: expect.anything() });
   });
 
   test("it shouldn't be able to change game for a stopped broadcast", async () => {
@@ -37,7 +37,7 @@ describe("Broadcast", () => {
   test("it should be able to end broadcast", async () => {
     await broadcast.begin("Tetris");
     await broadcast.end();
-    expect(publish).toHaveBeenCalledWith({ type: "begun", game: "Tetris", version: 1 });
+    expect(publish).toHaveBeenCalledWith({ type: "begun", game: "Tetris", version: 1, date: expect.anything() });
   });
 
   test("it shouldn't be able to end a stopped broadcast", async () => {

@@ -20,7 +20,12 @@ describe("Viewer", () => {
 
       await someone.cheer(500, "hi");
 
-      expect(publish).toHaveBeenCalledWith({ type: "got-achievement", achievement: "cheerleader", version: 1 });
+      expect(publish).toHaveBeenCalledWith({
+        type: "got-achievement",
+        achievement: "cheerleader",
+        version: 1,
+        date: expect.anything(),
+      });
     });
 
     test("it shouldnt publish already obtained achievements", async () => {
@@ -41,7 +46,12 @@ describe("Viewer", () => {
 
       await someone.changeName("Someone");
 
-      expect(publish).toHaveBeenCalledWith({ type: "changed-name", name: "Someone", version: 1 });
+      expect(publish).toHaveBeenCalledWith({
+        type: "changed-name",
+        name: "Someone",
+        version: 1,
+        date: expect.anything(),
+      });
     });
 
     test("it shouldnt do anything when the name is the same", async () => {

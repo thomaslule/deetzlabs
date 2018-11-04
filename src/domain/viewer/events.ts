@@ -22,6 +22,7 @@ export const eventsTypes = {
 const createEvent = (type: string, content: any = {}) => ({
   version: 1,
   type,
+  date: new Date().toISOString(),
   ...content,
 });
 

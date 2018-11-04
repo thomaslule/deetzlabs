@@ -13,6 +13,8 @@ export function makeViewerEvent(data: Obj = {}): Event {
     aggregate: "viewer",
     id: "123",
     sequence: 0,
+    version: 1,
+    date: new Date().toISOString(),
     ...data,
   };
 }
@@ -22,6 +24,8 @@ export function makeBroadcastEvent(data: Obj = {}): Event {
     aggregate: "broadcast",
     id: "broadcast",
     sequence: 0,
+    version: 1,
+    date: new Date().toISOString(),
     ...data,
   };
 }

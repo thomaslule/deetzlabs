@@ -22,5 +22,21 @@ export async function resetDatabase(connectionString = "postgresql://postgres:ad
       primary key(name, key)
     );
   `);
+  await db.query("drop table if exists viewers");
+  await db.query(`
+    create table viewers(
+      id text primary key,
+      name text
+    );
+  `);
+  await db.query("drop table if exists achievements");
+  await db.query(`
+    create table achievements(
+      viewerId text not null,
+      achievement text not null,
+      date timestamp not null,
+      primary key(viewerId, achievement)
+    );
+  `);
   await db.end();
 }

@@ -9,12 +9,38 @@ describe("Domain", () => {
   beforeEach(async () => { db = await getCleanDb(); configureLog(testOptions); });
   afterEach(async () => { await db.end(); });
 
+  test("it should respond to !commands command", async () => {
+    const storage = new PgStorage(db);
+    const sendChatMessage = jest.fn();
+    const domain = new Domain(storage, sendChatMessage, () => {}, testOptions);
+    const someone = await domain.store.getViewer("123");
+
+    await someone.chatMessage("not the command");
+    expect(sendChatMessage).not.toHaveBeenCalled();
+
+    await someone.chatMessage("!commands"); await wait();
+
+    expect(sendChatMessage).toHaveBeenCalledWith("Say !achievements to see your current achievements");
+  });
+
+  test("it should respond to !achievements command", async () => {
+    const storage = new PgStorage(db);
+    const sendChatMessage = jest.fn();
+    const domain = new Domain(storage, sendChatMessage, () => {}, testOptions);
+    const someone = await domain.store.getViewer("123");
+    await someone.giveAchievement("cheerleader", "Someone");
+
+    await someone.chatMessage("!achievements"); await wait();
+
+    expect(sendChatMessage).toHaveBeenCalledWith("Congratulations Someone for your achievements: Cheerleader");
+  });
+
   test("on achievement, it should call showAchievement", async () => {
     const storage = new PgStorage(db);
     const showAchievement = jest.fn();
     const domain = new Domain(storage, () => {}, showAchievement, testOptions);
 
-    const viewer = await domain.viewer.get("123");
+    const viewer = await domain.store.getViewer("123");
     await viewer.giveAchievement("cheerleader", "Someone"); await wait();
 
     expect(showAchievement).toHaveBeenCalledWith("Cheerleader", "Someone", "Thank you %USER%!", 0.5);
@@ -24,11 +50,12 @@ describe("Domain", () => {
     const storage = new PgStorage(db);
     const domain = new Domain(storage, () => {}, () => {}, testOptions);
 
-    await domain.broadcast.begin("Tetris");
-    await (await domain.viewer.get("123")).chatMessage("yo", "Someone");
-    await (await domain.viewer.get("123")).cheer(100, "hop");
+    const broadcast = await domain.store.getBroadcast();
+    await broadcast.begin("Tetris");
+    await (await domain.store.getViewer("123")).chatMessage("yo", "Someone");
+    await (await domain.store.getViewer("123")).cheer(100, "hop");
 
-    expect(await domain.credits.get()).toEqual({
+    expect(await domain.query.getCredits()).toEqual({
       games: ["Tetris"],
       viewers: ["Someone"],
       hosts: [],
@@ -55,15 +82,15 @@ describe("Domain", () => {
 
     await domain.rebuild();
 
-    await (await domain.viewer.get("123")).follow();
-    expect(await domain.settings.getAchievementVolume()).toBe(0.8);
-    expect(domain.broadcast.isBroadcasting()).toBeTruthy();
-    await expect(domain.broadcast.begin("Tetris")).rejects.toThrow();
-    expect((await domain.credits.get()).viewers[0]).toBe("Someone");
-    expect((await domain.credits.get()).follows[0]).toBe("Someone");
-    expect(await domain.viewer.getViewerName("123")).toBe("Someone");
-    expect(await domain.viewer.getLastAchievements())
-      .toEqual([{ viewer: "123", viewerName: "Someone", achievement: "cheerleader" }]);
+    await (await domain.store.getViewer("123")).follow();
+    expect((await domain.query.getSettings()).achievementVolume).toBe(0.8);
+    expect(domain.query.isBroadcasting()).toBeTruthy();
+    const broadcast = await domain.store.getBroadcast();
+    await expect(broadcast.begin("Tetris")).rejects.toThrow();
+    expect((await domain.query.getCredits()).viewers[0]).toBe("Someone");
+    expect((await domain.query.getCredits()).follows[0]).toBe("Someone");
+    expect((await domain.query.getViewer("123")).name).toBe("Someone");
+    expect(await domain.query.getLastViewerAchievements())
+      .toEqual([{ viewerId: "123", viewerName: "Someone", achievement: "cheerleader", date: expect.anything() }]);
   });
-
 });

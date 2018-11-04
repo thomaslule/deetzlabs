@@ -3,6 +3,7 @@ import { Obj } from "../../util";
 const createEvent = (type: string, content: Obj) => ({
   version: 1,
   type,
+  date: new Date().toISOString(),
   ...content,
 });
 

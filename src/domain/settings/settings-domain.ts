@@ -1,19 +1,13 @@
 import {
   DecisionProvider, DecisionSequence, EventBus, InMemoryReduceProjection, Store,
 } from "es-objects";
-import { PgStorage } from "../../storage/pg-storage";
-import { AchievementVolumeProj } from "./achievement-volume-proj";
-import { FollowersGoal, FollowersGoalProj } from "./followers-goal-proj";
 import { Settings } from "./settings";
 
 export class SettingsDomain {
   private store: Store<Settings, undefined>;
-  private achievementVolumeProj: AchievementVolumeProj;
-  private followersGoalProj: FollowersGoalProj;
 
   constructor(
     eventBus: EventBus,
-    storage: PgStorage,
   ) {
     this.store = new Store<Settings, undefined>(
       "settings",
@@ -21,31 +15,10 @@ export class SettingsDomain {
       new VoidDecisionProvider(),
       (event) => eventBus.publish(event),
     );
-
-    this.achievementVolumeProj = new AchievementVolumeProj(storage.getValueStorage("settings-volume"));
-    eventBus.onEvent((event) => this.achievementVolumeProj.handleEvent(event));
-
-    this.followersGoalProj = new FollowersGoalProj(storage.getValueStorage("settings-followers-goal"));
-    eventBus.onEvent((event) => this.followersGoalProj.handleEvent(event));
   }
 
   public async get(): Promise<Settings> {
     return this.store.get("settings");
-  }
-
-  public async getAchievementVolume(): Promise<number> {
-    return this.achievementVolumeProj.getState();
-  }
-
-  public async getFollowersGoal(): Promise<FollowersGoal> {
-    return this.followersGoalProj.getState();
-  }
-
-  public rebuildStreams() {
-    return [
-      this.achievementVolumeProj.rebuildStream(),
-      this.followersGoalProj.rebuildStream(),
-    ];
   }
 }
 

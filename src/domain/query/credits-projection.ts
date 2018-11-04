@@ -1,8 +1,35 @@
 import { Event, PersistedReduceProjection, ValueStorage } from "es-objects";
+import { Options } from "../../get-options";
+import { PgViewer, PgViewerStorage } from "../../storage/pg-viewer-storage";
 
 export class CreditsProjection extends PersistedReduceProjection<Credits> {
-  constructor(storage: ValueStorage<Credits>) {
+  constructor(storage: ValueStorage<Credits>, private options: Options) {
     super(reducer, storage);
+  }
+
+  public async getWithNames(viewerStorage: PgViewerStorage): Promise<Credits> {
+    const credits = await this.getState();
+    const viewerIds = [
+      ...credits.viewers,
+      ...credits.hosts,
+      ...credits.achievements.map((a) => a.viewer),
+      ...credits.donators,
+      ...credits.follows,
+    ];
+    const viewers = await viewerStorage.getMany(viewerIds);
+    const getViewerName = (id: string) => (viewers.find((v) => v.id === id) as PgViewer).name;
+    return {
+      games: credits.games,
+      viewers: credits.viewers.map(getViewerName),
+      hosts: credits.hosts.map(getViewerName),
+      subscribes: credits.subscribes.map(getViewerName),
+      donators: credits.donators.map(getViewerName),
+      follows: credits.follows.map(getViewerName),
+      achievements: credits.achievements.map((a) => ({
+        viewer: getViewerName(a.viewer),
+        achievement: this.options.achievements[a.achievement].name,
+      })),
+    };
   }
 }
 
