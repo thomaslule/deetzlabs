@@ -1,7 +1,6 @@
-import { InMemoryKeyValueStorage } from "es-objects";
-import { achievementsCommandListener } from "../../src/domain/achievements-command-listener";
-import { Query } from "../../src/domain/query/query";
-import { makeViewerEvent, testOptions } from "../test-util";
+import { makeViewerEvent, testOptions } from "../../test/test-util";
+import { achievementsCommandListener } from "./achievements-command-listener";
+import { Query } from "./query/query";
 
 describe("achievementsCommandListener", () => {
   test("it should list a viewer's achievements in chat", async () => {

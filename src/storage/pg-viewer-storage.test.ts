@@ -1,6 +1,6 @@
 import { Pool } from "pg";
-import { PgViewerStorage } from "../../src/storage/pg-viewer-storage";
-import { getCleanDb } from "../test-util";
+import { getCleanDb } from "../../test/test-util";
+import { PgViewerStorage } from "./pg-viewer-storage";
 
 describe("PgViewerStorage", () => {
   let db: Pool;

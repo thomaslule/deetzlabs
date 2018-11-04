@@ -1,4 +1,4 @@
-import { Broadcast } from "../../../src/domain/broadcast/broadcast";
+import { Broadcast } from "./broadcast";
 
 describe("Broadcast", () => {
   let publish: jest.Mock;

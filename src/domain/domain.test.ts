@@ -1,8 +1,8 @@
 import { Pool } from "pg";
-import { Domain } from "../../src/domain/domain";
-import { configureLog } from "../../src/log";
-import { PgStorage } from "../../src/storage/pg-storage";
-import { getCleanDb, makeBroadcastEvent, makeViewerEvent, testOptions, wait } from "../test-util";
+import { getCleanDb, makeBroadcastEvent, makeViewerEvent, testOptions, wait } from "../../test/test-util";
+import { configureLog } from "../log";
+import { PgStorage } from "../storage/pg-storage";
+import { Domain } from "./domain";
 
 describe("Domain", () => {
   let db: Pool;

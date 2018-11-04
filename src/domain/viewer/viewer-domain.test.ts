@@ -1,9 +1,9 @@
 import { EventBus } from "es-objects";
 import { Pool } from "pg";
-import { Query } from "../../../src/domain/query/query";
-import { ViewerDomain } from "../../../src/domain/viewer/viewer-domain";
-import { PgStorage } from "../../../src/storage/pg-storage";
-import { getCleanDb, testOptions, wait } from "../../test-util";
+import { getCleanDb, testOptions, wait } from "../../../test/test-util";
+import { PgStorage } from "../../storage/pg-storage";
+import { Query } from "../query/query";
+import { ViewerDomain } from "./viewer-domain";
 
 describe("ViewerDomain", () => {
   let db: Pool;

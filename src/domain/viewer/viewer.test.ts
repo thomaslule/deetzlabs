@@ -1,6 +1,6 @@
-import { gotAchievement, sentChatMessage } from "../../../src/domain/viewer/events";
-import { getDecisionReducer, Viewer } from "../../../src/domain/viewer/viewer";
-import { testOptions } from "../../test-util";
+import { testOptions } from "../../../test/test-util";
+import { gotAchievement, sentChatMessage } from "./events";
+import { getDecisionReducer, Viewer } from "./viewer";
 
 describe("Viewer", () => {
 

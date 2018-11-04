@@ -1,6 +1,6 @@
-import { begun, ended } from "../../../src/domain/broadcast/events";
-import { BroadcastProjection } from "../../../src/domain/query/broadcast-projection";
-import { makeBroadcastEvent } from "../../test-util";
+import { makeBroadcastEvent } from "../../../test/test-util";
+import { begun, ended } from "../broadcast/events";
+import { BroadcastProjection } from "./broadcast-projection";
 
 describe("BroadcastProjection", () => {
   test("it should increment a broadcast number", () => {

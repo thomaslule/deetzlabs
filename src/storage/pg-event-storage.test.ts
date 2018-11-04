@@ -1,7 +1,7 @@
 import { Pool } from "pg";
 import * as toArray from "stream-to-array";
-import { PgEventStorage } from "../../src/storage/pg-event-storage";
-import { getCleanDb, makeBroadcastEvent, makeViewerEvent } from "../test-util";
+import { getCleanDb, makeBroadcastEvent, makeViewerEvent } from "../../test/test-util";
+import { PgEventStorage } from "./pg-event-storage";
 
 describe("PgEventStorage", () => {
   let db: Pool;
