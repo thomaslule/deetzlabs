@@ -1,14 +1,11 @@
-// import { Admin } from "./admin";
 import { Pool } from "pg";
+import { Admin } from "./admin";
 import { Api } from "./api";
 import { Domain } from "./domain/domain";
 import { getOptions, Options } from "./get-options";
 import { configureLog, log } from "./log";
 import { Server } from "./server";
 import { PgStorage } from "./storage/pg-storage";
-// import { Server } from "./server";
-// import { Storage } from "./storage/storage";
-// import { Streamlabs } from "./streamlabs";
 import { Twitch } from "./twitch";
 import { Widgets } from "./widgets";
 
@@ -22,9 +19,8 @@ export class Deetzlabs {
     this.opts = getOptions(options);
     configureLog(this.opts);
     this.twitch = new Twitch(this.opts);
-    // const streamlabs = new Streamlabs();
     const widgets = new Widgets(this.opts);
-    // const admin = new Admin();
+    const admin = new Admin();
     this.domain = new Domain(
       new PgStorage(new Pool({ connectionString: this.opts.db_url })),
       (msg) => this.twitch.say(msg),
@@ -33,7 +29,7 @@ export class Deetzlabs {
     );
     this.twitch.connectToDomain(this.domain);
     const api = new Api(this.domain, this.twitch, this.opts);
-    this.server = new Server(api.getRouter(), widgets.getRouter(), /*admin.getRouter(),*/ this.twitch.getProxy());
+    this.server = new Server(api.getRouter(), widgets.getRouter(), admin.getRouter(), this.twitch.getProxy());
     widgets.setupSocket(this.server.get());
   }
 

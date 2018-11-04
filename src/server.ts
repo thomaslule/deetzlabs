@@ -10,7 +10,7 @@ const stream = { write: (message: string) => log.info(message.slice(0, -1)) };
 export class Server {
   private server: HttpServer;
 
-  constructor(apiRouter: Router, widgetsRouter: Router, /*adminRouter: any,*/ twitchProxy: any) {
+  constructor(apiRouter: Router, widgetsRouter: Router, adminRouter: Router, twitchProxy: any) {
     const app = express();
     app.use(morgan(':remote-addr ":method :url" - :status - :response-time ms', { stream }));
     app.use("/twitch-callback", twitchProxy);
@@ -18,7 +18,7 @@ export class Server {
 
     app.use("/api", apiRouter);
     app.use("/widgets", widgetsRouter);
-    // app.use("/admin", admin);
+    app.use("/admin", adminRouter);
     app.get("/", (req, res) => { res.redirect("/admin"); });
 
     app.use((err: any, req: Request, res: Response, next: NextFunction) => {
