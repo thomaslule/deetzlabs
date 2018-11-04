@@ -32,7 +32,8 @@ export class Domain {
     showAchievement: (achievement: string, username: string, text: string, volume: number) => void,
     options: Options,
   ) {
-    const bus = new EventBus(this.storage.getEventStorage(), (err) => {
+    const bus = new EventBus(this.storage.getEventStorage());
+    bus.on("error", (err) => {
       log.error("An error happened in an event handler: %s", err);
       if (err.stack) {
         log.error(err.stack);

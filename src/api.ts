@@ -171,7 +171,7 @@ export class Api {
         try {
           const { volume } = req.validParams;
           const settings = await this.domain.store.getSettings();
-          settings.changeAchievementVolume(volume);
+          await settings.changeAchievementVolume(volume);
           res.sendStatus(200);
         } catch (err) {
           next(err);
@@ -190,7 +190,7 @@ export class Api {
         try {
           const { goal, html, css } = req.validParams;
           const settings = await this.domain.store.getSettings();
-          settings.changeFollowersGoal({ goal, html, css });
+          await settings.changeFollowersGoal({ goal, html, css });
           res.sendStatus(200);
         } catch (err) {
           next(err);
