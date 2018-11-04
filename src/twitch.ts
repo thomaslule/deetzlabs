@@ -23,8 +23,8 @@ export class Twitch {
       secret: options.secret,
       port: options.webhook_port,
       logger: log,
-      error_handler: (err) => { log.error(err); },
     });
+    this.channel.on("error", (err) => { log.error("an error happened in a twitch-channel handler: %s", err); });
     this.proxy = proxy(`http://localhost:${options.webhook_port}`);
   }
 
