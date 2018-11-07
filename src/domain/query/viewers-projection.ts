@@ -6,13 +6,14 @@ export class ViewerProjection implements Rebuildable {
   constructor(private storage: PgViewerStorage) {
   }
 
-  public async handleEvent(event: Event) {
+  public async handleEvent(event: Event, isReplay = false) {
     if (event.aggregate === "viewer") {
       if (event.type === "changed-name") {
-        await this.storage.store({ id: event.id, name: event.name });
-      }
-      if (event.type === "got-achievement") {
+        await this.storage.update(event.id, event.date, event.name);
+      } else if (event.type === "got-achievement") {
         await this.storage.addAchievement(event.id, event.achievement, event.date);
+      } else if (!isReplay) {
+        await this.storage.update(event.id, event.date);
       }
     }
   }
@@ -20,7 +21,7 @@ export class ViewerProjection implements Rebuildable {
   public rebuildStream() {
     let deletedAll = false;
     const deleteAll = () => this.storage.deleteAll();
-    const handleEvent = (event: Event) => this.handleEvent(event);
+    const handleEvent = (event: Event) => this.handleEvent(event, true);
     return new Writable({
       objectMode: true,
       async write(event, encoding, callback) {

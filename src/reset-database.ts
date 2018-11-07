@@ -26,7 +26,8 @@ export async function resetDatabase(connectionString = "postgresql://postgres:ad
   await db.query(`
     create table viewers(
       id text primary key,
-      name text
+      name text not null default '',
+      last_action timestamp not null
     );
   `);
   await db.query("drop table if exists achievements");

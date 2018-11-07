@@ -77,8 +77,8 @@ export class Query {
     return this.storage.getViewerStorage().getWithAchievements(id);
   }
 
-  public async getAllViewerNames() {
-    return this.storage.getViewerStorage().getAllNames();
+  public async getRecentViewerNames() {
+    return this.storage.getViewerStorage().getRecentNames();
   }
 
   public async getAllViewerAchievements() {

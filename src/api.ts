@@ -68,7 +68,7 @@ export class Api {
 
     this.router.get("/viewer_names", async (req: Request, res: Response, next: NextFunction) => {
       try {
-        res.send(await this.domain.query.getAllViewerNames());
+        res.send(await this.domain.query.getRecentViewerNames());
       } catch (err) {
         next(err);
       }
