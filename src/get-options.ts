@@ -2,7 +2,7 @@ import { Event, Reducer } from "es-objects";
 import { Dictionary } from "lodash";
 import { Obj } from "./util";
 
-const defaultOptions = {
+const defaultOptions: Options = {
   port: 3100,
   self_url: "http://localhost",
   webhook_port: 3333,
@@ -26,9 +26,20 @@ const defaultOptions = {
     commandsCommand: message === "!commands" ? true : undefined,
     achievementsCommand: message === "!achievements" ? true : undefined,
   }),
-  achievements_answer: "Congratulations %USER% for your achievements: %ACHIEVEMENTS%",
-  achievements_answer_none: "%USER% doesn't have any achievement but their time will come!",
-  commands_answer: "Say !achievements to see your current achievements",
+  commands: [
+    {
+      when: (event) => event.type === "sent-chat-message" && event.message.commandsCommand,
+      say: () => "Say !achievements to see your current achievements",
+    },
+    {
+      when: (event) => event.type === "sent-chat-message" && event.message.achievementsCommand,
+      say: (viewerName, viewerAchievements) => {
+        return viewerAchievements.length === 0
+          ? `${viewerName} doesn't have any achievement but their time will come!`
+          : `Congratulations ${viewerName} for your achievements: ${viewerAchievements.join(", ")}`;
+      },
+    },
+  ],
 };
 
 export function getOptions(providedOptions: Partial<Options> = {}): Options {
@@ -54,9 +65,7 @@ export interface Options {
   widgets_folder: string | undefined;
   achievements: Dictionary<AchievementOption>;
   messageToObject: (message: string) => Obj;
-  achievements_answer: string;
-  achievements_answer_none: string;
-  commands_answer: string;
+  commands: Command[];
 }
 
 interface AchievementOption {
@@ -64,4 +73,9 @@ interface AchievementOption {
   text: string;
   reducer?: Reducer<any>;
   distributeWhen: (state: any, event: Event) => boolean;
+}
+
+interface Command {
+  when: (event: Event) => boolean;
+  say: (viewerName: string, viewerAchievements: string[]) => string | undefined;
 }

@@ -2,10 +2,9 @@ import { EventBus } from "es-objects";
 import { Options } from "../get-options";
 import { log } from "../log";
 import { PgStorage } from "../storage/pg-storage";
-import { achievementsCommandListener } from "./achievements-command-listener";
 import { Broadcast } from "./broadcast/broadcast";
 import { BroadcastDomain } from "./broadcast/broadcast-domain";
-import { commandsCommandListenener } from "./commands-command-listener";
+import { commandsListener } from "./commands-listener";
 import { displayAchievementListener } from "./display-achievement-listener";
 import { Query } from "./query/query";
 import { Settings } from "./settings/settings";
@@ -56,8 +55,7 @@ export class Domain {
     bus.onEvent((event) => {
       log.info(`event happened: %s %s %s`, event.aggregate, event.id, event.type);
     });
-    bus.onEvent(achievementsCommandListener(this.query, sendChatMessage, options));
-    bus.onEvent(commandsCommandListenener(sendChatMessage, options));
+    bus.onEvent(commandsListener(this.query, sendChatMessage, options));
     bus.onEvent(displayAchievementListener(this.query, showAchievement, options));
   }
 
