@@ -1,5 +1,5 @@
 import {
-  DecisionProvider, DecisionSequence, Event, EventBus, EventStorage, InMemoryReduceProjection, Reducer, Store,
+  DecisionProvider, DecisionSequence, Event, EventBus, EventStorage, InMemoryReduceProjection, Store,
 } from "es-objects";
 import { Settings } from "./settings";
 
