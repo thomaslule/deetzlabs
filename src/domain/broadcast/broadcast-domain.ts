@@ -1,21 +1,15 @@
-import { EventBus, PersistedDecisionProvider, Store } from "es-objects";
-import { PgStorage } from "../../storage/pg-storage";
+import { EventBus, EventStorage, FromEventsDecisionProvider, Store } from "es-objects";
 import { Broadcast, decisionReducer } from "./broadcast";
 
 export class BroadcastDomain {
   private store: Store<Broadcast, any>;
-  private decisionProvider: PersistedDecisionProvider<any>;
 
-  constructor(eventBus: EventBus, storage: PgStorage) {
-    this.decisionProvider = new PersistedDecisionProvider(
-      "broadcast",
-      decisionReducer,
-      storage.getKeyValueStorage("broadcast-decision"),
-    );
+  constructor(eventBus: EventBus, eventStorage: EventStorage) {
+    const decisionProvider = new FromEventsDecisionProvider("broadcast", decisionReducer, eventStorage);
     this.store = new Store(
       "broadcast",
       (id, decisionState, createAndPublish) => new Broadcast(decisionState, createAndPublish),
-      this.decisionProvider,
+      decisionProvider,
       (event) => eventBus.publish(event),
     );
   }
@@ -23,9 +17,4 @@ export class BroadcastDomain {
   public async get(): Promise<Broadcast> {
     return this.store.get("broadcast");
   }
-
-  public decisionRebuildStream() {
-    return this.decisionProvider.rebuildStream();
-  }
-
 }

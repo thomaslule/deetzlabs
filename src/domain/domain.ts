@@ -38,7 +38,7 @@ export class Domain {
         log.error(err.stack);
       }
     });
-    const broadcast = this.broadcast = new BroadcastDomain(bus, this.storage);
+    const broadcast = this.broadcast = new BroadcastDomain(bus, this.storage.getEventStorage());
     const settings = new SettingsDomain(bus, this.storage.getEventStorage());
     const viewer = this.viewer = new ViewerDomain(bus, this.storage, options);
 
@@ -71,7 +71,6 @@ export class Domain {
 
   public async rebuild() {
     const rebuildStreams = [
-      this.broadcast.decisionRebuildStream(),
       this.viewer.decisionRebuildStream(),
       ...this.query.rebuildStreams(),
     ];

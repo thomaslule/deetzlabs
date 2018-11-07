@@ -76,6 +76,15 @@ describe("Domain", () => {
     expect((await domain.query.getSettings()).achievementVolume).toBe(0.8);
   });
 
+  test("it should be able to start and stop broadcasts", async () => {
+    const domain = new Domain(new PgStorage(db), () => {}, () => {}, testOptions);
+    expect(domain.query.getBroadcastNumber()).toBeUndefined();
+    await (await domain.store.getBroadcast()).begin("Tetris");
+    expect(domain.query.getBroadcastNumber()).toBe(1);
+    await (await domain.store.getBroadcast()).end();
+    expect(domain.query.getBroadcastNumber()).toBeUndefined();
+  });
+
   test("init should rebuild the memory projections", async () => {
     const storage = new PgStorage(db);
     await storage.getEventStorage().store(makeBroadcastEvent({ sequence: 0, type: "begun", game: "Tetris" }));
