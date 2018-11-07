@@ -8,6 +8,7 @@ import mapValues = require("lodash.mapvalues");
 import { Domain } from "./domain/domain";
 import { Options } from "./get-options";
 import { Twitch } from "./twitch";
+import { Widgets } from "./widgets";
 
 const LOGIN_DURATION = 60 * 60 * 24 * 30;
 
@@ -24,7 +25,7 @@ const validationMiddleware = (req: any, res: Response, next: NextFunction) => {
 export class Api {
   private router: Router;
 
-  constructor(private domain: Domain, private twitch: Twitch, private options: Options) {
+  constructor(private domain: Domain, private twitch: Twitch, private widgets: Widgets, private options: Options) {
     this.router = Router();
     if (this.options.protect_api) {
       this.router.use(expressjwt({
@@ -155,6 +156,19 @@ export class Api {
           const { achievement, viewer } = req.validParams;
           const viewerEntity = await this.domain.store.getViewer(viewer);
           await viewerEntity.replayAchievement(achievement);
+          res.sendStatus(200);
+        } catch (err) {
+          next(err);
+        }
+      },
+    );
+
+    this.router.post(
+      "/show_test_achievement",
+      async (req: any, res: Response, next: NextFunction) => {
+        try {
+          const volume = (await this.domain.query.getSettings()).achievementVolume;
+          this.widgets.showAchievement("Test", this.options.channel, "%USER% is testing the alert", volume);
           res.sendStatus(200);
         } catch (err) {
           next(err);
