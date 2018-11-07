@@ -39,7 +39,7 @@ export class Domain {
       }
     });
     const broadcast = this.broadcast = new BroadcastDomain(bus, this.storage);
-    const settings = new SettingsDomain(bus);
+    const settings = new SettingsDomain(bus, this.storage.getEventStorage());
     const viewer = this.viewer = new ViewerDomain(bus, this.storage, options);
 
     const query = this.query = new Query(this.storage, bus, options);

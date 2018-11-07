@@ -66,6 +66,16 @@ describe("Domain", () => {
     });
   });
 
+  test("it should be able to save settings", async () => {
+    const domain = new Domain(new PgStorage(db), () => {}, () => {}, testOptions);
+    expect((await domain.query.getSettings()).achievementVolume).toBe(0.5);
+    const settings = await domain.store.getSettings();
+    await settings.changeAchievementVolume(0.2); await wait();
+    expect((await domain.query.getSettings()).achievementVolume).toBe(0.2);
+    await settings.changeAchievementVolume(0.8); await wait();
+    expect((await domain.query.getSettings()).achievementVolume).toBe(0.8);
+  });
+
   test("init should rebuild the memory projections", async () => {
     const storage = new PgStorage(db);
     await storage.getEventStorage().store(makeBroadcastEvent({ sequence: 0, type: "begun", game: "Tetris" }));
