@@ -35,6 +35,14 @@ export class PgEventStorage implements EventStorage {
       .pipe(rowToEvent());
   }
 
+  public async getCurrentSequence(aggregate: string, id: string) {
+    const result = await this.db.query(
+      "select max(sequence) as max from events where aggregate = $1 and id = $2",
+      [aggregate, id],
+    );
+    return result.rows[0].max === null ? 0 : result.rows[0].max;
+  }
+
   private getStream(query: QueryStream) {
     const stream = new PassThrough({ objectMode: true });
     this.db.connect()

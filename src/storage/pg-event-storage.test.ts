@@ -57,4 +57,17 @@ describe("PgEventStorage", () => {
     await expect(storage.store(event)).rejects.toThrow();
   });
 
+  test("getCurrentSequence should return 0 when there is no event", async () => {
+    const storage = new PgEventStorage(db);
+    expect(await storage.getCurrentSequence("viewer", "123")).toBe(0);
+  });
+
+  test("getCurrentSequence should return the current sequence", async () => {
+    const storage = new PgEventStorage(db);
+    await storage.store(makeViewerEvent());
+    await storage.store(makeViewerEvent({ sequence: 1 }));
+    await storage.store(makeViewerEvent({ sequence: 2 }));
+    expect(await storage.getCurrentSequence("viewer", "123")).toBe(2);
+  });
+
 });
