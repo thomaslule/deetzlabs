@@ -29,13 +29,13 @@ export class ViewerDomain {
     return this.store.get(id);
   }
 
-  public async setTopClipper(id: string, query: Query) {
+  public async setTopClipper(id: string, name: string, query: Query) {
     const previous = await query.getTopClipper();
     if (previous !== id) {
       if (previous !== undefined) {
         await (await this.get(previous)).notTopClipper();
       }
-      await (await this.get(id)).topClipper();
+      await (await this.get(id)).topClipper(name);
     }
   }
 

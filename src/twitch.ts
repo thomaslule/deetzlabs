@@ -1,18 +1,17 @@
 import { EventEmitter } from "events";
 import * as proxy from "express-http-proxy";
-import * as TwitchChannel from "twitch-channel";
-import { TwitchChannelInstance } from "twitch-channel";
+import { TwitchChannel } from "twitch-channel";
 import { Domain } from "./domain/domain";
 import { Options } from "./get-options";
 import { log } from "./log";
 
 export class Twitch {
-  private channel: TwitchChannelInstance;
+  private channel: TwitchChannel;
   private proxy: any;
   private bus = new EventEmitter();
 
   constructor(options: Options) {
-    this.channel = TwitchChannel({
+    this.channel = new TwitchChannel({
       channel: options.channel,
       bot_name: options.bot_name,
       bot_token: options.bot_token,
@@ -22,9 +21,9 @@ export class Twitch {
       callback_url: `${options.self_url}/twitch-callback`,
       secret: options.secret,
       port: options.webhook_port,
-      logger: log,
     });
-    this.channel.on("error", (err) => { log.error("an error happened in a twitch-channel handler: %s", err); });
+    this.channel.on("info", (message) => { log.info("twitch-channel: %s", message); });
+    this.channel.on("error", (err) => { log.error("twitch-channel error: %s", err); });
     this.proxy = proxy(`http://localhost:${options.webhook_port}`);
   }
 
@@ -33,88 +32,102 @@ export class Twitch {
   }
 
   public connectToDomain(domain: Domain) {
-    this.channel.on("chat", async (channel: string, userstate: any, message: string, isSelf: boolean) => {
-      if (isSelf) { return; }
-      const viewer = await domain.store.getViewer(userstate["user-id"]);
-      const broadcastNo = domain.query.getBroadcastNumber();
-      await viewer.chatMessage(message, userstate["display-name"], broadcastNo);
+    this.channel.on("chat", async ({ viewerId, viewerName, message }) => {
+      try {
+        const viewer = await domain.store.getViewer(viewerId);
+        const broadcastNo = domain.query.getBroadcastNumber();
+        await viewer.chatMessage(message, viewerName, broadcastNo);
+      } catch (err) { log.error("chat command error: %s", err); }
     });
 
-    this.channel.on("cheer", async (channel: string, userstate: any, message: string) => {
-      const viewer = await domain.store.getViewer(userstate["user-id"]);
-      const broadcastNo = domain.query.getBroadcastNumber();
-      await viewer.cheer(userstate.bits, message, userstate["display-name"], broadcastNo);
+    this.channel.on("cheer", async ({ viewerId, viewerName, amount, message }) => {
+      try {
+        const viewer = await domain.store.getViewer(viewerId);
+        const broadcastNo = domain.query.getBroadcastNumber();
+        await viewer.cheer(amount, message, viewerName, broadcastNo);
+      } catch (err) { log.error("cheer command error: %s", err); }
     });
 
-    this.channel.on("subscription", async (channel, username: string, method, message: string) => {
-      const twitchViewer = await this.channel.getTwitchUserByName(username);
-      const viewer = await domain.store.getViewer(twitchViewer.id);
-      const broadcastNo = domain.query.getBroadcastNumber();
-      await viewer.subscribe(message, username, broadcastNo);
+    this.channel.on("sub", async ({ viewerId, viewerName, message }) => {
+      try {
+        const viewer = await domain.store.getViewer(viewerId);
+        const broadcastNo = domain.query.getBroadcastNumber();
+        await viewer.subscribe(message, viewerName, broadcastNo);
+      } catch (err) { log.error("sub command error: %s", err); }
     });
 
-    this.channel.on("resub", async (channel, username: string, months: number, message: string, userstate, methods) => {
-      const twitchViewer = await this.channel.getTwitchUserByName(username);
-      const viewer = await domain.store.getViewer(twitchViewer.id);
-      const broadcastNo = domain.query.getBroadcastNumber();
-      await viewer.resub(message, months, username, broadcastNo);
+    this.channel.on("resub", async ({ viewerId, viewerName, message, months }) => {
+      try {
+        const viewer = await domain.store.getViewer(viewerId);
+        const broadcastNo = domain.query.getBroadcastNumber();
+        await viewer.resub(message, months, viewerName, broadcastNo);
+      } catch (err) { log.error("resub command error: %s", err); }
     });
 
-    this.channel.on("subgift", async (channel, username, recipient, method) => {
-      const twitchViewer = await this.channel.getTwitchUserByName(username);
-      const twitchRecipient = await this.channel.getTwitchUserByName(recipient);
-      const viewer = await domain.store.getViewer(twitchViewer.id);
-      await viewer.giveSub(twitchRecipient.id, username);
+    this.channel.on("subgift", async ({ viewerId, viewerName, recipientId }) => {
+      try {
+        const viewer = await domain.store.getViewer(viewerId);
+        await viewer.giveSub(recipientId, viewerName);
+      } catch (err) { log.error("subgift command error: %s", err); }
     });
 
-    this.channel.on("donation", async ({ name, amount}) => {
-      const twitchViewer = await this.channel.getTwitchUserByName(name);
-      if (!twitchViewer) {
-        log.warn("donation from an unknown viewer: %s", name);
-      } else {
-        const viewer = await domain.store.getViewer(twitchViewer.id);
-        await viewer.donate(amount, twitchViewer.display_name);
-      }
+    this.channel.on("donation", async ({ viewerId, viewerName, amount }) => {
+      try {
+        const viewer = await domain.store.getViewer(viewerId);
+        await viewer.donate(amount, viewerName);
+      } catch (err) { log.error("donation command error: %s", err); }
     });
 
-    this.channel.on("host", async ({ name, viewers }) => {
-      const twitchViewer = await this.channel.getTwitchUserByName(name);
-      const viewer = await domain.store.getViewer(twitchViewer.id);
-      await viewer.host(viewers, twitchViewer.display_name);
+    this.channel.on("host", async ({ viewerId, viewerName, viewers }) => {
+      try {
+        const viewer = await domain.store.getViewer(viewerId);
+        await viewer.host(viewers, viewerName);
+      } catch (err) { log.error("host command error: %s", err); }
     });
 
-    this.channel.on("raid", async ({ raider, viewers }) => {
-      const twitchViewer = await this.channel.getTwitchUserByName(raider);
-      const viewer = await domain.store.getViewer(twitchViewer.id);
-      await viewer.raid(viewers, twitchViewer.display_name);
+    this.channel.on("raid", async ({ viewerId, viewerName, viewers }) => {
+      try {
+        const viewer = await domain.store.getViewer(viewerId);
+        await viewer.raid(viewers, viewerName);
+      } catch (err) { log.error("raid command error: %s", err); }
     });
 
-    this.channel.on("follow", async (viewerId) => {
-      const viewer = await domain.store.getViewer(viewerId);
-      await viewer.follow();
+    this.channel.on("follow", async ({ viewerId, viewerName }) => {
+      try {
+        const viewer = await domain.store.getViewer(viewerId);
+        await viewer.follow(viewerName);
+      } catch (err) { log.error("follow command error: %s", err); }
     });
 
-    this.channel.on("stream-begin", async (game) => {
-      const broadcast = await domain.store.getBroadcast();
-      await broadcast.begin(game);
+    this.channel.on("stream-begin", async ({ game }) => {
+      try {
+        const broadcast = await domain.store.getBroadcast();
+        await broadcast.begin(game);
+      } catch (err) { log.error("stream-begin command error: %s", err); }
     });
 
-    this.channel.on("stream-change-game", async (game) => {
-      const broadcast = await domain.store.getBroadcast();
-      await broadcast.changeGame(game);
+    this.channel.on("stream-change-game", async ({ game }) => {
+      try {
+        const broadcast = await domain.store.getBroadcast();
+        await broadcast.changeGame(game);
+      } catch (err) { log.error("stream-change-game command error: %s", err); }
     });
 
     this.channel.on("stream-end", async () => {
-      const broadcast = await domain.store.getBroadcast();
-      await broadcast.end();
+      try {
+        const broadcast = await domain.store.getBroadcast();
+        await broadcast.end();
+      } catch (err) { log.error("stream-end command error: %s", err); }
     });
 
-    this.bus.on("top-clipper", async (viewerId: string) => {
-      await domain.service.setTopClipper(viewerId);
+    this.bus.on("top-clipper", async ({ viewerId, viewerName }) => {
+      try {
+        await domain.service.setTopClipper(viewerId, viewerName);
+      } catch (err) { log.error("top-clipper command error: %s", err); }
     });
   }
 
-  public async getViewer(viewerName: string): Promise<any> {
+  public async getViewer(viewerName: string) {
     const twitchViewer = await this.channel.getTwitchUserByName(viewerName);
     return twitchViewer ? twitchViewer : undefined;
   }

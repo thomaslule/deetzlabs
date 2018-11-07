@@ -20,7 +20,7 @@ export class Domain {
     getViewer(id: string): Promise<Viewer>;
   };
   public service: {
-    setTopClipper(id: string): Promise<void>;
+    setTopClipper(id: string, name: string): Promise<void>;
   };
   private broadcast: BroadcastDomain;
   private viewer: ViewerDomain;
@@ -49,7 +49,7 @@ export class Domain {
       getViewer(id) { return viewer.get(id); },
     };
     this.service = {
-      async setTopClipper(id) { await viewer.setTopClipper(id, query); },
+      async setTopClipper(id, name) { await viewer.setTopClipper(id, name, query); },
     };
 
     bus.onEvent((event) => {

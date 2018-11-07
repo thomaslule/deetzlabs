@@ -19,10 +19,10 @@ describe("ViewerDomain", () => {
         const handleEvent = jest.fn();
         const domain = new ViewerDomain(bus, storage, testOptions);
         const query = new Query(storage, bus, testOptions);
-        await domain.setTopClipper("123", query); await wait();
-        bus.onEvent(handleEvent);
+        await domain.setTopClipper("123", "Someone", query); await wait();
+        bus.onEvent((e) => { if (e.type.includes("top-clipper")) { handleEvent(e); }});
 
-        await domain.setTopClipper("456", query); await wait();
+        await domain.setTopClipper("456", "Other", query); await wait();
 
         expect(handleEvent).toHaveBeenCalledTimes(2);
         expect(handleEvent.mock.calls[0][0]).toMatchObject({ id: "123", type: "lost-top-clipper" });
@@ -36,9 +36,9 @@ describe("ViewerDomain", () => {
       const handleEvent = jest.fn();
       const domain = new ViewerDomain(bus, storage, testOptions);
       const query = new Query(storage, bus, testOptions);
-      bus.onEvent(handleEvent);
+      bus.onEvent((e) => { if (e.type.includes("top-clipper")) { handleEvent(e); }});
 
-      await domain.setTopClipper("123", query); await wait();
+      await domain.setTopClipper("123", "Someone", query); await wait();
 
       expect(handleEvent).toHaveBeenCalledTimes(1);
       expect(handleEvent.mock.calls[0][0]).toMatchObject({ id: "123", type: "became-top-clipper" });
@@ -50,10 +50,10 @@ describe("ViewerDomain", () => {
       const handleEvent = jest.fn();
       const domain = new ViewerDomain(bus, storage, testOptions);
       const query = new Query(storage, bus, testOptions);
-      await domain.setTopClipper("123", query); await wait();
-      bus.onEvent(handleEvent);
+      await domain.setTopClipper("123", "Someone", query); await wait();
+      bus.onEvent((e) => { if (e.type.includes("top-clipper")) { handleEvent(e); }});
 
-      await domain.setTopClipper("123", query); await wait();
+      await domain.setTopClipper("123", "Someone", query); await wait();
 
       expect(handleEvent).not.toHaveBeenCalled();
     });

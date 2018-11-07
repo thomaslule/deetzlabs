@@ -112,7 +112,8 @@ export class Viewer extends Entity<DecisionState> {
     await this.distributeAchievements(event);
   }
 
-  public async topClipper() {
+  public async topClipper(viewerName?: string) {
+    if (viewerName) { await this.changeName(viewerName); }
     if (!this.getDecision().topClipper) {
       const event = await this.publishAndApply(becameTopClipper());
       await this.distributeAchievements(event);
@@ -130,7 +131,8 @@ export class Viewer extends Entity<DecisionState> {
     return this.getDecision().topClipper;
   }
 
-  public async follow() {
+  public async follow(viewerName?: string) {
+    if (viewerName) { await this.changeName(viewerName); }
     const event = await this.publishAndApply(followed());
     await this.distributeAchievements(event);
   }
