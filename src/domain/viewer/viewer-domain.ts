@@ -1,4 +1,5 @@
-import { EventBus,  PersistedDecisionProvider, Store } from "es-objects";
+import { EventBus, makeDecisionReducer, PersistedDecisionProvider, projectFromEvents, Store } from "es-objects";
+import * as logger from "winston";
 import { PgStorage } from "../../storage/pg-storage";
 import { Query } from "../query/query";
 import { DecisionState, getDecisionReducer, Viewer } from "./viewer";
@@ -9,19 +10,20 @@ export class ViewerDomain {
 
   constructor(
     eventBus: EventBus,
-    storage: PgStorage,
-    options: any,
+    private storage: PgStorage,
+    private options: any,
   ) {
     this.viewerDecisionProvider = new PersistedDecisionProvider(
       "viewer",
-      getDecisionReducer(options),
-      storage.getKeyValueStorage("viewer-decision"),
+      getDecisionReducer(this.options),
+      this.storage.getKeyValueStorage("viewer-decision"),
     );
     this.store = new Store<Viewer, DecisionState>(
       "viewer",
-      (id, decisionState, createAndPublish) => new Viewer(id, decisionState, createAndPublish, options),
+      (id, decisionState, createAndPublish) =>
+        new Viewer(id, decisionState, createAndPublish, this.options),
       this.viewerDecisionProvider,
-      (event) => eventBus.publish(event),
+      (event) => eventBus.publish(event).catch((err) => { this.rebuildDecisionFor(event.id); throw err; }),
     );
   }
 
@@ -41,5 +43,15 @@ export class ViewerDomain {
 
   public decisionRebuildStream() {
     return this.viewerDecisionProvider.rebuildStream();
+  }
+
+  private async rebuildDecisionFor(id: string) {
+    try {
+      const events = this.storage.getEventStorage().getEvents("viewer", id);
+      const projection = await projectFromEvents(makeDecisionReducer(getDecisionReducer(this.options)), events);
+      await this.storage.getKeyValueStorage("viewer-decision").store(id, projection);
+    } catch (err) {
+      logger.error("could not rebuild decision projection for viewer %s: %s", id, err);
+    }
   }
 }
