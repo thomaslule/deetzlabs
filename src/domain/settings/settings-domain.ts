@@ -1,5 +1,5 @@
 import {
-  DecisionProvider, DecisionSequence, Event, EventBus, EventStorage, InMemoryReduceProjection, Store,
+  DecisionProvider, DecisionSequence, EventBus, EventStorage, Store,
 } from "es-objects";
 import { Settings } from "./settings";
 
@@ -11,7 +11,7 @@ export class SettingsDomain {
     eventStorage: EventStorage,
   ) {
     this.store = new Store<Settings, undefined>(
-      (id, decisionProjection, publish) => new Settings(decisionProjection, publish),
+      (id, decisionSequence, publish) => new Settings(decisionSequence, publish),
       new VoidDecisionProvider(eventStorage),
       (event) => eventBus.publish(event),
     );
@@ -23,19 +23,11 @@ export class SettingsDomain {
 }
 
 class VoidDecisionProvider implements DecisionProvider<undefined> {
-
-  private static reducer(state: any, event: Event) {
-    return { decision: undefined, sequence: event.sequence };
-  }
-
   constructor(private eventStorage: EventStorage) {
   }
 
-  public async getDecisionProjection(): Promise<InMemoryReduceProjection<DecisionSequence<undefined>>> {
+  public async getDecisionSequence(): Promise<DecisionSequence<undefined>> {
     const sequence = await this.eventStorage.getCurrentSequence("settings", "settings");
-    return new InMemoryReduceProjection<DecisionSequence<undefined>>(
-      VoidDecisionProvider.reducer,
-      { decision: undefined, sequence },
-    );
+    return { decision: undefined, sequence };
   }
 }

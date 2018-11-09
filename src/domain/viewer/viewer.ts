@@ -1,4 +1,4 @@
-import { DecisionProjection, DecisionSequence, Entity, Event, Reducer } from "es-objects";
+import { DecisionSequence, Entity, Event, Reducer } from "es-objects";
 import mapValues = require("lodash.mapvalues");
 import ow from "ow";
 import { Options } from "../../get-options";
@@ -23,11 +23,11 @@ import {
 export class Viewer extends Entity<DecisionState> {
   public constructor(
     id: string,
-    decisionProjection: DecisionProjection<DecisionState>,
+    decisionSequence: DecisionSequence<DecisionState>,
     publish: (event: Event, decisionSequence: DecisionSequence<DecisionState>) => Promise<void>,
     private options: Options,
   ) {
-    super("viewer", id, decisionProjection, publish);
+    super(id, decisionSequence, publish);
   }
 
   public async changeName(name: string) {
@@ -135,6 +135,14 @@ export class Viewer extends Entity<DecisionState> {
     if (viewerName) { await this.changeName(viewerName); }
     const event = await this.publishAndApply(followed());
     await this.distributeAchievements(event);
+  }
+
+  protected getAggregate() {
+    return "viewer";
+  }
+
+  protected getDecisionReducer() {
+    return getDecisionReducer(this.options);
   }
 
   private async distributeAchievements(event: Event) {

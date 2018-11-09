@@ -1,13 +1,13 @@
-import { DecisionProjection, DecisionSequence, Entity, Event } from "es-objects";
+import { DecisionSequence, Entity, Event } from "es-objects";
 import ow from "ow";
 import { begun, changedGame, ended } from "./events";
 
 export class Broadcast extends Entity<DecisionState> {
   constructor(
-    decisionProjection: DecisionProjection<DecisionState>,
+    decisionSequence: DecisionSequence<DecisionState>,
     publish: (event: Event, decisionSequence: DecisionSequence<DecisionState>) => Promise<void>,
   ) {
-    super("broadcast", "broadcast", decisionProjection, publish);
+    super("broadcast", decisionSequence, publish);
   }
 
   public async begin(game: string) {
@@ -42,6 +42,14 @@ export class Broadcast extends Entity<DecisionState> {
 
   public getCurrentGame() {
     return this.getDecision().game;
+  }
+
+  protected getAggregate() {
+    return "broadcast";
+  }
+
+  protected getDecisionReducer() {
+    return decisionReducer;
   }
 }
 

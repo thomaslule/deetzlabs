@@ -1,4 +1,3 @@
-import { makeDecisionProjection } from "es-objects";
 import { testOptions } from "../../../test/test-util";
 import { gotAchievement, sentChatMessage } from "./events";
 import { getDecisionReducer, Viewer } from "./viewer";
@@ -8,10 +7,12 @@ describe("Viewer", () => {
   function getViewer(publish, decisionState = {}) {
     return new Viewer(
       "123",
-      makeDecisionProjection(
-        getDecisionReducer(testOptions),
-        { name: "Someone", achievementsReceived: [], achievementsProgress: {}, topClipper: false, ...decisionState },
-      ),
+      {
+        decision: {
+          name: "Someone", achievementsReceived: [], achievementsProgress: {}, topClipper: false, ...decisionState,
+        },
+        sequence: -1,
+      },
       publish,
       testOptions,
     );

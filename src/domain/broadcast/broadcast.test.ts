@@ -1,5 +1,4 @@
-import { makeDecisionProjection } from "es-objects";
-import { Broadcast, decisionReducer } from "./broadcast";
+import { Broadcast } from "./broadcast";
 
 describe("Broadcast", () => {
   let publish: jest.Mock;
@@ -9,7 +8,7 @@ describe("Broadcast", () => {
 
   beforeEach(() => {
     publish = jest.fn().mockImplementation((event) => event);
-    broadcast = new Broadcast(makeDecisionProjection(decisionReducer), publish);
+    broadcast = new Broadcast({ sequence: -1, decision: { broadcasting: false, game: undefined } }, publish);
   });
 
   test("it should be able to launch broadcast", async () => {

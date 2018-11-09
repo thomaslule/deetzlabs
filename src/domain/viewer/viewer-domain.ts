@@ -19,8 +19,8 @@ export class ViewerDomain {
       this.storage.getKeyValueStorage("viewer-decision"),
     );
     this.store = new Store<Viewer, DecisionState>(
-      (id, decisionProjection, publish) =>
-        new Viewer(id, decisionProjection, publish, this.options),
+      (id, decisionSequence, publish) =>
+        new Viewer(id, decisionSequence, publish, this.options),
       this.viewerDecisionProvider,
       (event) => eventBus.publish(event).catch((err) => { this.rebuildDecisionFor(event.id); throw err; }),
     );
