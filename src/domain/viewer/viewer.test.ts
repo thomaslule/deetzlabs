@@ -1,3 +1,4 @@
+import { makeDecisionProjection } from "es-objects";
 import { testOptions } from "../../../test/test-util";
 import { gotAchievement, sentChatMessage } from "./events";
 import { getDecisionReducer, Viewer } from "./viewer";
@@ -7,11 +8,18 @@ describe("Viewer", () => {
   function getViewer(publish, decisionState = {}) {
     return new Viewer(
       "123",
-      { name: "Someone", achievementsReceived: [], achievementsProgress: {}, topClipper: false, ...decisionState },
+      makeDecisionProjection(
+        getDecisionReducer(testOptions),
+        { name: "Someone", achievementsReceived: [], achievementsProgress: {}, topClipper: false, ...decisionState },
+      ),
       publish,
       testOptions,
     );
   }
+
+  const viewerEvent = {
+    aggregate: "viewer", id: "123", sequence: expect.anything(), version: 1, date: expect.anything(),
+  };
 
   describe("cheer", () => {
     test("it should publish deserved achievements", async () => {
@@ -20,12 +28,9 @@ describe("Viewer", () => {
 
       await someone.cheer(500, "hi");
 
-      expect(publish).toHaveBeenCalledWith({
-        type: "got-achievement",
-        achievement: "cheerleader",
-        version: 1,
-        date: expect.anything(),
-      });
+      expect(publish).toHaveBeenCalledWith(
+        { ...viewerEvent, type: "got-achievement", achievement: "cheerleader" }, expect.anything(),
+      );
     });
 
     test("it shouldnt publish already obtained achievements", async () => {
@@ -47,11 +52,10 @@ describe("Viewer", () => {
       await someone.changeName("Someone");
 
       expect(publish).toHaveBeenCalledWith({
+        ...viewerEvent,
         type: "changed-name",
         name: "Someone",
-        version: 1,
-        date: expect.anything(),
-      });
+      }, expect.anything());
     });
 
     test("it shouldnt do anything when the name is the same", async () => {

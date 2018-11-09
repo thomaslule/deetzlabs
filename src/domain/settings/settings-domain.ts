@@ -11,8 +11,7 @@ export class SettingsDomain {
     eventStorage: EventStorage,
   ) {
     this.store = new Store<Settings, undefined>(
-      "settings",
-      (id, decisionState, createAndPublish) => new Settings(createAndPublish),
+      (id, decisionProjection, publish) => new Settings(decisionProjection, publish),
       new VoidDecisionProvider(eventStorage),
       (event) => eventBus.publish(event),
     );
@@ -26,10 +25,7 @@ export class SettingsDomain {
 class VoidDecisionProvider implements DecisionProvider<undefined> {
 
   private static reducer(state: any, event: Event) {
-    return {
-      decision: undefined,
-      sequence: event.sequence,
-    };
+    return { decision: undefined, sequence: event.sequence };
   }
 
   constructor(private eventStorage: EventStorage) {

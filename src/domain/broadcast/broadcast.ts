@@ -1,10 +1,13 @@
-import { Entity, Event } from "es-objects";
+import { DecisionProjection, DecisionSequence, Entity, Event } from "es-objects";
 import ow from "ow";
 import { begun, changedGame, ended } from "./events";
 
 export class Broadcast extends Entity<DecisionState> {
-  constructor(decisionState: DecisionState, createAndPublish: (eventData: any) => Promise<Event>) {
-    super(decisionState, decisionReducer, createAndPublish);
+  constructor(
+    decisionProjection: DecisionProjection<DecisionState>,
+    publish: (event: Event, decisionSequence: DecisionSequence<DecisionState>) => Promise<void>,
+  ) {
+    super("broadcast", "broadcast", decisionProjection, publish);
   }
 
   public async begin(game: string) {

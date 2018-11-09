@@ -7,8 +7,7 @@ export class BroadcastDomain {
   constructor(eventBus: EventBus, eventStorage: EventStorage) {
     const decisionProvider = new FromEventsDecisionProvider("broadcast", decisionReducer, eventStorage);
     this.store = new Store(
-      "broadcast",
-      (id, decisionState, createAndPublish) => new Broadcast(decisionState, createAndPublish),
+      (id, decisionProjection, publish) => new Broadcast(decisionProjection, publish),
       decisionProvider,
       (event) => eventBus.publish(event),
     );
