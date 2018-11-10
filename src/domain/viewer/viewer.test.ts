@@ -1,4 +1,4 @@
-import { testOptions } from "../../../test/test-util";
+import { makeViewerEvent, testOptions } from "../../../test/test-util";
 import { gotAchievement, sentChatMessage } from "./events";
 import { getDecisionReducer, Viewer } from "./viewer";
 
@@ -214,5 +214,17 @@ describe("getDecisionReducer", () => {
     const state1 = reducer(undefined, gotAchievement("supporter"));
     const state2 = reducer(state1, sentChatMessage({ gg: true }));
     expect(state2.achievementsProgress.supporter).toBeUndefined();
+  });
+
+  test("the reducer should add the achievements in the state from a migrated-data event", () => {
+    const reducer = getDecisionReducer(testOptions);
+    const state = reducer(undefined, makeViewerEvent({
+      type: "migrated-data",
+      achievements: [
+        { achievement: "cheerleader", date: new Date().toISOString() },
+        { achievement: "supporter", date: new Date().toISOString() },
+      ],
+    }));
+    expect(state.achievementsReceived).toEqual(["cheerleader", "supporter"]);
   });
 });
