@@ -13,6 +13,7 @@ export class ViewerProjection implements Rebuildable {
       } else if (event.type === "got-achievement") {
         await this.storage.addAchievement(event.id, event.achievement, new Date(event.date));
       } else if (event.type === "migrated-data") {
+        await this.storage.update(event.id, new Date(event.date), event.name);
         await Promise.all(
           event.achievements.map((a: any) => this.storage.addAchievement(event.id, a.achievement, a.date)),
         );

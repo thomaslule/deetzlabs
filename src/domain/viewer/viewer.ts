@@ -185,17 +185,16 @@ export function getDecisionReducer(options: Options): Reducer<DecisionState> {
 
   return (state = initialState, event) => {
     const achievementsProgress = getProgressForAchievementsInProgress(state, event);
-    let achievementsReceived: string[];
-    if (event.type === "got-achievement") {
-      achievementsReceived = state.achievementsReceived.concat(event.achievement);
-    } else if (event.type === "migrated-data") {
+    let achievementsReceived = state.achievementsReceived;
+    let name = state.name;
+    if (event.type === "migrated-data") {
       achievementsReceived = state.achievementsReceived.concat(event.achievements.map((a: any) => a.achievement));
-    } else {
-      achievementsReceived = state.achievementsReceived;
+      name = event.name;
+    } else if (event.type === "got-achievement") {
+      achievementsReceived = state.achievementsReceived.concat(event.achievement);
+    } else if (event.type === "changed-name") {
+      name = event.name;
     }
-    const name = event.type === "changed-name"
-      ? event.name
-      : state.name;
     const topClipper = topClipperReducer(state.topClipper, event);
     return { name, achievementsProgress, achievementsReceived, topClipper };
   };
