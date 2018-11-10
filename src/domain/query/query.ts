@@ -5,7 +5,7 @@ import { BroadcastProjection } from "./broadcast-projection";
 import { CreditsProjection } from "./credits-projection";
 import { SettingsProjection } from "./settings-projection";
 import { TopClipperProjection } from "./top-clipper-projection";
-import { ViewerProjection } from "./viewers-projection";
+import { ViewerProjection } from "./viewer-projection";
 
 export class Query {
   private broadcast: BroadcastProjection;
