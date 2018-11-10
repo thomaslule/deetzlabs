@@ -2,7 +2,7 @@
   "name": "deetzlabs",
   "version": "0.4.0",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
   "typings": "./lib/index.d.ts",
   "scripts": {
     "build": "rimraf ./lib && tsc && copyfiles -u 1 \"./src/widgets/public/**/*\" ./lib",

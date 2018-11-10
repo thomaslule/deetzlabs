@@ -9,6 +9,7 @@ export class Twitch {
   private channel: TwitchChannel;
   private proxy: any;
   private bus = new EventEmitter();
+  private intervalId?: NodeJS.Timer;
 
   constructor(options: Options) {
     this.channel = new TwitchChannel({
@@ -135,9 +136,14 @@ export class Twitch {
   public async connect(): Promise<void> {
     await this.channel.connect();
     await this.fetchTopClipper();
-    setInterval(async () => {
+    this.intervalId = setInterval(async () => {
       try { this.fetchTopClipper(); } catch (err) { log.error(err); }
-    }, 5 * 60 * 1000);
+    }, 30 * 60 * 1000);
+  }
+
+  public async disconnect(): Promise<void> {
+    await this.channel.disconnect();
+    if (this.intervalId) { clearInterval(this.intervalId); }
   }
 
   public getProxy(): any {

@@ -46,4 +46,11 @@ export class Deetzlabs {
       log.info(`listening on ${this.opts.port}`);
     });
   }
+
+  public async stop() {
+    await Promise.all([
+      this.twitch.disconnect(),
+      this.server.close(),
+    ]);
+  }
 }

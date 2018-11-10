@@ -33,4 +33,8 @@ export class Server {
   public get(): HttpServer {
     return this.server;
   }
+
+  public async close() {
+    return new Promise((resolve) => this.server.close(resolve));
+  }
 }
