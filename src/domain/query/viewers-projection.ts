@@ -9,11 +9,11 @@ export class ViewerProjection implements Rebuildable {
   public async handleEvent(event: Event, isReplay = false) {
     if (event.aggregate === "viewer") {
       if (event.type === "changed-name") {
-        await this.storage.update(event.id, event.date, event.name);
+        await this.storage.update(event.id, new Date(event.date), event.name);
       } else if (event.type === "got-achievement") {
-        await this.storage.addAchievement(event.id, event.achievement, event.date);
+        await this.storage.addAchievement(event.id, event.achievement, new Date(event.date));
       } else if (!isReplay) {
-        await this.storage.update(event.id, event.date);
+        await this.storage.update(event.id, new Date(event.date));
       }
     }
   }

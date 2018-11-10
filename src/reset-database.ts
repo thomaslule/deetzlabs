@@ -27,7 +27,7 @@ export async function resetDatabase(connectionString = "postgresql://postgres:ad
     create table viewers(
       id text primary key,
       name text not null default '',
-      last_action timestamp not null
+      last_action timestamptz not null
     );
   `);
   await db.query("drop table if exists achievements");
@@ -35,7 +35,7 @@ export async function resetDatabase(connectionString = "postgresql://postgres:ad
     create table achievements(
       viewerId text not null,
       achievement text not null,
-      date timestamp not null,
+      date timestamptz not null,
       primary key(viewerId, achievement)
     );
   `);
