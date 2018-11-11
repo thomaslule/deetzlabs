@@ -1,14 +1,13 @@
 import { Router, static as expressStatic } from "express";
-import { resolve } from "path";
+import { join } from "path";
 
-const adminPath = resolve(require.resolve("deetzlabs-web"), "..");
+const adminPath = join(require.resolve("deetzlabs-web"), "..", "..", "build");
 
 export class Admin {
   private router: Router;
 
   public constructor() {
     this.router = Router();
-    this.router.get("/package.json", (req, res) => { res.sendStatus(404); });
     this.router.use(expressStatic(adminPath));
     this.router.get("*", (req, res) => { res.sendfile(`${adminPath}/index.html`); });
   }
