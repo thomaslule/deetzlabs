@@ -152,7 +152,7 @@ export class Twitch {
 
   private async fetchTopClipper() {
     const topClipper = await this.channel.getTopClipper();
-    log.info("fetched top clipper: %s", topClipper);
+    log.info("fetched top clipper: %s", topClipper ? topClipper.viewerName : undefined);
     if (topClipper !== undefined) {
       this.bus.emit("top-clipper", topClipper);
     }
