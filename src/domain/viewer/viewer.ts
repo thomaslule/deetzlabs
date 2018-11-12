@@ -65,14 +65,14 @@ export class Viewer extends Entity<DecisionState> {
   }
 
   public async donate(amount: number, viewerName?: string) {
-    ow(amount, ow.number);
+    ow(amount, ow.number.greaterThan(0));
     if (viewerName) { await this.changeName(viewerName); }
     const event = await this.publishAndApply(donated(amount));
     await this.distributeAchievements(event);
   }
 
   public async cheer(amount: number, message: string, viewerName?: string, broadcastNo?: number) {
-    ow(amount, ow.number);
+    ow(amount, ow.number.greaterThan(0));
     await this.chatMessage(message, viewerName, broadcastNo);
     const event = await this.publishAndApply(cheered(amount));
     await this.distributeAchievements(event);

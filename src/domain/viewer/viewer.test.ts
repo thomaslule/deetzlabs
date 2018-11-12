@@ -22,7 +22,23 @@ describe("Viewer", () => {
     aggregate: "viewer", id: "123", sequence: expect.anything(), version: 1, date: expect.anything(),
   };
 
+  describe("donate", () => {
+    test("it should throw if amount is not a number or a number <= 0", async () => {
+      const someone = getViewer(jest.fn());
+
+      await expect(someone.donate(0, "Someone")).rejects.toThrow();
+      await expect(someone.donate("12" as any as number, "Someone")).rejects.toThrow();
+    });
+  });
+
   describe("cheer", () => {
+    test("it should throw if amount is not a number or a number <= 0", async () => {
+      const someone = getViewer(jest.fn());
+
+      await expect(someone.cheer(0, "hi")).rejects.toThrow();
+      await expect(someone.cheer("12" as any as number, "hi")).rejects.toThrow();
+    });
+
     test("it should publish deserved achievements", async () => {
       const publish = jest.fn().mockImplementation((event) => event);
       const someone = getViewer(publish);
