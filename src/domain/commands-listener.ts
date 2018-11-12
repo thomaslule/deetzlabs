@@ -10,11 +10,12 @@ export function commandsListener(query: Query, sendChatMessage: (msg: string) =>
         const viewer = await query.getViewerWithAchievements(event.id);
         if (viewer === undefined) { throw new Error(`couldnt get the viewer ${event.id}`); }
         successfulCommands.forEach((command) => {
-          const message = command.say(viewer.name, viewer.achievements.map((a) => options.achievements[a].name));
+          const viewerName = viewer.name;
+          const viewerAchievements = viewer.achievements;
+          const message = command.say({ event, viewerName, viewerAchievements, options });
           if (message) { sendChatMessage(message); }
         });
       }
     }
-
   };
 }

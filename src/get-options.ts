@@ -33,10 +33,11 @@ const defaultOptions: Options = {
     },
     {
       when: (event) => event.type === "sent-chat-message" && event.message.achievementsCommand,
-      say: (viewerName, viewerAchievements) => {
+      say: ({ viewerName, viewerAchievements, options }) => {
+        const achievements = viewerAchievements.map((a) => options.achievements[a].name).join(", ");
         return viewerAchievements.length === 0
           ? `${viewerName} doesn't have any achievement but their time will come!`
-          : `Congratulations ${viewerName} for your achievements: ${viewerAchievements.join(", ")}`;
+          : `Congratulations ${viewerName} for your achievements: ${achievements}`;
       },
     },
   ],
@@ -77,5 +78,12 @@ interface AchievementOption {
 
 interface Command {
   when: (event: Event) => boolean;
-  say: (viewerName: string, viewerAchievements: string[]) => string | undefined;
+  say: (inputs: CommandInputs) => string | undefined;
+}
+
+interface CommandInputs {
+  event: Event;
+  viewerName: string;
+  viewerAchievements: string[];
+  options: Options;
 }
