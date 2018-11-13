@@ -72,7 +72,7 @@ export class Twitch {
       } catch (err) { log.error("subgift command error: %s", err); }
     });
 
-    this.channel.on("donation", async ({ viewerId, viewerName, amount }) => {
+    this.channel.on("streamlabs/donation", async ({ viewerId, viewerName, amount }) => {
       try {
         const viewer = await domain.store.getViewer(viewerId);
         await viewer.donate(amount, viewerName);
