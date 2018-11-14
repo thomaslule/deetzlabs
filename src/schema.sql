@@ -1,12 +1,3 @@
-import { Pool } from "pg";
-
-export async function resetDatabase(connectionString = "postgresql://postgres:admin@localhost:5432/deetzlabs_test") {
-  const db = new Pool({ connectionString });
-  await db.query(sql);
-  await db.end();
-}
-
-const sql = `
 drop table if exists events;
 create table events(
   event_id serial primary key,
@@ -39,4 +30,3 @@ create table achievements(
   date timestamptz not null,
   primary key(viewerId, achievement)
 );
-`;

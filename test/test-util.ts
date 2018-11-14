@@ -1,7 +1,7 @@
 import { Event } from "es-objects";
+import { readFileSync } from "fs";
 import { Pool } from "pg";
 import { Readable } from "stream";
-import { resetDatabase } from "../src";
 import { getOptions } from "../src/options";
 import { Obj } from "../src/util";
 import * as testOptionsObj from "./test-options";
@@ -34,10 +34,12 @@ export async function wait(ms: number = 50) {
   return new Promise((resolve) => { setTimeout(resolve, ms); });
 }
 
+const schema = readFileSync("./src/schema.sql", "utf8");
+
 export async function getCleanDb() {
-  const connectionString = "postgresql://postgres:admin@localhost:5432/deetzlabs_test";
-  await resetDatabase(connectionString);
-  return new Pool({ connectionString });
+  const db = new Pool({ connectionString: "postgresql://postgres:admin@localhost:5432/deetzlabs_test" });
+  await db.query(schema);
+  return db;
 }
 
 export function arrayToStream(array: any[]): Readable {
