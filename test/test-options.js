@@ -23,4 +23,19 @@ module.exports = {
       distributeWhen: (state, event) => isGG(event) && state >= 5,
     },
   },
+  commands: [
+    {
+      when: (event) => event.type === "sent-chat-message" && event.message.commandsCommand,
+      say: () => "Say !achievements to see your current achievements",
+    },
+    {
+      when: (event) => event.type === "sent-chat-message" && event.message.achievementsCommand,
+      say: ({ viewerName, viewerAchievements, options }) => {
+        const achievements = viewerAchievements.map((a) => options.achievements[a].name).join(", ");
+        return viewerAchievements.length === 0
+          ? `${viewerName} doesn't have any achievement but their time will come!`
+          : `Congratulations ${viewerName} for your achievements: ${achievements}`;
+      },
+    },
+  ],
 }

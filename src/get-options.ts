@@ -23,25 +23,8 @@ const defaultOptions: Options = {
   log_to_file: true,
   widgets_folder: undefined,
   achievements: {},
-  messageToObject: (message: string) => ({
-    commandsCommand: message === "!commands" ? true : undefined,
-    achievementsCommand: message === "!achievements" ? true : undefined,
-  }),
-  commands: [
-    {
-      when: (event) => event.type === "sent-chat-message" && event.message.commandsCommand,
-      say: () => "Say !achievements to see your current achievements",
-    },
-    {
-      when: (event) => event.type === "sent-chat-message" && event.message.achievementsCommand,
-      say: ({ viewerName, viewerAchievements, options }) => {
-        const achievements = viewerAchievements.map((a) => options.achievements[a].name).join(", ");
-        return viewerAchievements.length === 0
-          ? `${viewerName} doesn't have any achievement but their time will come!`
-          : `Congratulations ${viewerName} for your achievements: ${achievements}`;
-      },
-    },
-  ],
+  messageToObject: (message: string) => ({}),
+  commands: [],
 };
 
 export function getOptions(providedOptions: Partial<Options> = {}): Options {
