@@ -1,8 +1,8 @@
 import { Router, static as expressStatic } from "express";
 import { Server } from "http";
 import * as socketio from "socket.io";
-import { Options } from "../get-options";
 import { log } from "../log";
+import { Options } from "../options";
 
 export class Widgets {
   private router: Router;

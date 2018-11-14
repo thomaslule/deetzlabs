@@ -1,5 +1,5 @@
 import { Event, PersistedReduceProjection, ValueStorage } from "es-objects";
-import { Options } from "../../get-options";
+import { Options } from "../../options";
 import { PgViewer, PgViewerStorage } from "../../storage/pg-viewer-storage";
 
 export class CreditsProjection extends PersistedReduceProjection<Credits> {

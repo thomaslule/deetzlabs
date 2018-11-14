@@ -2,7 +2,7 @@ import { Event } from "es-objects";
 import { Pool } from "pg";
 import { Readable } from "stream";
 import { resetDatabase } from "../src";
-import { getOptions } from "../src/get-options";
+import { getOptions } from "../src/options";
 import { Obj } from "../src/util";
 import * as testOptionsObj from "./test-options";
 

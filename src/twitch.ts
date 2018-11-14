@@ -2,8 +2,8 @@ import { EventEmitter } from "events";
 import * as proxy from "express-http-proxy";
 import { TwitchChannel } from "twitch-channel";
 import { Domain } from "./domain/domain";
-import { Options } from "./get-options";
 import { log } from "./log";
+import { Options } from "./options";
 
 export class Twitch {
   private channel: TwitchChannel;

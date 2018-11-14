@@ -1,5 +1,5 @@
 import { Event } from "es-objects";
-import { Options } from "../get-options";
+import { Options } from "../options";
 import { Query } from "./query/query";
 
 type ShowAchievementFunc = (name: string, displayName: string, text: string, volume: number) => void;

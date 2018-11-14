@@ -1,6 +1,6 @@
 import { EventBus } from "es-objects";
-import { Options } from "../get-options";
 import { log } from "../log";
+import { Options } from "../options";
 import { PgStorage } from "../storage/pg-storage";
 import { Broadcast } from "./broadcast/broadcast";
 import { BroadcastDomain } from "./broadcast/broadcast-domain";

@@ -1,5 +1,5 @@
 import { EventBus } from "es-objects";
-import { Options } from "../../get-options";
+import { Options } from "../../options";
 import { PgStorage } from "../../storage/pg-storage";
 import { BroadcastProjection } from "./broadcast-projection";
 import { CreditsProjection } from "./credits-projection";

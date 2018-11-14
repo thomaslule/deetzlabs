@@ -1,7 +1,7 @@
 import { DecisionSequence, Entity, Event, Reducer } from "es-objects";
 import mapValues = require("lodash.mapvalues");
 import ow from "ow";
-import { Options } from "../../get-options";
+import { Options } from "../../options";
 import { Obj } from "../../util";
 import {
   becameTopClipper,

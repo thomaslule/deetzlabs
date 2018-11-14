@@ -27,10 +27,6 @@ const defaultOptions: Options = {
   commands: [],
 };
 
-export function getOptions(providedOptions: Partial<Options> = {}): Options {
-  return { ...defaultOptions, ...providedOptions };
-}
-
 export interface Options {
   port: number;
   self_url: string;
@@ -71,4 +67,8 @@ interface CommandInputs {
   viewerName: string;
   viewerAchievements: string[];
   options: Options;
+}
+
+export function getOptions(providedOptions: Partial<Options> = {}): Options {
+  return { ...defaultOptions, ...providedOptions };
 }

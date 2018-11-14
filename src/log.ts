@@ -1,7 +1,7 @@
 import { format } from "logform";
 import { createLogger, transports } from "winston";
 import * as DailyRotateFile from "winston-daily-rotate-file";
-import { Options } from "./get-options";
+import { Options } from "./options";
 
 export const log = createLogger();
 

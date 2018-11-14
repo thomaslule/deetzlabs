@@ -1,5 +1,5 @@
 import { Event } from "es-objects";
-import { Options } from "../get-options";
+import { Options } from "../options";
 import { Query } from "./query/query";
 
 export function commandsListener(query: Query, sendChatMessage: (msg: string) => void, options: Options) {

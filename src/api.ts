@@ -6,7 +6,7 @@ import { matchedData, sanitize } from "express-validator/filter";
 import { sign } from "jsonwebtoken";
 import mapValues = require("lodash.mapvalues");
 import { Domain } from "./domain/domain";
-import { Options } from "./get-options";
+import { Options } from "./options";
 import { Twitch } from "./twitch";
 import { Widgets } from "./widgets";
 
