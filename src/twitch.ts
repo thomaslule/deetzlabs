@@ -23,6 +23,7 @@ export class Twitch {
       secret: options.secret,
       port: options.webhook_port,
     });
+    this.channel.on("debug", (message) => { log.debug("twitch-channel: %s", message); });
     this.channel.on("info", (message) => { log.info("twitch-channel: %s", message); });
     this.channel.on("error", (err) => { log.error("twitch-channel error: %s", err); });
     this.proxy = proxy(`http://localhost:${options.webhook_port}`);
@@ -73,10 +74,14 @@ export class Twitch {
     });
 
     this.channel.on("streamlabs/donation", async ({ viewerId, viewerName, amount }) => {
-      try {
-        const viewer = await domain.store.getViewer(viewerId);
-        await viewer.donate(amount, viewerName);
-      } catch (err) { log.error("donation command error: %s", err); }
+      if (viewerId) {
+        try {
+          const viewer = await domain.store.getViewer(viewerId);
+          await viewer.donate(amount, viewerName);
+        } catch (err) { log.error("donation command error: %s", err); }
+      } else {
+        log.info("got a donation from an unknown viewer: %s", viewerName);
+      }
     });
 
     this.channel.on("host", async ({ viewerId, viewerName, viewers }) => {
