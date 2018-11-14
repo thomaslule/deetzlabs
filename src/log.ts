@@ -7,6 +7,7 @@ export const log = createLogger();
 
 export function configureLog(options: Options) {
   log.configure({
+    level: options.log_level,
     format: format.combine(
       format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
       format.splat(),

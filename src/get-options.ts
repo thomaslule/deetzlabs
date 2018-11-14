@@ -18,6 +18,7 @@ const defaultOptions: Options = {
   logins: {
     test: "n4bQgYhMfWWaL+qgxVrQFaO/TxsrC4Is0V1sFbDwCgg=", // test
   },
+  log_level: "info",
   log_to_console: true,
   log_to_file: true,
   widgets_folder: undefined,
@@ -61,6 +62,7 @@ export interface Options {
   secret: string;
   protect_api: boolean;
   logins: Dictionary<string>;
+  log_level: string;
   log_to_console: boolean;
   log_to_file: boolean;
   widgets_folder: string | undefined;

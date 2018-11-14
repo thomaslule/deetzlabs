@@ -2,6 +2,7 @@ const isGG = (event) => event.type === "sent-chat-message" && event.message.gg;
 
 module.exports = {
   protect_api: false,
+  log_level: "debug",
   log_to_file: false,
   log_to_console: false,
   messageToObject: (message) => ({
