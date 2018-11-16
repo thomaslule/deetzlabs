@@ -149,13 +149,13 @@ export class Api {
     this.router.post(
       "/replay_achievement",
       check("achievement").not().isEmpty(),
-      check("viewer").not().isEmpty(),
+      check("viewerId").not().isEmpty(),
       validationMiddleware,
       async (req: any, res: Response, next: NextFunction) => {
         try {
-          const { achievement, viewer } = req.validParams;
-          const viewerEntity = await this.domain.store.getViewer(viewer);
-          await viewerEntity.replayAchievement(achievement);
+          const { achievement, viewerId } = req.validParams;
+          const viewer = await this.domain.store.getViewer(viewerId);
+          await viewer.replayAchievement(achievement);
           res.sendStatus(200);
         } catch (err) {
           next(err);
