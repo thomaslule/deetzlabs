@@ -14,11 +14,13 @@ module.exports = {
     cheerleader: {
       name: "Cheerleader",
       text: "Thank you %USER%!",
+      description: "Automatically distributed when a viewer sends bits",
       distributeWhen: (state, event) => event.type === "cheered",
     },
     supporter: {
       name: "Supporter",
       text: "Thank you %USER%!",
+      description: "Automatically distributed when a viewer says gg 5 times",
       reducer: (state = 0, event) => isGG(event) ? state + 1 : state,
       distributeWhen: (state, event) => isGG(event) && state >= 5,
     },

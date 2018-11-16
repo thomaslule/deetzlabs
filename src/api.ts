@@ -93,7 +93,10 @@ export class Api {
 
     this.router.get("/achievements", (req: Request, res: Response, next: NextFunction) => {
       try {
-        const achievements = mapValues(this.options.achievements, (achievement) => achievement.name);
+        const achievements = mapValues(this.options.achievements, (achievement) => ({
+          name: achievement.name,
+          description: achievement.description,
+        }));
         res.send(achievements);
       } catch (err) {
         next(err);

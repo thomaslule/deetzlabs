@@ -53,6 +53,7 @@ export interface Options {
 interface AchievementOption {
   name: string;
   text: string;
+  description: string;
   reducer?: Reducer<any>;
   distributeWhen: (state: any, event: Event) => boolean;
 }
