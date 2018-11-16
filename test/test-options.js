@@ -1,6 +1,7 @@
 const isGG = (event) => event.type === "sent-chat-message" && event.message.gg;
 
 module.exports = {
+  db_url: "postgresql://postgres:admin@localhost:5432/deetzlabs_test",
   protect_api: false,
   log_level: "debug",
   log_to_file: false,
