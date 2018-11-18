@@ -62,7 +62,7 @@ export class Twitch {
       try {
         const viewer = await domain.store.getViewer(viewerId);
         const broadcastNo = domain.query.getBroadcastNumber();
-        await viewer.resub(message, months, viewerName, broadcastNo);
+        await viewer.resub(months, message, viewerName, broadcastNo);
       } catch (err) { log.error("resub command error: %s", err); }
     });
 
@@ -73,11 +73,11 @@ export class Twitch {
       } catch (err) { log.error("subgift command error: %s", err); }
     });
 
-    this.channel.on("streamlabs/donation", async ({ viewerId, viewerName, amount }) => {
+    this.channel.on("streamlabs/donation", async ({ viewerId, viewerName, amount, message }) => {
       if (viewerId) {
         try {
           const viewer = await domain.store.getViewer(viewerId);
-          await viewer.donate(amount, viewerName);
+          await viewer.donate(amount, viewerName, message);
         } catch (err) { log.error("donation command error: %s", err); }
       } else {
         log.info("got a donation from an unknown viewer: %s", viewerName);

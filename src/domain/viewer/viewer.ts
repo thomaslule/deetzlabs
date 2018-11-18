@@ -64,10 +64,10 @@ export class Viewer extends Entity<DecisionState> {
     await this.publishAndApply(replayedAchievement(achievement));
   }
 
-  public async donate(amount: number, viewerName?: string) {
+  public async donate(amount: number, viewerName?: string, message?: string) {
     ow(amount, ow.number.greaterThan(0));
     if (viewerName) { await this.changeName(viewerName); }
-    const event = await this.publishAndApply(donated(amount));
+    const event = await this.publishAndApply(donated(amount, message));
     await this.distributeAchievements(event);
   }
 
@@ -78,15 +78,15 @@ export class Viewer extends Entity<DecisionState> {
     await this.distributeAchievements(event);
   }
 
-  public async subscribe(message: string, viewerName?: string, broadcastNo?: number) {
-    await this.chatMessage(message, viewerName, broadcastNo);
+  public async subscribe(message?: string, viewerName?: string, broadcastNo?: number) {
+    if (message) { await this.chatMessage(message, viewerName, broadcastNo); }
     const event = await this.publishAndApply(subscribed());
     await this.distributeAchievements(event);
   }
 
-  public async resub(message: string, months: number, viewerName?: string, broadcastNo?: number) {
+  public async resub(months: number, message?: string, viewerName?: string, broadcastNo?: number) {
     ow(months, ow.number);
-    await this.chatMessage(message, viewerName, broadcastNo);
+    if (message) { await this.chatMessage(message, viewerName, broadcastNo); }
     const event = await this.publishAndApply(resubscribed(months));
     await this.distributeAchievements(event);
   }

@@ -103,7 +103,7 @@ describe("Viewer", () => {
       const publish = jest.fn().mockImplementation((event) => event);
       const someone = getViewer(publish);
 
-      await someone.resub("hi", 6);
+      await someone.resub(6, "hi");
 
       expect(publish).toHaveBeenCalledTimes(2);
       expect(publish.mock.calls[0][0]).toMatchObject({ type: "sent-chat-message" });

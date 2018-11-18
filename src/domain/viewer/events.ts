@@ -27,7 +27,7 @@ export const gaveSub = (recipient: string) => createEvent("gave-sub", { recipien
 
 export const cheered = (amount: number) => createEvent("cheered", { amount });
 
-export const donated = (amount: number) => createEvent("donated", { amount });
+export const donated = (amount: number, message?: string) => createEvent("donated", { amount, message });
 
 export const hosted = (nbViewers: number) => createEvent("hosted", { nbViewers });
 
