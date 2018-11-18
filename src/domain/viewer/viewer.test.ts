@@ -83,6 +83,15 @@ describe("Viewer", () => {
 
       expect(publish).not.toHaveBeenCalled();
     });
+
+    test("it shouldnt do anything when the name is undefined", async () => {
+      const publish = jest.fn().mockImplementation((event) => event);
+      const someone = getViewer(publish);
+
+      await someone.changeName();
+
+      expect(publish).not.toHaveBeenCalled();
+    });
   });
 
   describe("subscribe", () => {

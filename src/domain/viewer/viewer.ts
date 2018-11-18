@@ -30,9 +30,9 @@ export class Viewer extends Entity<DecisionState> {
     super(id, decisionSequence, publish);
   }
 
-  public async changeName(name: string) {
-    ow(name, ow.string.minLength(1));
-    if (name !== this.getDecision().name) {
+  public async changeName(name?: string) {
+    ow(name, ow.any(ow.nullOrUndefined, ow.string.minLength(1)));
+    if (name && name !== this.getDecision().name) {
       const event = await this.publishAndApply(changedName(name));
       await this.distributeAchievements(event);
     }
@@ -41,32 +41,33 @@ export class Viewer extends Entity<DecisionState> {
   public async chatMessage(message: string, viewerName?: string, broadcastNo?: number) {
     ow(message, ow.string);
     ow(broadcastNo, ow.any(ow.undefined, ow.number));
-    if (viewerName) { await this.changeName(viewerName); }
+    await this.changeName(viewerName);
     const event = await this.publishAndApply(sentChatMessage(this.options.messageToObject(message), broadcastNo));
     await this.distributeAchievements(event);
   }
 
   public async giveAchievement(achievement: string, viewerName?: string) {
     if (this.getDecision().achievementsReceived.includes(achievement)) {
-      throw new Error("user already has achievement");
+      throw new Error(`user ${this.getId()} already has achievement ${achievement}`);
     }
     if (!this.options.achievements[achievement]) {
-      throw new Error("achievement doesnt exist");
+      throw new Error(`achievement ${achievement} doesnt exist`);
     }
-    if (viewerName) { await this.changeName(viewerName); }
+    await this.changeName(viewerName);
     await this.publishAndApply(gotAchievement(achievement));
   }
 
   public async replayAchievement(achievement: string) {
     if (!this.options.achievements[achievement]) {
-      throw new Error("achievement doesnt exist");
+      throw new Error(`achievement ${achievement} doesnt exist`);
     }
     await this.publishAndApply(replayedAchievement(achievement));
   }
 
   public async donate(amount: number, viewerName?: string, message?: string) {
     ow(amount, ow.number.greaterThan(0));
-    if (viewerName) { await this.changeName(viewerName); }
+    ow(message, ow.any(ow.undefined, ow.string));
+    await this.changeName(viewerName);
     const event = await this.publishAndApply(donated(amount, message));
     await this.distributeAchievements(event);
   }
@@ -93,27 +94,27 @@ export class Viewer extends Entity<DecisionState> {
 
   public async giveSub(recipient: string, viewerName?: string) {
     ow(recipient, ow.string);
-    if (viewerName) { await this.changeName(viewerName); }
+    await this.changeName(viewerName);
     const event = await this.publishAndApply(gaveSub(recipient));
     await this.distributeAchievements(event);
   }
 
   public async host(nbViewers: number, viewerName?: string) {
     ow(nbViewers, ow.number);
-    if (viewerName) { await this.changeName(viewerName); }
+    await this.changeName(viewerName);
     const event = await this.publishAndApply(hosted(nbViewers));
     await this.distributeAchievements(event);
   }
 
   public async raid(nbViewers: number, viewerName?: string) {
     ow(nbViewers, ow.number);
-    if (viewerName) { await this.changeName(viewerName); }
+    await this.changeName(viewerName);
     const event = await this.publishAndApply(raided(nbViewers));
     await this.distributeAchievements(event);
   }
 
   public async topClipper(viewerName?: string) {
-    if (viewerName) { await this.changeName(viewerName); }
+    await this.changeName(viewerName);
     if (!this.getDecision().topClipper) {
       const event = await this.publishAndApply(becameTopClipper());
       await this.distributeAchievements(event);
@@ -132,7 +133,7 @@ export class Viewer extends Entity<DecisionState> {
   }
 
   public async follow(viewerName?: string) {
-    if (viewerName) { await this.changeName(viewerName); }
+    await this.changeName(viewerName);
     const event = await this.publishAndApply(followed());
     await this.distributeAchievements(event);
   }

@@ -43,7 +43,7 @@
     "@types/socket.io": "^1.4.38",
     "body-parser": "^1.18.3",
     "deetzlabs-web": "^0.1.8",
-    "es-objects": "^0.1.0",
+    "es-objects": "^0.1.1",
     "express": "^4.16.3",
     "express-http-proxy": "^1.4.0",
     "express-jwt": "^5.3.1",
@@ -57,8 +57,7 @@
     "pg-query-stream": "^1.1.1",
     "socket.io": "^2.1.1",
     "stream-to-array": "^2.3.0",
-    "twitch-channel": "^0.2.3",
-    "twitch-js": "^1.2.14",
+    "twitch-channel": "^0.2.4",
     "winston": "^3.1.0",
     "winston-daily-rotate-file": "^3.3.2"
   }
