@@ -36,7 +36,9 @@ export class ViewerDomain {
       if (previous !== undefined) {
         await (await this.get(previous)).notTopClipper();
       }
-      await (await this.get(id)).topClipper(name);
+      const newTopClipper = await this.get(id);
+      await newTopClipper.setName(name);
+      await newTopClipper.topClipper();
     }
   }
 

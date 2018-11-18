@@ -141,7 +141,8 @@ export class Api {
             throw new Error(`couldnt give achievement to ${viewerName}, twitch user not found`);
           }
           const viewer = await this.domain.store.getViewer(twitchUser.id);
-          await viewer.giveAchievement(achievement, twitchUser.display_name);
+          await viewer.setName(twitchUser.display_name);
+          await viewer.giveAchievement(achievement);
           res.sendStatus(200);
         } catch (err) {
           next(err);

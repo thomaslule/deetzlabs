@@ -14,19 +14,19 @@ describe("ViewerDomain", () => {
     const storage = new PgStorage(db);
     const bus = new EventBus(storage.getEventStorage());
     const domain = new ViewerDomain(bus, storage, testOptions);
-    await (await domain.get("123")).chatMessage("hi", "Someone"); await wait();
+    await (await domain.get("123")).chatMessage("hi"); await wait();
 
     // for some reason the decision projection is lost
     await storage.getKeyValueStorage("viewer-decision").deleteAll();
 
     // this will fail because the sequence from the decision projection is not good
-    await expect((await domain.get("123")).chatMessage("hi", "Someone")).rejects.toThrow();
+    await expect((await domain.get("123")).chatMessage("hi")).rejects.toThrow();
 
     // the decision projection is rebuilt...
     await wait();
 
     // this one doesnt fail
-    await (await domain.get("123")).chatMessage("hi", "Someone"); await wait();
+    await (await domain.get("123")).chatMessage("hi"); await wait();
   });
 
   describe("setTopClipper", () => {

@@ -26,8 +26,8 @@ describe("Viewer", () => {
     test("it should throw if amount is not a number or a number <= 0", async () => {
       const someone = getViewer(jest.fn());
 
-      await expect(someone.donate(0, "Someone")).rejects.toThrow();
-      await expect(someone.donate("12" as any as number, "Someone")).rejects.toThrow();
+      await expect(someone.donate(0)).rejects.toThrow();
+      await expect(someone.donate("12" as any as number)).rejects.toThrow();
     });
   });
 
@@ -61,12 +61,12 @@ describe("Viewer", () => {
 
   });
 
-  describe("changeName", () => {
+  describe("setName", () => {
     test("it should set a new viewer's name", async () => {
       const publish = jest.fn().mockImplementation((event) => event);
       const someone = getViewer(publish, { name: undefined });
 
-      await someone.changeName("Someone");
+      await someone.setName("Someone");
 
       expect(publish).toHaveBeenCalledWith({
         ...viewerEvent,
@@ -79,16 +79,7 @@ describe("Viewer", () => {
       const publish = jest.fn().mockImplementation((event) => event);
       const someone = getViewer(publish);
 
-      await someone.changeName("Someone");
-
-      expect(publish).not.toHaveBeenCalled();
-    });
-
-    test("it shouldnt do anything when the name is undefined", async () => {
-      const publish = jest.fn().mockImplementation((event) => event);
-      const someone = getViewer(publish);
-
-      await someone.changeName();
+      await someone.setName("Someone");
 
       expect(publish).not.toHaveBeenCalled();
     });
@@ -102,8 +93,8 @@ describe("Viewer", () => {
       await someone.subscribe("hi");
 
       expect(publish).toHaveBeenCalledTimes(2);
-      expect(publish.mock.calls[0][0]).toMatchObject({ type: "sent-chat-message" });
-      expect(publish.mock.calls[1][0]).toMatchObject({ type: "subscribed" });
+      expect(publish.mock.calls[0][0]).toMatchObject({ type: "subscribed" });
+      expect(publish.mock.calls[1][0]).toMatchObject({ type: "sent-chat-message" });
     });
   });
 
@@ -115,8 +106,8 @@ describe("Viewer", () => {
       await someone.resub(6, "hi");
 
       expect(publish).toHaveBeenCalledTimes(2);
-      expect(publish.mock.calls[0][0]).toMatchObject({ type: "sent-chat-message" });
-      expect(publish.mock.calls[1][0]).toMatchObject({ type: "resubscribed", months: 6 });
+      expect(publish.mock.calls[0][0]).toMatchObject({ type: "resubscribed", months: 6 });
+      expect(publish.mock.calls[1][0]).toMatchObject({ type: "sent-chat-message" });
     });
   });
 

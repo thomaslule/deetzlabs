@@ -30,30 +30,28 @@ export class Viewer extends Entity<DecisionState> {
     super(id, decisionSequence, publish);
   }
 
-  public async changeName(name?: string) {
-    ow(name, ow.any(ow.nullOrUndefined, ow.string.minLength(1)));
-    if (name && name !== this.getDecision().name) {
+  public async setName(name: string) {
+    ow(name, ow.string.minLength(1));
+    if (name !== this.getDecision().name) {
       const event = await this.publishAndApply(changedName(name));
       await this.distributeAchievements(event);
     }
   }
 
-  public async chatMessage(message: string, viewerName?: string, broadcastNo?: number) {
+  public async chatMessage(message: string, broadcastNo?: number) {
     ow(message, ow.string);
     ow(broadcastNo, ow.any(ow.undefined, ow.number));
-    await this.changeName(viewerName);
     const event = await this.publishAndApply(sentChatMessage(this.options.messageToObject(message), broadcastNo));
     await this.distributeAchievements(event);
   }
 
-  public async giveAchievement(achievement: string, viewerName?: string) {
+  public async giveAchievement(achievement: string) {
     if (this.getDecision().achievementsReceived.includes(achievement)) {
       throw new Error(`user ${this.getId()} already has achievement ${achievement}`);
     }
     if (!this.options.achievements[achievement]) {
       throw new Error(`achievement ${achievement} doesnt exist`);
     }
-    await this.changeName(viewerName);
     await this.publishAndApply(gotAchievement(achievement));
   }
 
@@ -64,57 +62,52 @@ export class Viewer extends Entity<DecisionState> {
     await this.publishAndApply(replayedAchievement(achievement));
   }
 
-  public async donate(amount: number, viewerName?: string, message?: string) {
+  public async donate(amount: number, message?: string) {
     ow(amount, ow.number.greaterThan(0));
     ow(message, ow.any(ow.undefined, ow.string));
-    await this.changeName(viewerName);
     const event = await this.publishAndApply(donated(amount, message));
     await this.distributeAchievements(event);
   }
 
-  public async cheer(amount: number, message: string, viewerName?: string, broadcastNo?: number) {
+  public async cheer(amount: number, message: string, broadcastNo?: number) {
     ow(amount, ow.number.greaterThan(0));
-    await this.chatMessage(message, viewerName, broadcastNo);
     const event = await this.publishAndApply(cheered(amount));
     await this.distributeAchievements(event);
+    await this.chatMessage(message, broadcastNo);
   }
 
-  public async subscribe(message?: string, viewerName?: string, broadcastNo?: number) {
-    if (message) { await this.chatMessage(message, viewerName, broadcastNo); }
+  public async subscribe(message?: string, broadcastNo?: number) {
     const event = await this.publishAndApply(subscribed());
     await this.distributeAchievements(event);
+    if (message) { await this.chatMessage(message, broadcastNo); }
   }
 
-  public async resub(months: number, message?: string, viewerName?: string, broadcastNo?: number) {
+  public async resub(months: number, message?: string, broadcastNo?: number) {
     ow(months, ow.number);
-    if (message) { await this.chatMessage(message, viewerName, broadcastNo); }
     const event = await this.publishAndApply(resubscribed(months));
     await this.distributeAchievements(event);
+    if (message) { await this.chatMessage(message, broadcastNo); }
   }
 
-  public async giveSub(recipient: string, viewerName?: string) {
+  public async giveSub(recipient: string) {
     ow(recipient, ow.string);
-    await this.changeName(viewerName);
     const event = await this.publishAndApply(gaveSub(recipient));
     await this.distributeAchievements(event);
   }
 
-  public async host(nbViewers: number, viewerName?: string) {
+  public async host(nbViewers: number) {
     ow(nbViewers, ow.number);
-    await this.changeName(viewerName);
     const event = await this.publishAndApply(hosted(nbViewers));
     await this.distributeAchievements(event);
   }
 
-  public async raid(nbViewers: number, viewerName?: string) {
+  public async raid(nbViewers: number) {
     ow(nbViewers, ow.number);
-    await this.changeName(viewerName);
     const event = await this.publishAndApply(raided(nbViewers));
     await this.distributeAchievements(event);
   }
 
-  public async topClipper(viewerName?: string) {
-    await this.changeName(viewerName);
+  public async topClipper() {
     if (!this.getDecision().topClipper) {
       const event = await this.publishAndApply(becameTopClipper());
       await this.distributeAchievements(event);
@@ -132,8 +125,7 @@ export class Viewer extends Entity<DecisionState> {
     return this.getDecision().topClipper;
   }
 
-  public async follow(viewerName?: string) {
-    await this.changeName(viewerName);
+  public async follow() {
     const event = await this.publishAndApply(followed());
     await this.distributeAchievements(event);
   }

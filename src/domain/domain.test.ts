@@ -15,7 +15,7 @@ describe("Domain", () => {
     const domain = new Domain(storage, sendChatMessage, () => {}, testOptions);
     const someone = await domain.store.getViewer("123");
 
-    await someone.chatMessage("not the command");
+    await someone.chatMessage("not the command"); await wait();
     expect(sendChatMessage).not.toHaveBeenCalled();
 
     await someone.chatMessage("!commands"); await wait();
@@ -28,7 +28,8 @@ describe("Domain", () => {
     const sendChatMessage = jest.fn();
     const domain = new Domain(storage, sendChatMessage, () => {}, testOptions);
     const someone = await domain.store.getViewer("123");
-    await someone.giveAchievement("cheerleader", "Someone");
+    await someone.setName("Someone");
+    await someone.giveAchievement("cheerleader");
 
     await someone.chatMessage("!achievements"); await wait();
 
@@ -41,7 +42,8 @@ describe("Domain", () => {
     const domain = new Domain(storage, () => {}, showAchievement, testOptions);
 
     const viewer = await domain.store.getViewer("123");
-    await viewer.giveAchievement("cheerleader", "Someone"); await wait();
+    await viewer.setName("Someone");
+    await viewer.giveAchievement("cheerleader"); await wait();
 
     expect(showAchievement).toHaveBeenCalledWith("Cheerleader", "Someone", "Thank you %USER%!", 0.5);
   });
@@ -52,7 +54,8 @@ describe("Domain", () => {
 
     const broadcast = await domain.store.getBroadcast();
     await broadcast.begin("Tetris");
-    await (await domain.store.getViewer("123")).chatMessage("yo", "Someone");
+    await (await domain.store.getViewer("123")).setName("Someone");
+    await (await domain.store.getViewer("123")).chatMessage("yo");
     await (await domain.store.getViewer("123")).cheer(100, "hop");
 
     expect(await domain.query.getCredits()).toEqual({
