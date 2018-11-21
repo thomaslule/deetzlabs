@@ -121,10 +121,6 @@ export class Viewer extends Entity<DecisionState> {
     }
   }
 
-  public isTopClipper() {
-    return this.getDecision().topClipper;
-  }
-
   public async follow() {
     const event = await this.publishAndApply(followed());
     await this.distributeAchievements(event);
