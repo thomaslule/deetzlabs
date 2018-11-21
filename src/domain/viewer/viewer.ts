@@ -136,15 +136,21 @@ export class Viewer extends Entity<DecisionState> {
 
   protected async distributeAchievements(event: Event) {
     const decision = this.getDecision();
-    const publishAchievements =  Object.keys(this.options.achievements)
+    await Object.keys(this.options.achievements)
       .filter((achievement) => !decision.achievementsReceived.includes(achievement))
-      .map(async (achievement) => {
+      .map((achievement) => {
         const { distributeWhen } = this.options.achievements[achievement];
         if (distributeWhen(decision.achievementsProgress[achievement], event)) {
-          await this.publishAndApply(gotAchievement(achievement));
+          return gotAchievement(achievement);
         }
-      });
-    await Promise.all(publishAchievements);
+        return undefined;
+      })
+      .reduce(
+        (chain, achievementEvent) => achievementEvent === undefined
+          ? chain
+          : chain.then(() => this.publishAndApply(achievementEvent)),
+        Promise.resolve(),
+      );
   }
 }
 

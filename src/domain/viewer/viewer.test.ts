@@ -22,6 +22,39 @@ describe("Viewer", () => {
     aggregate: "viewer", id: "123", sequence: expect.anything(), version: 1, date: expect.anything(),
   };
 
+  test("it should be able to distribute 2 achievements on the same event", async () => {
+    const publish = jest.fn();
+    const achievementFollow = {
+      name: "", text: "", description: "", distributeWhen: (state, event) => event.type === "followed",
+    };
+    const options = {
+      ...testOptions,
+      achievements: {
+        test1: achievementFollow,
+        test2: achievementFollow,
+      },
+    };
+    const viewer = new Viewer(
+      "123",
+      {
+        decision: {
+          name: "Someone", achievementsReceived: [], achievementsProgress: {}, topClipper: false,
+        },
+        sequence: -1,
+      },
+      publish,
+      options,
+    );
+    await viewer.follow();
+    expect(publish).toHaveBeenCalledTimes(3);
+    expect(publish).toHaveBeenCalledWith(
+      { ...viewerEvent, type: "got-achievement", achievement: "test1" }, expect.anything(),
+    );
+    expect(publish).toHaveBeenCalledWith(
+      { ...viewerEvent, type: "got-achievement", achievement: "test2" }, expect.anything(),
+    );
+  });
+
   describe("donate", () => {
     test("it should throw if amount is not a number or a number <= 0", async () => {
       const someone = getViewer(jest.fn());
