@@ -19,4 +19,9 @@ export class TestViewer extends Viewer {
   public hasAchievement(achievement: string) {
     return this.getDecision().achievementsReceived.includes(achievement);
   }
+
+  public async handleCustomEvent(eventData: any) {
+    const event = await this.publishAndApply(eventData);
+    await this.distributeAchievements(event);
+  }
 }

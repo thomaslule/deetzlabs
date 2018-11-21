@@ -134,7 +134,7 @@ export class Viewer extends Entity<DecisionState> {
     return getDecisionReducer(this.options);
   }
 
-  private async distributeAchievements(event: Event) {
+  protected async distributeAchievements(event: Event) {
     const decision = this.getDecision();
     const publishAchievements =  Object.keys(this.options.achievements)
       .filter((achievement) => !decision.achievementsReceived.includes(achievement))
