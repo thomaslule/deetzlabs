@@ -123,11 +123,36 @@ describe("Viewer", () => {
       const publish = jest.fn().mockImplementation((event) => event);
       const someone = getViewer(publish);
 
-      await someone.subscribe("hi");
+      await someone.subscribe(true, 1, "hi");
 
       expect(publish).toHaveBeenCalledTimes(2);
-      expect(publish.mock.calls[0][0]).toMatchObject({ type: "subscribed" });
+      expect(publish.mock.calls[0][0]).toMatchObject({ type: "subscribed", version: 2, prime: true, tier: 1 });
       expect(publish.mock.calls[1][0]).toMatchObject({ type: "sent-chat-message" });
+    });
+
+    test("it should not publish a sent-chat-message event when there is no message", async () => {
+      const publish = jest.fn().mockImplementation((event) => event);
+      const someone = getViewer(publish);
+
+      await someone.subscribe(true, 1);
+
+      expect(publish).toHaveBeenCalledTimes(1);
+      expect(publish.mock.calls[0][0]).toMatchObject({ type: "subscribed", prime: true, tier: 1 });
+    });
+
+    test("it should throw if tier is not 1, 2, or 3", async () => {
+      const publish = jest.fn().mockImplementation((event) => event);
+      const someone = getViewer(publish);
+
+      await someone.subscribe(true, 1);
+      await someone.subscribe(true, 2);
+      await someone.subscribe(true, 3);
+      await expect(someone.subscribe(true, 4)).rejects.toThrow();
+
+      expect(publish).toHaveBeenCalledTimes(3);
+      expect(publish.mock.calls[0][0]).toMatchObject({ type: "subscribed", prime: true, tier: 1 });
+      expect(publish.mock.calls[1][0]).toMatchObject({ type: "subscribed", prime: true, tier: 2 });
+      expect(publish.mock.calls[2][0]).toMatchObject({ type: "subscribed", prime: true, tier: 3 });
     });
   });
 
@@ -136,10 +161,12 @@ describe("Viewer", () => {
       const publish = jest.fn().mockImplementation((event) => event);
       const someone = getViewer(publish);
 
-      await someone.resub(6, "hi");
+      await someone.resub(6, true, 1, "hi");
 
       expect(publish).toHaveBeenCalledTimes(2);
-      expect(publish.mock.calls[0][0]).toMatchObject({ type: "resubscribed", months: 6 });
+      expect(publish.mock.calls[0][0]).toMatchObject(
+        { type: "resubscribed", version: 2, months: 6, prime: true, tier: 1 },
+      );
       expect(publish.mock.calls[1][0]).toMatchObject({ type: "sent-chat-message" });
     });
   });
@@ -149,9 +176,9 @@ describe("Viewer", () => {
       const publish = jest.fn().mockImplementation((event) => event);
       const someone = getViewer(publish);
 
-      await someone.giveSub("456");
+      await someone.giveSub("456", 1);
 
-      expect(publish.mock.calls[0][0]).toMatchObject({ type: "gave-sub", recipient: "456" });
+      expect(publish.mock.calls[0][0]).toMatchObject({ type: "gave-sub", version: 2, recipient: "456", tier: 1 });
     });
   });
 

@@ -19,11 +19,12 @@ export const gotAchievement = (achievement: string) =>
 export const replayedAchievement = (achievement: string) =>
   createEvent("replayed-achievement", { achievement });
 
-export const subscribed = () => createEvent("subscribed");
+export const subscribed = (prime: boolean, tier: number) => createEvent("subscribed", { version: 2, prime, tier });
 
-export const resubscribed = (months: number) => createEvent("resubscribed", { months });
+export const resubscribed = (months: number, prime: boolean, tier: number) =>
+  createEvent("resubscribed", { version: 2, months, prime, tier });
 
-export const gaveSub = (recipient: string) => createEvent("gave-sub", { recipient });
+export const gaveSub = (recipient: string, tier: number) => createEvent("gave-sub", { version: 2, recipient, tier });
 
 export const cheered = (amount: number) => createEvent("cheered", { amount });
 

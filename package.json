@@ -57,7 +57,7 @@
     "pg-query-stream": "^1.1.1",
     "socket.io": "^2.1.1",
     "stream-to-array": "^2.3.0",
-    "twitch-channel": "^0.2.4",
+    "twitch-channel": "^0.2.5",
     "winston": "^3.1.0",
     "winston-daily-rotate-file": "^3.3.2"
   }

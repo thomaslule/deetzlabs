@@ -76,22 +76,27 @@ export class Viewer extends Entity<DecisionState> {
     await this.chatMessage(message, broadcastNo);
   }
 
-  public async subscribe(message?: string, broadcastNo?: number) {
-    const event = await this.publishAndApply(subscribed());
+  public async subscribe(prime: boolean, tier: number, message?: string, broadcastNo?: number) {
+    ow(prime, ow.boolean);
+    ow(tier, ow.any(ow.number.equal(1), ow.number.equal(2), ow.number.equal(3)));
+    const event = await this.publishAndApply(subscribed(prime, tier));
     await this.distributeAchievements(event);
     if (message) { await this.chatMessage(message, broadcastNo); }
   }
 
-  public async resub(months: number, message?: string, broadcastNo?: number) {
+  public async resub(months: number, prime: boolean, tier: number, message?: string, broadcastNo?: number) {
     ow(months, ow.number);
-    const event = await this.publishAndApply(resubscribed(months));
+    ow(prime, ow.boolean);
+    ow(tier, ow.any(ow.number.equal(1), ow.number.equal(2), ow.number.equal(3)));
+    const event = await this.publishAndApply(resubscribed(months, prime, tier));
     await this.distributeAchievements(event);
     if (message) { await this.chatMessage(message, broadcastNo); }
   }
 
-  public async giveSub(recipient: string) {
+  public async giveSub(recipient: string, tier: number) {
     ow(recipient, ow.string);
-    const event = await this.publishAndApply(gaveSub(recipient));
+    ow(tier, ow.any(ow.number.equal(1), ow.number.equal(2), ow.number.equal(3)));
+    const event = await this.publishAndApply(gaveSub(recipient, tier));
     await this.distributeAchievements(event);
   }
 
