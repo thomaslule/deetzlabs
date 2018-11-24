@@ -1,4 +1,5 @@
 import { EventBus } from "es-objects";
+import { Writable } from "stream";
 import { log } from "../log";
 import { Options } from "../options";
 import { PgStorage } from "../storage/pg-storage";
@@ -70,9 +71,11 @@ export class Domain {
   }
 
   public async rebuild() {
+    log.info("beginning rebuild...");
     const rebuildStreams = [
       this.viewer.decisionRebuildStream(),
       ...this.query.rebuildStreams(),
+      this.logStream(),
     ];
     const events = this.storage.getEventStorage().getEvents();
     events.setMaxListeners(Infinity);
@@ -83,6 +86,21 @@ export class Domain {
         stream.on("error", reject);
       })),
     );
+    log.info("rebuild finished");
+  }
+
+  private logStream() {
+    let count = 0;
+    return new Writable({
+      objectMode: true,
+      write(chunk, encoding, callback) {
+        count++;
+        if (count % 1000 === 0) {
+          log.info(`read ${count} events...`);
+        }
+        callback();
+      },
+    });
   }
 
 }
