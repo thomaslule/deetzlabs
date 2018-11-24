@@ -23,7 +23,6 @@ export class Domain {
   public service: {
     setTopClipper(id: string, name: string): Promise<void>;
   };
-  private broadcast: BroadcastDomain;
   private viewer: ViewerDomain;
 
   constructor(
@@ -39,7 +38,7 @@ export class Domain {
         log.error(err.stack);
       }
     });
-    const broadcast = this.broadcast = new BroadcastDomain(bus, this.storage.getEventStorage());
+    const broadcast = new BroadcastDomain(bus, this.storage.getEventStorage());
     const settings = new SettingsDomain(bus, this.storage.getEventStorage());
     const viewer = this.viewer = new ViewerDomain(bus, this.storage, options);
 
