@@ -1,6 +1,6 @@
 {
   "name": "deetzlabs",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Add viewers achievements and other widgets to a twitch stream",
   "main": "lib/index.js",
   "typings": "./lib/index.d.ts",
