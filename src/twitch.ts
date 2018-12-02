@@ -52,29 +52,29 @@ export class Twitch {
       } catch (err) { log.error("cheer command error: %s", err); }
     });
 
-    this.channel.on("sub", async ({ viewerId, viewerName, prime, tier, message }) => {
+    this.channel.on("sub", async ({ viewerId, viewerName, plan, message }) => {
       try {
         const viewer = await domain.store.getViewer(viewerId);
         const broadcastNo = domain.query.getBroadcastNumber();
         await viewer.setName(viewerName);
-        await viewer.subscribe(prime, tier, message, broadcastNo);
+        await viewer.subscribe(plan, message, broadcastNo);
       } catch (err) { log.error("sub command error: %s", err); }
     });
 
-    this.channel.on("resub", async ({ viewerId, viewerName, months, prime, tier, message }) => {
+    this.channel.on("resub", async ({ viewerId, viewerName, months, plan, message }) => {
       try {
         const viewer = await domain.store.getViewer(viewerId);
         const broadcastNo = domain.query.getBroadcastNumber();
         await viewer.setName(viewerName);
-        await viewer.resub(months, prime, tier, message, broadcastNo);
+        await viewer.resub(months, plan, message, broadcastNo);
       } catch (err) { log.error("resub command error: %s", err); }
     });
 
-    this.channel.on("subgift", async ({ viewerId, viewerName, recipientId, tier }) => {
+    this.channel.on("subgift", async ({ viewerId, viewerName, recipientId, plan }) => {
       try {
         const viewer = await domain.store.getViewer(viewerId);
         await viewer.setName(viewerName);
-        await viewer.giveSub(recipientId, tier);
+        await viewer.giveSub(recipientId, plan);
       } catch (err) { log.error("subgift command error: %s", err); }
     });
 
