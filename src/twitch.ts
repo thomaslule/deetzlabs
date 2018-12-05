@@ -70,11 +70,13 @@ export class Twitch {
       } catch (err) { log.error("resub command error"); log.error(err); }
     });
 
-    this.channel.on("subgift", async ({ viewerId, viewerName, recipientId, plan }) => {
+    this.channel.on("subgift", async ({ viewerId, viewerName, recipientId, recipientName, plan }) => {
       try {
         const viewer = await domain.store.getViewer(viewerId);
         await viewer.setName(viewerName);
         await viewer.giveSub(recipientId, plan);
+        const recipient = await domain.store.getViewer(recipientId);
+        await recipient.setName(recipientName);
       } catch (err) { log.error("subgift command error"); log.error(err); }
     });
 
