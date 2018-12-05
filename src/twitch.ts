@@ -25,7 +25,7 @@ export class Twitch {
     });
     this.channel.on("debug", (message) => { log.debug("twitch-channel: %s", message); });
     this.channel.on("info", (message) => { log.info("twitch-channel: %s", message); });
-    this.channel.on("error", (err) => { log.error("twitch-channel error: %s", err); });
+    this.channel.on("error", (err) => { log.error("twitch-channel error"); log.error(err); });
     this.proxy = proxy(`http://localhost:${options.webhook_port}`);
   }
 
@@ -40,7 +40,7 @@ export class Twitch {
         const broadcastNo = domain.query.getBroadcastNumber();
         await viewer.setName(viewerName);
         await viewer.chatMessage(message, broadcastNo);
-      } catch (err) { log.error("chat command error: %s", err); }
+      } catch (err) { log.error("chat command error"); log.error(err); }
     });
 
     this.channel.on("cheer", async ({ viewerId, viewerName, amount, message }) => {
@@ -49,7 +49,7 @@ export class Twitch {
         const broadcastNo = domain.query.getBroadcastNumber();
         await viewer.setName(viewerName);
         await viewer.cheer(amount, message, broadcastNo);
-      } catch (err) { log.error("cheer command error: %s", err); }
+      } catch (err) { log.error("cheer command error"); log.error(err); }
     });
 
     this.channel.on("sub", async ({ viewerId, viewerName, plan, message }) => {
@@ -58,7 +58,7 @@ export class Twitch {
         const broadcastNo = domain.query.getBroadcastNumber();
         await viewer.setName(viewerName);
         await viewer.subscribe(plan, message, broadcastNo);
-      } catch (err) { log.error("sub command error: %s", err); }
+      } catch (err) { log.error("sub command error"); log.error(err); }
     });
 
     this.channel.on("resub", async ({ viewerId, viewerName, months, plan, message }) => {
@@ -67,7 +67,7 @@ export class Twitch {
         const broadcastNo = domain.query.getBroadcastNumber();
         await viewer.setName(viewerName);
         await viewer.resub(months, plan, message, broadcastNo);
-      } catch (err) { log.error("resub command error: %s", err); }
+      } catch (err) { log.error("resub command error"); log.error(err); }
     });
 
     this.channel.on("subgift", async ({ viewerId, viewerName, recipientId, plan }) => {
@@ -75,7 +75,7 @@ export class Twitch {
         const viewer = await domain.store.getViewer(viewerId);
         await viewer.setName(viewerName);
         await viewer.giveSub(recipientId, plan);
-      } catch (err) { log.error("subgift command error: %s", err); }
+      } catch (err) { log.error("subgift command error"); log.error(err); }
     });
 
     this.channel.on("streamlabs/donation", async ({ viewerId, viewerName, amount, message }) => {
@@ -84,7 +84,7 @@ export class Twitch {
           const viewer = await domain.store.getViewer(viewerId);
           await viewer.setName(viewerName);
           await viewer.donate(amount, message);
-        } catch (err) { log.error("donation command error: %s", err); }
+        } catch (err) { log.error("donation command error"); log.error(err); }
       } else {
         log.info("got a donation from an unknown viewer: %s", viewerName);
       }
@@ -95,7 +95,7 @@ export class Twitch {
         const viewer = await domain.store.getViewer(viewerId);
         await viewer.setName(viewerName);
         await viewer.host(viewers);
-      } catch (err) { log.error("host command error: %s", err); }
+      } catch (err) { log.error("host command error"); log.error(err); }
     });
 
     this.channel.on("raid", async ({ viewerId, viewerName, viewers }) => {
@@ -103,7 +103,7 @@ export class Twitch {
         const viewer = await domain.store.getViewer(viewerId);
         await viewer.setName(viewerName);
         await viewer.raid(viewers);
-      } catch (err) { log.error("raid command error: %s", err); }
+      } catch (err) { log.error("raid command error"); log.error(err); }
     });
 
     this.channel.on("follow", async ({ viewerId, viewerName }) => {
@@ -111,34 +111,34 @@ export class Twitch {
         const viewer = await domain.store.getViewer(viewerId);
         await viewer.setName(viewerName);
         await viewer.follow();
-      } catch (err) { log.error("follow command error: %s", err); }
+      } catch (err) { log.error("follow command error"); log.error(err); }
     });
 
     this.channel.on("stream-begin", async ({ game }) => {
       try {
         const broadcast = await domain.store.getBroadcast();
         await broadcast.begin(game);
-      } catch (err) { log.error("stream-begin command error: %s", err); }
+      } catch (err) { log.error("stream-begin command error"); log.error(err); }
     });
 
     this.channel.on("stream-change-game", async ({ game }) => {
       try {
         const broadcast = await domain.store.getBroadcast();
         await broadcast.changeGame(game);
-      } catch (err) { log.error("stream-change-game command error: %s", err); }
+      } catch (err) { log.error("stream-change-game command error"); log.error(err); }
     });
 
     this.channel.on("stream-end", async () => {
       try {
         const broadcast = await domain.store.getBroadcast();
         await broadcast.end();
-      } catch (err) { log.error("stream-end command error: %s", err); }
+      } catch (err) { log.error("stream-end command error"); log.error(err); }
     });
 
     this.bus.on("top-clipper", async ({ viewerId, viewerName }) => {
       try {
         await domain.service.setTopClipper(viewerId, viewerName);
-      } catch (err) { log.error("top-clipper command error: %s", err); }
+      } catch (err) { log.error("top-clipper command error"); log.error(err); }
     });
   }
 

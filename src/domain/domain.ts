@@ -33,10 +33,8 @@ export class Domain {
   ) {
     const bus = new EventBus(this.storage.getEventStorage());
     bus.on("error", (err) => {
-      log.error("An error happened in an event handler: %s", err);
-      if (err.stack) {
-        log.error(err.stack);
-      }
+      log.error("An error happened in an event handler");
+      log.error(err);
     });
     const broadcast = new BroadcastDomain(bus, this.storage.getEventStorage());
     const settings = new SettingsDomain(bus, this.storage.getEventStorage());

@@ -22,7 +22,8 @@ export class Server {
     app.get("/", (req, res) => { res.redirect("/admin"); });
 
     app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-      log.error("Request error: %s", err);
+      log.error("Returning 500 because of error");
+      log.error(err);
       res.sendStatus(500);
       next();
     });
