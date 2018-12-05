@@ -1,10 +1,11 @@
+import { Event } from "es-objects";
 import { makeViewerEvent, testOptions } from "../../../test/test-util";
 import { gotAchievement, sentChatMessage } from "./events";
 import { getDecisionReducer, Viewer } from "./viewer";
 
 describe("Viewer", () => {
 
-  function getViewer(publish, decisionState = {}) {
+  function getViewer(publish: any, decisionState = {}) {
     return new Viewer(
       "123",
       {
@@ -25,7 +26,8 @@ describe("Viewer", () => {
   test("it should be able to distribute 2 achievements on the same event", async () => {
     const publish = jest.fn();
     const achievementFollow = {
-      name: "", text: "", description: "", distributeWhen: (state, event) => event.type === "followed",
+      name: "", text: "", description: "",
+      distributeWhen: (state: undefined, event: Event) => event.type === "followed",
     };
     const options = {
       ...testOptions,

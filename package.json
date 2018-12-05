@@ -41,6 +41,7 @@
     "@types/pg": "^7.4.10",
     "@types/pg-query-stream": "^1.0.2",
     "@types/socket.io": "^1.4.38",
+    "@types/stream-to-array": "^2.3.0",
     "body-parser": "^1.18.3",
     "deetzlabs-web": "^0.2.0",
     "es-objects": "^0.1.2",

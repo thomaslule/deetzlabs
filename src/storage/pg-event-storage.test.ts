@@ -1,5 +1,5 @@
 import { Pool } from "pg";
-import * as toArray from "stream-to-array";
+import toArray = require("stream-to-array");
 import { getCleanDb, makeBroadcastEvent, makeViewerEvent } from "../../test/test-util";
 import { PgEventStorage } from "./pg-event-storage";
 

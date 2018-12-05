@@ -119,7 +119,7 @@ describe("Domain", () => {
     await expect(broadcast.begin("Tetris")).rejects.toThrow();
     expect((await domain.query.getCredits()).viewers[0]).toBe("Someone");
     expect((await domain.query.getCredits()).follows[0]).toBe("Someone");
-    expect((await domain.query.getViewer("123")).name).toBe("Someone");
+    expect((await domain.query.getViewer("123"))!.name).toBe("Someone");
     expect(await domain.query.getLastViewerAchievements())
       .toEqual([{ viewerId: "123", viewerName: "Someone", achievement: "cheerleader", date: expect.anything() }]);
   });
