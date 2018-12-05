@@ -1,6 +1,7 @@
 import { Event, PersistedReduceProjection, ValueStorage } from "es-objects";
+import { log } from "../../log";
 import { Options } from "../../options";
-import { PgViewer, PgViewerStorage } from "../../storage/pg-viewer-storage";
+import { PgViewerStorage } from "../../storage/pg-viewer-storage";
 
 export class CreditsProjection extends PersistedReduceProjection<Credits> {
   constructor(storage: ValueStorage<Credits>, private options: Options) {
@@ -17,7 +18,14 @@ export class CreditsProjection extends PersistedReduceProjection<Credits> {
       ...credits.follows,
     ];
     const viewers = await viewerStorage.getMany(viewerIds);
-    const getViewerName = (id: string) => (viewers.find((v) => v.id === id) as PgViewer).name;
+    const getViewerName = (id: string) => {
+      const viewer = viewers.find((v) => v.id === id);
+      if (viewer === undefined) {
+        log.error(`couldnt find name of ${id}`);
+        return "";
+      }
+      return viewer.name;
+    };
     return {
       games: credits.games,
       viewers: credits.viewers.map(getViewerName),
