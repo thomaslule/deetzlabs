@@ -5,8 +5,6 @@ import { createServer, Server as HttpServer } from "http";
 import * as morgan from "morgan";
 import { log } from "./log";
 
-const stream = { write: (message: string) => log.info(message.slice(0, -1)) };
-
 export class Server {
   private server: HttpServer;
 
@@ -18,8 +16,8 @@ export class Server {
   ) {
     const app = express();
     app.use(
-      morgan(':remote-addr ":method :url" - :status - :response-time ms', {
-        stream
+      morgan('http ":method :url" - :status - :response-time ms', {
+        stream: { write: (message: string) => log.info(message.slice(0, -1)) }
       })
     );
     app.use("/twitch-callback", twitchProxy);
