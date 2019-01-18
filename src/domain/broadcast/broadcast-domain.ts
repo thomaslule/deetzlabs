@@ -1,15 +1,25 @@
-import { EventBus, EventStorage, FromEventsDecisionProvider, Store } from "es-objects";
+import {
+  EventBus,
+  EventStorage,
+  FromEventsDecisionProvider,
+  Store
+} from "es-objects";
 import { Broadcast, decisionReducer } from "./broadcast";
 
 export class BroadcastDomain {
   private store: Store<Broadcast, any>;
 
   constructor(eventBus: EventBus, eventStorage: EventStorage) {
-    const decisionProvider = new FromEventsDecisionProvider("broadcast", decisionReducer, eventStorage);
+    const decisionProvider = new FromEventsDecisionProvider(
+      "broadcast",
+      decisionReducer,
+      eventStorage
+    );
     this.store = new Store(
-      (id, decisionSequence, publish) => new Broadcast(decisionSequence, publish),
+      (id, decisionSequence, publish) =>
+        new Broadcast(decisionSequence, publish),
       decisionProvider,
-      (event) => eventBus.publish(event),
+      event => eventBus.publish(event)
     );
   }
 

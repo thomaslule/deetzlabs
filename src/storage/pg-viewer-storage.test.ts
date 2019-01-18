@@ -4,8 +4,12 @@ import { PgViewerStorage } from "./pg-viewer-storage";
 
 describe("PgViewerStorage", () => {
   let db: Pool;
-  beforeEach(async () => { db = await getCleanDb(); });
-  afterEach(async () => { await db.end(); });
+  beforeEach(async () => {
+    db = await getCleanDb();
+  });
+  afterEach(async () => {
+    await db.end();
+  });
 
   const lastAction = new Date(2018, 1, 1);
 
@@ -13,9 +17,17 @@ describe("PgViewerStorage", () => {
     const storage = new PgViewerStorage(db);
     expect(await storage.get("123")).toBeUndefined();
     await storage.update("123", lastAction, "Someone");
-    expect(await storage.get("123")).toEqual({ id: "123", name: "Someone", lastAction });
+    expect(await storage.get("123")).toEqual({
+      id: "123",
+      name: "Someone",
+      lastAction
+    });
     await storage.update("123", lastAction, "Someone2");
-    expect(await storage.get("123")).toEqual({ id: "123", name: "Someone2", lastAction });
+    expect(await storage.get("123")).toEqual({
+      id: "123",
+      name: "Someone2",
+      lastAction
+    });
     await storage.deleteAll();
     expect(await storage.get("123")).toBeUndefined();
   });
@@ -23,23 +35,43 @@ describe("PgViewerStorage", () => {
   test("update should be able to insert and update without name", async () => {
     const storage = new PgViewerStorage(db);
     await storage.update("123", lastAction);
-    expect(await storage.get("123")).toEqual({ id: "123", name: "", lastAction });
+    expect(await storage.get("123")).toEqual({
+      id: "123",
+      name: "",
+      lastAction
+    });
     const lastAction2 = new Date(2018, 1, 2);
     await storage.update("123", lastAction2);
-    expect(await storage.get("123")).toEqual({ id: "123", name: "", lastAction: lastAction2 });
+    expect(await storage.get("123")).toEqual({
+      id: "123",
+      name: "",
+      lastAction: lastAction2
+    });
   });
 
   test("it should be able add and get achievements", async () => {
     const storage = new PgViewerStorage(db);
     await storage.update("123", lastAction, "Someone");
-    expect(await storage.getWithAchievements("123"))
-      .toEqual({ id: "123", name: "Someone", lastAction, achievements: [] });
+    expect(await storage.getWithAchievements("123")).toEqual({
+      id: "123",
+      name: "Someone",
+      lastAction,
+      achievements: []
+    });
     await storage.addAchievement("123", "cheerleader", lastAction);
-    expect(await storage.getWithAchievements("123"))
-        .toEqual({ id: "123", name: "Someone", lastAction, achievements: ["cheerleader"] });
+    expect(await storage.getWithAchievements("123")).toEqual({
+      id: "123",
+      name: "Someone",
+      lastAction,
+      achievements: ["cheerleader"]
+    });
     await storage.addAchievement("123", "supporter", lastAction);
-    expect(await storage.getWithAchievements("123"))
-        .toEqual({ id: "123", name: "Someone", lastAction, achievements: ["cheerleader", "supporter"] });
+    expect(await storage.getWithAchievements("123")).toEqual({
+      id: "123",
+      name: "Someone",
+      lastAction,
+      achievements: ["cheerleader", "supporter"]
+    });
   });
 
   test("getMany should return multiple viewers", async () => {
@@ -50,7 +82,10 @@ describe("PgViewerStorage", () => {
 
     const viewers = await storage.getMany(["123", "456"]);
 
-    expect(viewers).toEqual([{ id: "123", name: "Someone", lastAction }, { id: "456", name: "Other", lastAction }]);
+    expect(viewers).toEqual([
+      { id: "123", name: "Someone", lastAction },
+      { id: "456", name: "Other", lastAction }
+    ]);
   });
 
   test("getRecentNames should return all recent viewers names", async () => {
@@ -79,9 +114,24 @@ describe("PgViewerStorage", () => {
     const achievements = await storage.getAllAchievements();
 
     expect(achievements).toEqual([
-      { achievement: "supporter", viewerId: "123", viewerName: "Someone", date: date1 },
-      { achievement: "supporter", viewerId: "456", viewerName: "Other", date: date2 },
-      { achievement: "cheerleader", viewerId: "123", viewerName: "Someone", date: date3 },
+      {
+        achievement: "supporter",
+        viewerId: "123",
+        viewerName: "Someone",
+        date: date1
+      },
+      {
+        achievement: "supporter",
+        viewerId: "456",
+        viewerName: "Other",
+        date: date2
+      },
+      {
+        achievement: "cheerleader",
+        viewerId: "123",
+        viewerName: "Someone",
+        date: date3
+      }
     ]);
   });
 
@@ -99,8 +149,18 @@ describe("PgViewerStorage", () => {
     const achievements = await storage.getLastAchievements(2);
 
     expect(achievements).toEqual([
-      { achievement: "cheerleader", viewerId: "123", viewerName: "Someone", date: date3 },
-      { achievement: "supporter", viewerId: "456", viewerName: "Other", date: date2 },
+      {
+        achievement: "cheerleader",
+        viewerId: "123",
+        viewerName: "Someone",
+        date: date3
+      },
+      {
+        achievement: "supporter",
+        viewerId: "456",
+        viewerName: "Other",
+        date: date2
+      }
     ]);
   });
 });

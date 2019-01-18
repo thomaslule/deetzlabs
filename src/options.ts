@@ -16,7 +16,7 @@ const defaultOptions: Options = {
   secret: "",
   protect_api: true,
   logins: {
-    test: "n4bQgYhMfWWaL+qgxVrQFaO/TxsrC4Is0V1sFbDwCgg=", // test
+    test: "n4bQgYhMfWWaL+qgxVrQFaO/TxsrC4Is0V1sFbDwCgg=" // test
   },
   log_level: "info",
   log_to_console: true,
@@ -24,7 +24,7 @@ const defaultOptions: Options = {
   widgets_folder: undefined,
   achievements: {},
   messageToObject: (message: string) => ({}),
-  commands: [],
+  commands: []
 };
 
 export interface Options {

@@ -14,7 +14,7 @@ export class Widgets {
       try {
         const publicConfig = {
           channel: options.channel,
-          client_id: options.client_id,
+          client_id: options.client_id
         };
         res.type("application/javascript");
         res.send(`window.config = ${JSON.stringify(publicConfig)}`);
@@ -32,12 +32,20 @@ export class Widgets {
     this.socket = socketio.listen(server);
   }
 
-  public showAchievement(achievement: string, username: string, text: string, volume: number) {
+  public showAchievement(
+    achievement: string,
+    username: string,
+    text: string,
+    volume: number
+  ) {
     if (this.socket === undefined) {
       log.error("socket has not yet been set");
     } else {
       this.socket.emit("achievement", {
-        achievement, username, text, volume,
+        achievement,
+        username,
+        text,
+        volume
       });
     }
   }

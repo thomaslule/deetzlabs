@@ -1,8 +1,13 @@
-import { Event, PersistedReduceProjection, Reducer, ValueStorage } from "es-objects";
+import {
+  Event,
+  PersistedReduceProjection,
+  Reducer,
+  ValueStorage
+} from "es-objects";
 
 export class SettingsProjection extends PersistedReduceProjection<Settings> {
   constructor(storage: ValueStorage<Settings>) {
-    super(reducer, storage, (e) => e.aggregate === "settings");
+    super(reducer, storage, e => e.aggregate === "settings");
   }
 }
 
@@ -105,6 +110,6 @@ const initialState: Settings = {
         z-index: 10;
         box-shadow: rgb(0, 0, 0) 0px 0px 2px inset;
       }
-    `,
-  },
+    `
+  }
 };

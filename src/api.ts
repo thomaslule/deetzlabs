@@ -25,12 +25,21 @@ const validationMiddleware = (req: any, res: Response, next: NextFunction) => {
 export class Api {
   private router: Router;
 
-  constructor(private domain: Domain, private twitch: Twitch, private widgets: Widgets, private options: Options) {
+  constructor(
+    private domain: Domain,
+    private twitch: Twitch,
+    private widgets: Widgets,
+    private options: Options
+  ) {
     this.router = Router();
     if (this.options.protect_api) {
-      this.router.use(expressjwt({
-        secret: this.options.secret,
-      }).unless({ path: ["/api/login", "/api/followers_goal", "/api/credits"] }));
+      this.router.use(
+        expressjwt({
+          secret: this.options.secret
+        }).unless({
+          path: ["/api/login", "/api/followers_goal", "/api/credits"]
+        })
+      );
     }
     this.setRoutes();
   }
@@ -50,95 +59,134 @@ export class Api {
           if (this.options.protect_api) {
             const { username, password } = req.validParams;
             const { logins } = this.options;
-            if (logins[username] && logins[username] === createHash("sha256").update(password).digest("base64")) {
-              const token = sign({ username }, this.options.secret, { expiresIn: LOGIN_DURATION });
-              const expiresAt = Date.now() + (LOGIN_DURATION * 1000);
+            if (
+              logins[username] &&
+              logins[username] ===
+                createHash("sha256")
+                  .update(password)
+                  .digest("base64")
+            ) {
+              const token = sign({ username }, this.options.secret, {
+                expiresIn: LOGIN_DURATION
+              });
+              const expiresAt = Date.now() + LOGIN_DURATION * 1000;
               res.send({ token, expiresAt });
             } else {
               res.sendStatus(401);
             }
           } else {
-            const expiresAt = Date.now() + (LOGIN_DURATION * 1000);
+            const expiresAt = Date.now() + LOGIN_DURATION * 1000;
             res.send({ token: "DUMMY_TOKEN", expiresAt });
           }
         } catch (err) {
           next(err);
         }
-      },
+      }
     );
 
-    this.router.get("/viewer_names", async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        res.send(await this.domain.query.getRecentViewerNames());
-      } catch (err) {
-        next(err);
+    this.router.get(
+      "/viewer_names",
+      async (req: Request, res: Response, next: NextFunction) => {
+        try {
+          res.send(await this.domain.query.getRecentViewerNames());
+        } catch (err) {
+          next(err);
+        }
       }
-    });
+    );
 
-    this.router.get("/viewer_achievements", async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        res.send(await this.domain.query.getAllViewerAchievements());
-      } catch (err) {
-        next(err);
+    this.router.get(
+      "/viewer_achievements",
+      async (req: Request, res: Response, next: NextFunction) => {
+        try {
+          res.send(await this.domain.query.getAllViewerAchievements());
+        } catch (err) {
+          next(err);
+        }
       }
-    });
+    );
 
-    this.router.get("/last_achievements", async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        res.send(await this.domain.query.getLastViewerAchievements());
-      } catch (err) {
-        next(err);
+    this.router.get(
+      "/last_achievements",
+      async (req: Request, res: Response, next: NextFunction) => {
+        try {
+          res.send(await this.domain.query.getLastViewerAchievements());
+        } catch (err) {
+          next(err);
+        }
       }
-    });
+    );
 
-    this.router.get("/achievements", (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const achievements = mapValues(this.options.achievements, (achievement) => ({
-          name: achievement.name,
-          description: achievement.description,
-        }));
-        res.send(achievements);
-      } catch (err) {
-        next(err);
+    this.router.get(
+      "/achievements",
+      (req: Request, res: Response, next: NextFunction) => {
+        try {
+          const achievements = mapValues(
+            this.options.achievements,
+            achievement => ({
+              name: achievement.name,
+              description: achievement.description
+            })
+          );
+          res.send(achievements);
+        } catch (err) {
+          next(err);
+        }
       }
-    });
+    );
 
-    this.router.get("/achievement_alert_volume", async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const volume = (await this.domain.query.getSettings()).achievementVolume;
-        res.send({ volume });
-      } catch (err) {
-        next(err);
+    this.router.get(
+      "/achievement_alert_volume",
+      async (req: Request, res: Response, next: NextFunction) => {
+        try {
+          const volume = (await this.domain.query.getSettings())
+            .achievementVolume;
+          res.send({ volume });
+        } catch (err) {
+          next(err);
+        }
       }
-    });
+    );
 
-    this.router.get("/followers_goal", async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        res.send((await this.domain.query.getSettings()).followersGoal);
-      } catch (err) {
-        next(err);
+    this.router.get(
+      "/followers_goal",
+      async (req: Request, res: Response, next: NextFunction) => {
+        try {
+          res.send((await this.domain.query.getSettings()).followersGoal);
+        } catch (err) {
+          next(err);
+        }
       }
-    });
+    );
 
-    this.router.get("/credits", async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        res.send(await this.domain.query.getCredits());
-      } catch (err) {
-        next(err);
+    this.router.get(
+      "/credits",
+      async (req: Request, res: Response, next: NextFunction) => {
+        try {
+          res.send(await this.domain.query.getCredits());
+        } catch (err) {
+          next(err);
+        }
       }
-    });
+    );
 
     this.router.post(
       "/give_achievement",
-      check("achievement").not().isEmpty(),
-      check("viewerName").not().isEmpty(),
+      check("achievement")
+        .not()
+        .isEmpty(),
+      check("viewerName")
+        .not()
+        .isEmpty(),
       validationMiddleware,
       async (req: any, res: Response, next: NextFunction) => {
         try {
           const { achievement, viewerName } = req.validParams;
           const twitchUser = await this.twitch.getViewer(viewerName);
           if (!twitchUser) {
-            throw new Error(`couldnt give achievement to ${viewerName}, twitch user not found`);
+            throw new Error(
+              `couldnt give achievement to ${viewerName}, twitch user not found`
+            );
           }
           const viewer = await this.domain.store.getViewer(twitchUser.id);
           await viewer.setName(twitchUser.display_name);
@@ -147,13 +195,17 @@ export class Api {
         } catch (err) {
           next(err);
         }
-      },
+      }
     );
 
     this.router.post(
       "/replay_achievement",
-      check("achievement").not().isEmpty(),
-      check("viewerId").not().isEmpty(),
+      check("achievement")
+        .not()
+        .isEmpty(),
+      check("viewerId")
+        .not()
+        .isEmpty(),
       validationMiddleware,
       async (req: any, res: Response, next: NextFunction) => {
         try {
@@ -164,20 +216,26 @@ export class Api {
         } catch (err) {
           next(err);
         }
-      },
+      }
     );
 
     this.router.post(
       "/show_test_achievement",
       async (req: any, res: Response, next: NextFunction) => {
         try {
-          const volume = (await this.domain.query.getSettings()).achievementVolume;
-          this.widgets.showAchievement("Test", this.options.channel, "%USER% is testing the alert", volume);
+          const volume = (await this.domain.query.getSettings())
+            .achievementVolume;
+          this.widgets.showAchievement(
+            "Test",
+            this.options.channel,
+            "%USER% is testing the alert",
+            volume
+          );
           res.sendStatus(200);
         } catch (err) {
           next(err);
         }
-      },
+      }
     );
 
     this.router.post(
@@ -194,7 +252,7 @@ export class Api {
         } catch (err) {
           next(err);
         }
-      },
+      }
     );
 
     this.router.post(
@@ -213,7 +271,7 @@ export class Api {
         } catch (err) {
           next(err);
         }
-      },
+      }
     );
   }
 }

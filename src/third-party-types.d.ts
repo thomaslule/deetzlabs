@@ -1,1 +1,1 @@
-declare module 'express-http-proxy';
+declare module "express-http-proxy";

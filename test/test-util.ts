@@ -16,7 +16,7 @@ export function makeViewerEvent(data: Obj = {}): Event {
     sequence: 0,
     version: 1,
     date: new Date().toISOString(),
-    ...data,
+    ...data
   };
 }
 
@@ -27,18 +27,23 @@ export function makeBroadcastEvent(data: Obj = {}): Event {
     sequence: 0,
     version: 1,
     date: new Date().toISOString(),
-    ...data,
+    ...data
   };
 }
 
 export async function wait(ms: number = 50) {
-  return new Promise((resolve) => { setTimeout(resolve, ms); });
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
 }
 
 const schema = readFileSync("./src/schema.sql", "utf8");
 
 export async function getCleanDb() {
-  const db = new Pool({ connectionString: "postgresql://postgres:admin@localhost:5432/deetzlabs_test" });
+  const db = new Pool({
+    connectionString:
+      "postgresql://postgres:admin@localhost:5432/deetzlabs_test"
+  });
   await db.query(schema);
   return db;
 }
@@ -54,6 +59,6 @@ export function arrayToStream(array: any[]): Readable {
         this.push(array[index]);
         index++;
       }
-    },
+    }
   });
 }

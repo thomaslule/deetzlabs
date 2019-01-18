@@ -1,12 +1,20 @@
 import { Pool } from "pg";
 import toArray = require("stream-to-array");
-import { getCleanDb, makeBroadcastEvent, makeViewerEvent } from "../../test/test-util";
+import {
+  getCleanDb,
+  makeBroadcastEvent,
+  makeViewerEvent
+} from "../../test/test-util";
 import { PgEventStorage } from "./pg-event-storage";
 
 describe("PgEventStorage", () => {
   let db: Pool;
-  beforeEach(async () => { db = await getCleanDb(); });
-  afterEach(async () => { await db.end(); });
+  beforeEach(async () => {
+    db = await getCleanDb();
+  });
+  afterEach(async () => {
+    await db.end();
+  });
 
   test("getEvents with no arg should retrieve all events", async () => {
     const storage = new PgEventStorage(db);
@@ -69,5 +77,4 @@ describe("PgEventStorage", () => {
     await storage.store(makeViewerEvent({ sequence: 2 }));
     expect(await storage.getCurrentSequence("viewer", "123")).toBe(2);
   });
-
 });

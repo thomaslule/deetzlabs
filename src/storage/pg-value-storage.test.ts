@@ -4,8 +4,12 @@ import { PgValueStorage } from "./pg-value-storage";
 
 describe("PgValueStorage", () => {
   let db: Pool;
-  beforeEach(async () => { db = await getCleanDb(); });
-  afterEach(async () => { await db.end(); });
+  beforeEach(async () => {
+    db = await getCleanDb();
+  });
+  afterEach(async () => {
+    await db.end();
+  });
 
   test("it should be able to store, update and retrieve values", async () => {
     const storage = new PgValueStorage<number>("test", db);
@@ -17,5 +21,4 @@ describe("PgValueStorage", () => {
     await storage.delete();
     expect(await storage.get()).toBeUndefined();
   });
-
 });

@@ -1,19 +1,21 @@
 import {
-  DecisionProvider, DecisionSequence, EventBus, EventStorage, Store,
+  DecisionProvider,
+  DecisionSequence,
+  EventBus,
+  EventStorage,
+  Store
 } from "es-objects";
 import { Settings } from "./settings";
 
 export class SettingsDomain {
   private store: Store<Settings, undefined>;
 
-  constructor(
-    eventBus: EventBus,
-    eventStorage: EventStorage,
-  ) {
+  constructor(eventBus: EventBus, eventStorage: EventStorage) {
     this.store = new Store<Settings, undefined>(
-      (id, decisionSequence, publish) => new Settings(decisionSequence, publish),
+      (id, decisionSequence, publish) =>
+        new Settings(decisionSequence, publish),
       new VoidDecisionProvider(eventStorage),
-      (event) => eventBus.publish(event),
+      event => eventBus.publish(event)
     );
   }
 
@@ -23,11 +25,13 @@ export class SettingsDomain {
 }
 
 class VoidDecisionProvider implements DecisionProvider<undefined> {
-  constructor(private eventStorage: EventStorage) {
-  }
+  constructor(private eventStorage: EventStorage) {}
 
   public async getDecisionSequence(): Promise<DecisionSequence<undefined>> {
-    const sequence = await this.eventStorage.getCurrentSequence("settings", "settings");
+    const sequence = await this.eventStorage.getCurrentSequence(
+      "settings",
+      "settings"
+    );
     return { decision: undefined, sequence };
   }
 }

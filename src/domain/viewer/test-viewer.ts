@@ -6,7 +6,7 @@ export class TestViewer extends Viewer {
   constructor(options: Options) {
     const initialDecision = {
       decision: getInitialState(getDecisionReducer(options)),
-      sequence: -1,
+      sequence: -1
     };
     const publish = () => Promise.resolve();
     super("123", initialDecision, publish, options);

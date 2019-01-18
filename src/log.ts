@@ -4,7 +4,7 @@ import { createLogger, transports } from "winston";
 import * as DailyRotateFile from "winston-daily-rotate-file";
 import { Options } from "./options";
 
-const errorStackToMessage = winston.format((info) => {
+const errorStackToMessage = winston.format(info => {
   if (info instanceof Error && info.stack) {
     info.message = info.stack;
   }
@@ -20,17 +20,19 @@ export function configureLog(options: Options) {
       format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
       format.splat(),
       errorStackToMessage(),
-      format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`),
+      format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
     ),
-    silent: !options.log_to_console && !options.log_to_file,
+    silent: !options.log_to_console && !options.log_to_file
   });
   if (options.log_to_console) {
     log.add(new transports.Console());
   }
   if (options.log_to_file) {
-    log.add(new DailyRotateFile({
-      dirname: "log",
-      filename: "deetzlabs-%DATE%.log",
-    }));
+    log.add(
+      new DailyRotateFile({
+        dirname: "log",
+        filename: "deetzlabs-%DATE%.log"
+      })
+    );
   }
 }

@@ -5,7 +5,10 @@ import { begun, changedGame, ended } from "./events";
 export class Broadcast extends Entity<DecisionState> {
   constructor(
     decisionSequence: DecisionSequence<DecisionState>,
-    publish: (event: Event, decisionSequence: DecisionSequence<DecisionState>) => Promise<void>,
+    publish: (
+      event: Event,
+      decisionSequence: DecisionSequence<DecisionState>
+    ) => Promise<void>
   ) {
     super("broadcast", decisionSequence, publish);
   }
@@ -60,7 +63,7 @@ interface DecisionState {
 
 export function decisionReducer(
   state: DecisionState = { broadcasting: false, game: undefined },
-  event: Event,
+  event: Event
 ): DecisionState {
   if (event.type === "begun") {
     return { broadcasting: true, game: event.game };

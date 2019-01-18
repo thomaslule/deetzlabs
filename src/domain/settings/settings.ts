@@ -5,7 +5,10 @@ import { achievementVolumeChanged, followersGoalChanged } from "./events";
 export class Settings extends Entity<undefined> {
   constructor(
     decisionSequence: DecisionSequence<undefined>,
-    publish: (event: Event, decisionSequence: DecisionSequence<undefined>) => Promise<void>,
+    publish: (
+      event: Event,
+      decisionSequence: DecisionSequence<undefined>
+    ) => Promise<void>
   ) {
     super("settings", decisionSequence, publish);
   }

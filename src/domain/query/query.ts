@@ -16,19 +16,26 @@ export class Query {
 
   constructor(private storage: PgStorage, bus: EventBus, options: Options) {
     this.broadcast = new BroadcastProjection();
-    bus.onEvent((event) => this.broadcast.handleEvent(event));
+    bus.onEvent(event => this.broadcast.handleEvent(event));
 
-    this.credits = new CreditsProjection(this.storage.getValueStorage("credits"), options);
-    bus.onEvent((event) => this.credits.handleEvent(event));
+    this.credits = new CreditsProjection(
+      this.storage.getValueStorage("credits"),
+      options
+    );
+    bus.onEvent(event => this.credits.handleEvent(event));
 
-    this.settings = new SettingsProjection(this.storage.getValueStorage("settings"));
-    bus.onEvent((event) => this.settings.handleEvent(event));
+    this.settings = new SettingsProjection(
+      this.storage.getValueStorage("settings")
+    );
+    bus.onEvent(event => this.settings.handleEvent(event));
 
-    this.topClipper = new TopClipperProjection(this.storage.getValueStorage("top-clipper"));
-    bus.onEvent((event) => this.topClipper.handleEvent(event));
+    this.topClipper = new TopClipperProjection(
+      this.storage.getValueStorage("top-clipper")
+    );
+    bus.onEvent(event => this.topClipper.handleEvent(event));
 
     this.viewers = new ViewerProjection(this.storage.getViewerStorage());
-    bus.onEvent((event) => this.viewers.handleEvent(event));
+    bus.onEvent(event => this.viewers.handleEvent(event));
   }
 
   public rebuildMemoryStream() {
@@ -41,7 +48,7 @@ export class Query {
       this.credits.rebuildStream(),
       this.settings.rebuildStream(),
       this.topClipper.rebuildStream(),
-      this.viewers.rebuildStream(),
+      this.viewers.rebuildStream()
     ];
   }
 
@@ -88,5 +95,4 @@ export class Query {
   public async getLastViewerAchievements() {
     return this.storage.getViewerStorage().getLastAchievements(5);
   }
-
 }

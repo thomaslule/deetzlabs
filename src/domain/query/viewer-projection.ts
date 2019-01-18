@@ -3,19 +3,24 @@ import { Writable } from "stream";
 import { PgViewerStorage } from "../../storage/pg-viewer-storage";
 
 export class ViewerProjection implements Rebuildable {
-  constructor(private storage: PgViewerStorage) {
-  }
+  constructor(private storage: PgViewerStorage) {}
 
   public async handleEvent(event: Event, isReplay = false) {
     if (event.aggregate === "viewer") {
       if (event.type === "changed-name") {
         await this.storage.update(event.id, new Date(event.date), event.name);
       } else if (event.type === "got-achievement") {
-        await this.storage.addAchievement(event.id, event.achievement, new Date(event.date));
+        await this.storage.addAchievement(
+          event.id,
+          event.achievement,
+          new Date(event.date)
+        );
       } else if (event.type === "migrated-data") {
         await this.storage.update(event.id, new Date(event.date), event.name);
         await Promise.all(
-          event.achievements.map((a: any) => this.storage.addAchievement(event.id, a.achievement, a.date)),
+          event.achievements.map((a: any) =>
+            this.storage.addAchievement(event.id, a.achievement, a.date)
+          )
         );
       } else if (!isReplay) {
         await this.storage.update(event.id, new Date(event.date));
@@ -31,7 +36,10 @@ export class ViewerProjection implements Rebuildable {
       objectMode: true,
       async write(event, encoding, callback) {
         try {
-          if (!deletedAll) { await deleteAll(); deletedAll = true; }
+          if (!deletedAll) {
+            await deleteAll();
+            deletedAll = true;
+          }
           await handleEvent(event);
           callback();
         } catch (err) {
@@ -40,12 +48,14 @@ export class ViewerProjection implements Rebuildable {
       },
       async final(callback) {
         try {
-          if (!deletedAll) { await deleteAll(); }
+          if (!deletedAll) {
+            await deleteAll();
+          }
           callback();
         } catch (err) {
           callback(err);
         }
-      },
+      }
     });
   }
 }

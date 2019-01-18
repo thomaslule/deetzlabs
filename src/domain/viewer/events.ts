@@ -4,7 +4,7 @@ const createEvent = (type: string, content: any = {}) => ({
   version: 1,
   type,
   date: new Date().toISOString(),
-  ...content,
+  ...content
 });
 
 export const changedName = (name: string) =>
@@ -19,19 +19,25 @@ export const gotAchievement = (achievement: string) =>
 export const replayedAchievement = (achievement: string) =>
   createEvent("replayed-achievement", { achievement });
 
-export const subscribed = (plan: string) => createEvent("subscribed", { version: 3, plan });
+export const subscribed = (plan: string) =>
+  createEvent("subscribed", { version: 3, plan });
 
-export const resubscribed = (months: number, plan: string) => createEvent("resubscribed", { version: 3, months, plan });
+export const resubscribed = (months: number, plan: string) =>
+  createEvent("resubscribed", { version: 3, months, plan });
 
-export const gaveSub = (recipient: string, plan: string) => createEvent("gave-sub", { version: 3, recipient, plan });
+export const gaveSub = (recipient: string, plan: string) =>
+  createEvent("gave-sub", { version: 3, recipient, plan });
 
 export const cheered = (amount: number) => createEvent("cheered", { amount });
 
-export const donated = (amount: number, message?: string) => createEvent("donated", { amount, message });
+export const donated = (amount: number, message?: string) =>
+  createEvent("donated", { amount, message });
 
-export const hosted = (nbViewers: number) => createEvent("hosted", { nbViewers });
+export const hosted = (nbViewers: number) =>
+  createEvent("hosted", { nbViewers });
 
-export const raided = (nbViewers: number) => createEvent("raided", { nbViewers });
+export const raided = (nbViewers: number) =>
+  createEvent("raided", { nbViewers });
 
 export const followed = () => createEvent("followed");
 

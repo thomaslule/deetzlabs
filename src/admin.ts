@@ -9,7 +9,9 @@ export class Admin {
   public constructor() {
     this.router = Router();
     this.router.use(expressStatic(adminPath));
-    this.router.get("*", (req, res) => { res.sendfile(`${adminPath}/index.html`); });
+    this.router.get("*", (req, res) => {
+      res.sendfile(`${adminPath}/index.html`);
+    });
   }
 
   public getRouter() {

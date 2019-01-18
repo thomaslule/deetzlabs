@@ -1,13 +1,24 @@
 import { Pool } from "pg";
-import { getCleanDb, makeBroadcastEvent, makeViewerEvent, testOptions, wait } from "../../test/test-util";
+import {
+  getCleanDb,
+  makeBroadcastEvent,
+  makeViewerEvent,
+  testOptions,
+  wait
+} from "../../test/test-util";
 import { configureLog } from "../log";
 import { PgStorage } from "../storage/pg-storage";
 import { Domain } from "./domain";
 
 describe("Domain", () => {
   let db: Pool;
-  beforeEach(async () => { db = await getCleanDb(); configureLog(testOptions); });
-  afterEach(async () => { await db.end(); });
+  beforeEach(async () => {
+    db = await getCleanDb();
+    configureLog(testOptions);
+  });
+  afterEach(async () => {
+    await db.end();
+  });
 
   test("it should respond to !commands command", async () => {
     const storage = new PgStorage(db);
@@ -15,12 +26,16 @@ describe("Domain", () => {
     const domain = new Domain(storage, sendChatMessage, () => {}, testOptions);
     const someone = await domain.store.getViewer("123");
 
-    await someone.chatMessage("not the command"); await wait();
+    await someone.chatMessage("not the command");
+    await wait();
     expect(sendChatMessage).not.toHaveBeenCalled();
 
-    await someone.chatMessage("!commands"); await wait();
+    await someone.chatMessage("!commands");
+    await wait();
 
-    expect(sendChatMessage).toHaveBeenCalledWith("Say !achievements to see your current achievements");
+    expect(sendChatMessage).toHaveBeenCalledWith(
+      "Say !achievements to see your current achievements"
+    );
   });
 
   test("it should respond to !achievements command", async () => {
@@ -31,9 +46,12 @@ describe("Domain", () => {
     await someone.setName("Someone");
     await someone.giveAchievement("cheerleader");
 
-    await someone.chatMessage("!achievements"); await wait();
+    await someone.chatMessage("!achievements");
+    await wait();
 
-    expect(sendChatMessage).toHaveBeenCalledWith("Congratulations Someone for your achievements: Cheerleader");
+    expect(sendChatMessage).toHaveBeenCalledWith(
+      "Congratulations Someone for your achievements: Cheerleader"
+    );
   });
 
   test("on achievement, it should call showAchievement", async () => {
@@ -43,9 +61,15 @@ describe("Domain", () => {
 
     const viewer = await domain.store.getViewer("123");
     await viewer.setName("Someone");
-    await viewer.giveAchievement("cheerleader"); await wait();
+    await viewer.giveAchievement("cheerleader");
+    await wait();
 
-    expect(showAchievement).toHaveBeenCalledWith("Cheerleader", "Someone", "Thank you %USER%!", 0.5);
+    expect(showAchievement).toHaveBeenCalledWith(
+      "Cheerleader",
+      "Someone",
+      "Thank you %USER%!",
+      0.5
+    );
   });
 
   test("query.getCredits should return the credits with names", async () => {
@@ -65,22 +89,34 @@ describe("Domain", () => {
       achievements: [{ viewer: "Someone", achievement: "Cheerleader" }],
       subscribes: [],
       donators: ["Someone"],
-      follows: [],
+      follows: []
     });
   });
 
   test("it should be able to save settings", async () => {
-    const domain = new Domain(new PgStorage(db), () => {}, () => {}, testOptions);
+    const domain = new Domain(
+      new PgStorage(db),
+      () => {},
+      () => {},
+      testOptions
+    );
     expect((await domain.query.getSettings()).achievementVolume).toBe(0.5);
     const settings = await domain.store.getSettings();
-    await settings.changeAchievementVolume(0.2); await wait();
+    await settings.changeAchievementVolume(0.2);
+    await wait();
     expect((await domain.query.getSettings()).achievementVolume).toBe(0.2);
-    await settings.changeAchievementVolume(0.8); await wait();
+    await settings.changeAchievementVolume(0.8);
+    await wait();
     expect((await domain.query.getSettings()).achievementVolume).toBe(0.8);
   });
 
   test("it should be able to start and stop broadcasts", async () => {
-    const domain = new Domain(new PgStorage(db), () => {}, () => {}, testOptions);
+    const domain = new Domain(
+      new PgStorage(db),
+      () => {},
+      () => {},
+      testOptions
+    );
     expect(domain.query.getBroadcastNumber()).toBeUndefined();
     await (await domain.store.getBroadcast()).begin("Tetris");
     expect(domain.query.getBroadcastNumber()).toBe(1);
@@ -90,7 +126,11 @@ describe("Domain", () => {
 
   test("init should rebuild the memory projections", async () => {
     const storage = new PgStorage(db);
-    await storage.getEventStorage().store(makeBroadcastEvent({ sequence: 0, type: "begun", game: "Tetris" }));
+    await storage
+      .getEventStorage()
+      .store(
+        makeBroadcastEvent({ sequence: 0, type: "begun", game: "Tetris" })
+      );
     const domain = new Domain(storage, () => {}, () => {}, testOptions);
     await domain.init();
     expect(domain.query.isBroadcasting()).toBeTruthy();
@@ -100,9 +140,23 @@ describe("Domain", () => {
     const events = [
       makeBroadcastEvent({ sequence: 0, type: "begun", game: "Tetris" }),
       makeViewerEvent({ sequence: 0, type: "changed-name", name: "Someone" }),
-      makeViewerEvent({ sequence: 1, type: "sent-chat-message", message: "hi" }),
-      makeViewerEvent({ sequence: 2, type: "got-achievement", achievement: "cheerleader" }),
-      { aggregate: "settings", id: "settings", sequence: 0, type: "achievement-volume-changed", volume: 0.8 },
+      makeViewerEvent({
+        sequence: 1,
+        type: "sent-chat-message",
+        message: "hi"
+      }),
+      makeViewerEvent({
+        sequence: 2,
+        type: "got-achievement",
+        achievement: "cheerleader"
+      }),
+      {
+        aggregate: "settings",
+        id: "settings",
+        sequence: 0,
+        type: "achievement-volume-changed",
+        volume: 0.8
+      }
     ];
     const storage = new PgStorage(db);
     for (const event of events) {
@@ -120,7 +174,13 @@ describe("Domain", () => {
     expect((await domain.query.getCredits()).viewers[0]).toBe("Someone");
     expect((await domain.query.getCredits()).follows[0]).toBe("Someone");
     expect((await domain.query.getViewer("123"))!.name).toBe("Someone");
-    expect(await domain.query.getLastViewerAchievements())
-      .toEqual([{ viewerId: "123", viewerName: "Someone", achievement: "cheerleader", date: expect.anything() }]);
+    expect(await domain.query.getLastViewerAchievements()).toEqual([
+      {
+        viewerId: "123",
+        viewerName: "Someone",
+        achievement: "cheerleader",
+        date: expect.anything()
+      }
+    ]);
   });
 });

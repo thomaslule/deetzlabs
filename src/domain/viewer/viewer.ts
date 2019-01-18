@@ -17,15 +17,18 @@ import {
   replayedAchievement,
   resubscribed,
   sentChatMessage,
-  subscribed,
+  subscribed
 } from "./events";
 
 export class Viewer extends Entity<DecisionState> {
   public constructor(
     id: string,
     decisionSequence: DecisionSequence<DecisionState>,
-    publish: (event: Event, decisionSequence: DecisionSequence<DecisionState>) => Promise<void>,
-    private options: Options,
+    publish: (
+      event: Event,
+      decisionSequence: DecisionSequence<DecisionState>
+    ) => Promise<void>,
+    private options: Options
   ) {
     super(id, decisionSequence, publish);
   }
@@ -41,13 +44,17 @@ export class Viewer extends Entity<DecisionState> {
   public async chatMessage(message: string, broadcastNo?: number) {
     ow(message, ow.string);
     ow(broadcastNo, ow.any(ow.undefined, ow.number));
-    const event = await this.publishAndApply(sentChatMessage(this.options.messageToObject(message), broadcastNo));
+    const event = await this.publishAndApply(
+      sentChatMessage(this.options.messageToObject(message), broadcastNo)
+    );
     await this.distributeAchievements(event);
   }
 
   public async giveAchievement(achievement: string) {
     if (this.getDecision().achievementsReceived.includes(achievement)) {
-      throw new Error(`user ${this.getId()} already has achievement ${achievement}`);
+      throw new Error(
+        `user ${this.getId()} already has achievement ${achievement}`
+      );
     }
     if (!this.options.achievements[achievement]) {
       throw new Error(`achievement ${achievement} doesnt exist`);
@@ -80,15 +87,24 @@ export class Viewer extends Entity<DecisionState> {
     ow(plan, ow.string);
     const event = await this.publishAndApply(subscribed(plan));
     await this.distributeAchievements(event);
-    if (message) { await this.chatMessage(message, broadcastNo); }
+    if (message) {
+      await this.chatMessage(message, broadcastNo);
+    }
   }
 
-  public async resub(months: number, plan: string, message?: string, broadcastNo?: number) {
+  public async resub(
+    months: number,
+    plan: string,
+    message?: string,
+    broadcastNo?: number
+  ) {
     ow(months, ow.number);
     ow(plan, ow.string);
     const event = await this.publishAndApply(resubscribed(months, plan));
     await this.distributeAchievements(event);
-    if (message) { await this.chatMessage(message, broadcastNo); }
+    if (message) {
+      await this.chatMessage(message, broadcastNo);
+    }
   }
 
   public async giveSub(recipient: string, plan: string) {
@@ -140,8 +156,10 @@ export class Viewer extends Entity<DecisionState> {
   protected async distributeAchievements(event: Event) {
     const decision = this.getDecision();
     await Object.keys(this.options.achievements)
-      .filter((achievement) => !decision.achievementsReceived.includes(achievement))
-      .map((achievement) => {
+      .filter(
+        achievement => !decision.achievementsReceived.includes(achievement)
+      )
+      .map(achievement => {
         const { distributeWhen } = this.options.achievements[achievement];
         if (distributeWhen(decision.achievementsProgress[achievement], event)) {
           return gotAchievement(achievement);
@@ -149,10 +167,11 @@ export class Viewer extends Entity<DecisionState> {
         return undefined;
       })
       .reduce(
-        (chain, achievementEvent) => achievementEvent === undefined
-          ? chain
-          : chain.then(() => this.publishAndApply(achievementEvent)),
-        Promise.resolve(),
+        (chain, achievementEvent) =>
+          achievementEvent === undefined
+            ? chain
+            : chain.then(() => this.publishAndApply(achievementEvent)),
+        Promise.resolve()
       );
   }
 }
@@ -164,32 +183,51 @@ export interface DecisionState {
   topClipper: boolean;
 }
 
-const initialState = { name: undefined, achievementsReceived: [], achievementsProgress: {}, topClipper: false };
+const initialState = {
+  name: undefined,
+  achievementsReceived: [],
+  achievementsProgress: {},
+  topClipper: false
+};
 
 function topClipperReducer(state = false, event: Event) {
-  if (event.type === "became-top-clipper") { return true; }
-  if (event.type === "lost-top-clipper") { return false; }
+  if (event.type === "became-top-clipper") {
+    return true;
+  }
+  if (event.type === "lost-top-clipper") {
+    return false;
+  }
   return state;
 }
 
 export function getDecisionReducer(options: Options): Reducer<DecisionState> {
-  function getProgressForAchievementsInProgress(state: DecisionState, event: Event): Obj {
+  function getProgressForAchievementsInProgress(
+    state: DecisionState,
+    event: Event
+  ): Obj {
     return mapValues(options.achievements, ({ reducer }, achievement) =>
       !state.achievementsReceived.includes(achievement) && reducer
         ? reducer(state.achievementsProgress[achievement], event)
-        : undefined,
+        : undefined
     );
   }
 
   return (state = initialState, event) => {
-    const achievementsProgress = getProgressForAchievementsInProgress(state, event);
+    const achievementsProgress = getProgressForAchievementsInProgress(
+      state,
+      event
+    );
     let achievementsReceived = state.achievementsReceived;
     let name = state.name;
     if (event.type === "migrated-data") {
-      achievementsReceived = state.achievementsReceived.concat(event.achievements.map((a: any) => a.achievement));
+      achievementsReceived = state.achievementsReceived.concat(
+        event.achievements.map((a: any) => a.achievement)
+      );
       name = event.name;
     } else if (event.type === "got-achievement") {
-      achievementsReceived = state.achievementsReceived.concat(event.achievement);
+      achievementsReceived = state.achievementsReceived.concat(
+        event.achievement
+      );
     } else if (event.type === "changed-name") {
       name = event.name;
     }

@@ -13,13 +13,13 @@ export class CreditsProjection extends PersistedReduceProjection<Credits> {
     const viewerIds = [
       ...credits.viewers,
       ...credits.hosts,
-      ...credits.achievements.map((a) => a.viewer),
+      ...credits.achievements.map(a => a.viewer),
       ...credits.donators,
-      ...credits.follows,
+      ...credits.follows
     ];
     const viewers = await viewerStorage.getMany(viewerIds);
     const getViewerName = (id: string) => {
-      const viewer = viewers.find((v) => v.id === id);
+      const viewer = viewers.find(v => v.id === id);
       if (viewer === undefined) {
         log.error(`couldnt find name of ${id}`);
         return "";
@@ -33,10 +33,10 @@ export class CreditsProjection extends PersistedReduceProjection<Credits> {
       subscribes: credits.subscribes.map(getViewerName),
       donators: credits.donators.map(getViewerName),
       follows: credits.follows.map(getViewerName),
-      achievements: credits.achievements.map((a) => ({
+      achievements: credits.achievements.map(a => ({
         viewer: getViewerName(a.viewer),
-        achievement: this.options.achievements[a.achievement].name,
-      })),
+        achievement: this.options.achievements[a.achievement].name
+      }))
     };
   }
 }
@@ -45,7 +45,7 @@ export interface Credits {
   games: string[];
   viewers: string[];
   hosts: string[];
-  achievements: Array<{viewer: string, achievement: string}>;
+  achievements: Array<{ viewer: string; achievement: string }>;
   subscribes: string[];
   donators: string[];
   follows: string[];
@@ -59,7 +59,7 @@ function emptyCredits(game: string): Credits {
     achievements: [],
     subscribes: [],
     donators: [],
-    follows: [],
+    follows: []
   };
 }
 
@@ -91,8 +91,8 @@ function reducer(state = emptyCredits(""), event: Event): Credits {
         ...state,
         achievements: state.achievements.concat({
           viewer: event.id,
-          achievement: event.achievement,
-        }),
+          achievement: event.achievement
+        })
       };
     }
     if (event.type === "subscribed" || event.type === "resubscribed") {

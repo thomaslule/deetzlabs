@@ -10,9 +10,7 @@ export class BroadcastProjection extends InMemoryReduceProjection<State> {
   }
 
   public getBroadcastNumber(): number | undefined {
-    return this.getState().isBroadcasting
-      ? this.getState().number
-      : undefined;
+    return this.getState().isBroadcasting ? this.getState().number : undefined;
   }
 
   public getGame(): string {
@@ -26,7 +24,10 @@ interface State {
   game: string;
 }
 
-function reducer(state: State = { number: 0, isBroadcasting: false, game: "" }, event: Event): State {
+function reducer(
+  state: State = { number: 0, isBroadcasting: false, game: "" },
+  event: Event
+): State {
   if (event.aggregate !== "broadcast") {
     return state;
   }
@@ -34,19 +35,19 @@ function reducer(state: State = { number: 0, isBroadcasting: false, game: "" }, 
     return {
       number: state.number + 1,
       isBroadcasting: true,
-      game: event.game,
+      game: event.game
     };
   }
   if (event.type === "changed-game") {
     return {
       ...state,
-      game: event.game,
+      game: event.game
     };
   }
   if (event.type === "ended") {
     return {
       ...state,
-      isBroadcasting: false,
+      isBroadcasting: false
     };
   }
   return state;
