@@ -6,9 +6,11 @@ describe("commandsListener", () => {
   test("it should be able to list a viewer's achievements in chat", async () => {
     const sendChatMessage = jest.fn();
     const query = {
-      getViewerWithAchievements: jest
-        .fn()
-        .mockResolvedValue({ name: "Someone", achievements: ["cheerleader"] })
+      getViewerWithAchievements: jest.fn().mockResolvedValue({
+        name: "Someone",
+        achievements: ["cheerleader"],
+        banned: false
+      })
     };
     const listener = commandsListener(
       (query as unknown) as Query,
@@ -47,5 +49,46 @@ describe("commandsListener", () => {
         })
       )
     ).rejects.toThrow("couldnt get the viewer 123");
+  });
+
+  test("it should be able to react to follow events", async () => {
+    const sendChatMessage = jest.fn();
+    const query = {
+      getViewerWithAchievements: jest.fn().mockResolvedValue({
+        name: "Someone",
+        achievements: [],
+        banned: false
+      })
+    };
+    const listener = commandsListener(
+      (query as unknown) as Query,
+      sendChatMessage,
+      testOptions
+    );
+
+    await listener(makeViewerEvent({ type: "followed" }));
+
+    expect(sendChatMessage).toHaveBeenCalledWith("Welcome Someone!");
+  });
+
+  test("it should not react to banned viewers' events", async () => {
+    const sendChatMessage = jest.fn();
+    const query = {
+      getViewerWithAchievements: jest.fn().mockResolvedValue({
+        name: "Someone",
+        achievements: [],
+        banned: true
+      })
+    };
+    const listener = commandsListener(
+      (query as unknown) as Query,
+      sendChatMessage,
+      testOptions
+    );
+
+    await listener(makeViewerEvent({ type: "got-ban" }));
+    await listener(makeViewerEvent({ type: "followed" }));
+
+    expect(sendChatMessage).not.toHaveBeenCalled();
   });
 });

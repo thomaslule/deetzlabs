@@ -9,6 +9,20 @@ export class ViewerProjection implements Rebuildable {
     if (event.aggregate === "viewer") {
       if (event.type === "changed-name") {
         await this.storage.update(event.id, new Date(event.date), event.name);
+      } else if (event.type === "got-ban") {
+        await this.storage.update(
+          event.id,
+          new Date(event.date),
+          undefined,
+          true
+        );
+      } else if (event.type === "got-unban") {
+        await this.storage.update(
+          event.id,
+          new Date(event.date),
+          undefined,
+          false
+        );
       } else if (event.type === "got-achievement") {
         await this.storage.addAchievement(
           event.id,

@@ -50,6 +50,10 @@ module.exports = {
           ? `${viewerName} doesn't have any achievement but their time will come!`
           : `Congratulations ${viewerName} for your achievements: ${achievements}`;
       }
+    },
+    {
+      when: event => event.type === "followed",
+      say: ({ viewerName }) => `Welcome ${viewerName}!`
     }
   ]
 };

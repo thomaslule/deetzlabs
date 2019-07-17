@@ -17,6 +17,10 @@ export function commandsListener(
         if (viewer === undefined) {
           throw new Error(`couldnt get the viewer ${event.id}`);
         }
+        if (viewer.banned) {
+          // we don't react to commands if viewer is banned
+          return;
+        }
         successfulCommands.forEach(command => {
           const viewerName = viewer.name;
           const viewerAchievements = viewer.achievements;
