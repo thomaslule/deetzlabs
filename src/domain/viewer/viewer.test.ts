@@ -13,6 +13,7 @@ describe("Viewer", () => {
           achievementsReceived: [],
           achievementsProgress: {},
           topClipper: false,
+          banned: false,
           ...decisionState
         },
         sequence: -1
@@ -53,7 +54,8 @@ describe("Viewer", () => {
           name: "Someone",
           achievementsReceived: [],
           achievementsProgress: {},
-          topClipper: false
+          topClipper: false,
+          banned: false
         },
         sequence: -1
       },
@@ -247,6 +249,39 @@ describe("Viewer", () => {
       await someone.follow();
 
       expect(publish.mock.calls[0][0]).toMatchObject({ type: "followed" });
+    });
+  });
+
+  describe("receiveBan", () => {
+    test("it should prevent user from getting achievements", async () => {
+      const publish = jest.fn().mockImplementation(event => event);
+      const someone = getViewer(publish);
+
+      await someone.receiveBan();
+      await someone.host(20);
+
+      expect(publish).toHaveBeenCalledTimes(2);
+      expect(publish.mock.calls[0][0]).toMatchObject({ type: "got-ban" });
+      expect(publish.mock.calls[1][0]).toMatchObject({ type: "hosted" });
+    });
+
+    test("it should be released if user sent a message", async () => {
+      const publish = jest.fn().mockImplementation(event => event);
+      const someone = getViewer(publish);
+
+      await someone.receiveBan();
+      await someone.chatMessage("i'm back");
+      await someone.host(20);
+
+      expect(publish).toHaveBeenCalledTimes(4);
+      expect(publish.mock.calls[0][0]).toMatchObject({ type: "got-ban" });
+      expect(publish.mock.calls[1][0]).toMatchObject({
+        type: "sent-chat-message"
+      });
+      expect(publish.mock.calls[2][0]).toMatchObject({ type: "hosted" });
+      expect(publish.mock.calls[3][0]).toMatchObject({
+        type: "got-achievement"
+      });
     });
   });
 

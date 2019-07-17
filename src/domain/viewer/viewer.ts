@@ -4,6 +4,7 @@ import ow from "ow";
 import { Options } from "../../options";
 import { Obj } from "../../util";
 import {
+  gotBan,
   becameTopClipper,
   changedName,
   cheered,
@@ -145,6 +146,10 @@ export class Viewer extends Entity<DecisionState> {
     await this.distributeAchievements(event);
   }
 
+  public async receiveBan() {
+    await this.publishAndApply(gotBan());
+  }
+
   protected getAggregate() {
     return "viewer";
   }
@@ -155,6 +160,9 @@ export class Viewer extends Entity<DecisionState> {
 
   protected async distributeAchievements(event: Event) {
     const decision = this.getDecision();
+    if (decision.banned) {
+      return;
+    }
     await Object.keys(this.options.achievements)
       .filter(
         achievement => !decision.achievementsReceived.includes(achievement)
@@ -181,13 +189,15 @@ export interface DecisionState {
   achievementsReceived: string[];
   achievementsProgress: Obj;
   topClipper: boolean;
+  banned: boolean;
 }
 
 const initialState = {
   name: undefined,
   achievementsReceived: [],
   achievementsProgress: {},
-  topClipper: false
+  topClipper: false,
+  banned: false
 };
 
 function topClipperReducer(state = false, event: Event) {
@@ -219,6 +229,7 @@ export function getDecisionReducer(options: Options): Reducer<DecisionState> {
     );
     let achievementsReceived = state.achievementsReceived;
     let name = state.name;
+    let banned = state.banned;
     if (event.type === "migrated-data") {
       achievementsReceived = state.achievementsReceived.concat(
         event.achievements.map((a: any) => a.achievement)
@@ -230,8 +241,19 @@ export function getDecisionReducer(options: Options): Reducer<DecisionState> {
       );
     } else if (event.type === "changed-name") {
       name = event.name;
+    } else if (event.type === "sent-chat-message") {
+      // if we receive a message, this means the viewer isnt banned anymore
+      banned = false;
+    } else if (event.type === "got-ban") {
+      banned = true;
     }
     const topClipper = topClipperReducer(state.topClipper, event);
-    return { name, achievementsProgress, achievementsReceived, topClipper };
+    return {
+      name,
+      achievementsProgress,
+      achievementsReceived,
+      topClipper,
+      banned
+    };
   };
 }

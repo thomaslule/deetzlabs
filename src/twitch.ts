@@ -162,6 +162,17 @@ export class Twitch {
       }
     });
 
+    this.channel.on("ban", async ({ viewerId, viewerName }) => {
+      try {
+        const viewer = await domain.store.getViewer(viewerId);
+        await viewer.setName(viewerName);
+        await viewer.receiveBan();
+      } catch (err) {
+        log.error("ban command error");
+        log.error(err);
+      }
+    });
+
     this.channel.on("stream-begin", async ({ game }) => {
       try {
         const broadcast = await domain.store.getBroadcast();

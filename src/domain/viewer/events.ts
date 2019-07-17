@@ -41,6 +41,8 @@ export const raided = (nbViewers: number) =>
 
 export const followed = () => createEvent("followed");
 
+export const gotBan = () => createEvent("got-ban");
+
 export const becameTopClipper = () => createEvent("became-top-clipper");
 
 export const lostTopClipper = () => createEvent("lost-top-clipper");
