@@ -18,7 +18,8 @@ import {
   replayedAchievement,
   resubscribed,
   sentChatMessage,
-  subscribed
+  subscribed,
+  gotUnban
 } from "./events";
 
 export class Viewer extends Entity<DecisionState> {
@@ -45,6 +46,10 @@ export class Viewer extends Entity<DecisionState> {
   public async chatMessage(message: string, broadcastNo?: number) {
     ow(message, ow.string);
     ow(broadcastNo, ow.any(ow.undefined, ow.number));
+    if (this.getDecision().banned) {
+      // since viewer is able to send a message, they have been unbanned
+      await this.publishAndApply(gotUnban());
+    }
     const event = await this.publishAndApply(
       sentChatMessage(this.options.messageToObject(message), broadcastNo)
     );
@@ -241,11 +246,10 @@ export function getDecisionReducer(options: Options): Reducer<DecisionState> {
       );
     } else if (event.type === "changed-name") {
       name = event.name;
-    } else if (event.type === "sent-chat-message") {
-      // if we receive a message, this means the viewer isnt banned anymore
-      banned = false;
     } else if (event.type === "got-ban") {
       banned = true;
+    } else if (event.type === "got-unban") {
+      banned = false;
     }
     const topClipper = topClipperReducer(state.topClipper, event);
     return {

@@ -273,13 +273,14 @@ describe("Viewer", () => {
       await someone.chatMessage("i'm back");
       await someone.host(20);
 
-      expect(publish).toHaveBeenCalledTimes(4);
+      expect(publish).toHaveBeenCalledTimes(5);
       expect(publish.mock.calls[0][0]).toMatchObject({ type: "got-ban" });
-      expect(publish.mock.calls[1][0]).toMatchObject({
+      expect(publish.mock.calls[1][0]).toMatchObject({ type: "got-unban" });
+      expect(publish.mock.calls[2][0]).toMatchObject({
         type: "sent-chat-message"
       });
-      expect(publish.mock.calls[2][0]).toMatchObject({ type: "hosted" });
-      expect(publish.mock.calls[3][0]).toMatchObject({
+      expect(publish.mock.calls[3][0]).toMatchObject({ type: "hosted" });
+      expect(publish.mock.calls[4][0]).toMatchObject({
         type: "got-achievement"
       });
     });

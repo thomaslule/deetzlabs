@@ -43,6 +43,8 @@ export const followed = () => createEvent("followed");
 
 export const gotBan = () => createEvent("got-ban");
 
+export const gotUnban = () => createEvent("got-unban");
+
 export const becameTopClipper = () => createEvent("became-top-clipper");
 
 export const lostTopClipper = () => createEvent("lost-top-clipper");
