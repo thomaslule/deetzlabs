@@ -5,7 +5,8 @@ export class PgViewerStorage {
     return {
       id: row.id,
       name: row.name,
-      lastAction: row.last_action
+      lastAction: row.last_action,
+      banned: row.banned
     };
   }
 
@@ -40,7 +41,7 @@ export class PgViewerStorage {
   ): Promise<PgViewerWithAchievements | undefined> {
     const result = await this.db.query(
       `
-      select viewers.id, viewers.name, viewers.last_action, achievements.achievement from viewers
+      select viewers.id, viewers.name, viewers.last_action, viewers.banned, achievements.achievement from viewers
       left join achievements on viewers.id = achievements.viewerId
       where viewers.id = $1
       order by achievements.date
@@ -93,24 +94,34 @@ export class PgViewerStorage {
     }));
   }
 
-  public async update(id: string, lastAction: Date, name?: string) {
-    if (name) {
-      await this.db.query(
-        `
-        insert into viewers(id, last_action, name) values ($1, $2, $3)
-        on conflict (id) do update set last_action = $2, name = $3
-      `,
-        [id, lastAction, name]
-      );
-    } else {
-      await this.db.query(
-        `
-        insert into viewers(id, last_action) values ($1, $2)
-        on conflict (id) do update set last_action = $2
-      `,
-        [id, lastAction]
-      );
+  public async update(
+    id: string,
+    lastAction: Date,
+    name?: string,
+    banned?: boolean
+  ) {
+    const updates: Array<{ column: string; value: unknown }> = [
+      { column: "id", value: id },
+      { column: "last_action", value: lastAction }
+    ];
+    if (name !== undefined) {
+      updates.push({ column: "name", value: name });
     }
+    if (banned !== undefined) {
+      updates.push({ column: "banned", value: banned });
+    }
+    const columns = updates.map(u => u.column).join(", ");
+    const dollars = updates.map((u, i) => `$${i + 1}`).join(", ");
+    const sets = updates
+      .filter((u, i) => i > 0)
+      .map((u, i) => `${u.column} = $${i + 2}`)
+      .join(", ");
+    const values = updates.map(u => u.value);
+    const query = `
+      insert into viewers(${columns}) values (${dollars})
+      on conflict (id) do update set ${sets}
+    `;
+    await this.db.query(query, values);
   }
 
   public async addAchievement(
@@ -135,6 +146,7 @@ export interface PgViewer {
   id: string;
   name: string;
   lastAction: Date;
+  banned: boolean;
 }
 
 export interface PgViewerWithAchievements extends PgViewer {

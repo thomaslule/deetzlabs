@@ -20,7 +20,8 @@ drop table if exists viewers;
 create table viewers(
   id text primary key,
   name text not null default '',
-  last_action timestamptz not null
+  last_action timestamptz not null,
+  banned boolean not null default FALSE
 );
 
 drop table if exists achievements;

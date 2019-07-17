@@ -20,13 +20,15 @@ describe("PgViewerStorage", () => {
     expect(await storage.get("123")).toEqual({
       id: "123",
       name: "Someone",
-      lastAction
+      lastAction,
+      banned: false
     });
     await storage.update("123", lastAction, "Someone2");
     expect(await storage.get("123")).toEqual({
       id: "123",
       name: "Someone2",
-      lastAction
+      lastAction,
+      banned: false
     });
     await storage.deleteAll();
     expect(await storage.get("123")).toBeUndefined();
@@ -38,15 +40,38 @@ describe("PgViewerStorage", () => {
     expect(await storage.get("123")).toEqual({
       id: "123",
       name: "",
-      lastAction
+      lastAction,
+      banned: false
     });
     const lastAction2 = new Date(2018, 1, 2);
     await storage.update("123", lastAction2);
     expect(await storage.get("123")).toEqual({
       id: "123",
       name: "",
-      lastAction: lastAction2
+      lastAction: lastAction2,
+      banned: false
     });
+  });
+
+  test("update should be able to insert and update with banned", async () => {
+    const storage = new PgViewerStorage(db);
+    expect(await storage.get("123")).toBeUndefined();
+    await storage.update("123", lastAction, undefined, true);
+    expect(await storage.get("123")).toEqual({
+      id: "123",
+      name: "",
+      lastAction,
+      banned: true
+    });
+    await storage.update("123", lastAction, undefined, false);
+    expect(await storage.get("123")).toEqual({
+      id: "123",
+      name: "",
+      lastAction,
+      banned: false
+    });
+    await storage.deleteAll();
+    expect(await storage.get("123")).toBeUndefined();
   });
 
   test("it should be able add and get achievements", async () => {
@@ -56,6 +81,7 @@ describe("PgViewerStorage", () => {
       id: "123",
       name: "Someone",
       lastAction,
+      banned: false,
       achievements: []
     });
     await storage.addAchievement("123", "cheerleader", lastAction);
@@ -63,6 +89,7 @@ describe("PgViewerStorage", () => {
       id: "123",
       name: "Someone",
       lastAction,
+      banned: false,
       achievements: ["cheerleader"]
     });
     await storage.addAchievement("123", "supporter", lastAction);
@@ -70,6 +97,7 @@ describe("PgViewerStorage", () => {
       id: "123",
       name: "Someone",
       lastAction,
+      banned: false,
       achievements: ["cheerleader", "supporter"]
     });
   });
@@ -83,8 +111,8 @@ describe("PgViewerStorage", () => {
     const viewers = await storage.getMany(["123", "456"]);
 
     expect(viewers).toEqual([
-      { id: "123", name: "Someone", lastAction },
-      { id: "456", name: "Other", lastAction }
+      { id: "123", name: "Someone", lastAction, banned: false },
+      { id: "456", name: "Other", lastAction, banned: false }
     ]);
   });
 
