@@ -10,33 +10,48 @@ export class CreditsProjection extends PersistedReduceProjection<Credits> {
 
   public async getWithNames(viewerStorage: PgViewerStorage): Promise<Credits> {
     const credits = await this.getState();
-    const viewerIds = [
-      ...credits.viewers,
-      ...credits.hosts,
-      ...credits.achievements.map(a => a.viewer),
-      ...credits.donators,
-      ...credits.follows
-    ];
+    const viewerIds = Array.from(
+      new Set([
+        ...credits.viewers,
+        ...credits.hosts,
+        ...credits.donators,
+        ...credits.follows,
+        ...credits.achievements.map(a => a.viewer)
+      ])
+    );
     const viewers = await viewerStorage.getMany(viewerIds);
-    const getViewerName = (id: string) => {
-      const viewer = viewers.find(v => v.id === id);
+    function getViewer(id: string) {
+      const viewer = viewers.find(viewer => viewer.id === id);
       if (viewer === undefined) {
         log.error(`couldnt find name of ${id}`);
-        return "";
+        return undefined;
       }
-      return viewer.name;
-    };
+      return viewer.banned ? undefined : viewer;
+    }
+    function getViewerNames(viewerIds: string[]): string[] {
+      return viewerIds
+        .map(id => getViewer(id))
+        .map(viewer => (viewer === undefined ? undefined : viewer.name))
+        .filter(name => name !== undefined) as string[];
+    }
     return {
       games: credits.games,
-      viewers: credits.viewers.map(getViewerName),
-      hosts: credits.hosts.map(getViewerName),
-      subscribes: credits.subscribes.map(getViewerName),
-      donators: credits.donators.map(getViewerName),
-      follows: credits.follows.map(getViewerName),
-      achievements: credits.achievements.map(a => ({
-        viewer: getViewerName(a.viewer),
-        achievement: this.options.achievements[a.achievement].name
-      }))
+      viewers: getViewerNames(credits.viewers),
+      hosts: getViewerNames(credits.hosts),
+      subscribes: getViewerNames(credits.subscribes),
+      donators: getViewerNames(credits.donators),
+      follows: getViewerNames(credits.follows),
+      achievements: credits.achievements
+        .map(a => {
+          const viewer = getViewer(a.viewer);
+          return viewer === undefined
+            ? undefined
+            : {
+                viewer: viewer.name,
+                achievement: this.options.achievements[a.achievement].name
+              };
+        })
+        .filter(a => a !== undefined) as CreditsAchievement[]
     };
   }
 }
@@ -45,10 +60,15 @@ export interface Credits {
   games: string[];
   viewers: string[];
   hosts: string[];
-  achievements: Array<{ viewer: string; achievement: string }>;
+  achievements: CreditsAchievement[];
   subscribes: string[];
   donators: string[];
   follows: string[];
+}
+
+export interface CreditsAchievement {
+  viewer: string;
+  achievement: string;
 }
 
 function emptyCredits(game: string): Credits {

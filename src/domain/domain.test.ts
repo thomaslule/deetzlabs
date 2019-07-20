@@ -183,4 +183,53 @@ describe("Domain", () => {
       }
     ]);
   });
+
+  test("it should send a message on follow, show achievement alert and populate credits when user interacts", async () => {
+    const sendChatMessage = jest.fn();
+    const showAchievement = jest.fn();
+    const domain = new Domain(
+      new PgStorage(db),
+      sendChatMessage,
+      showAchievement,
+      testOptions
+    );
+
+    const viewer = await domain.store.getViewer("123");
+    await viewer.setName("Someone");
+    await viewer.chatMessage("something nice");
+    await viewer.follow();
+    await viewer.host(10);
+    await wait();
+
+    const credits = await domain.query.getCredits();
+    expect(sendChatMessage).toHaveBeenCalled();
+    expect(showAchievement).toHaveBeenCalled();
+    expect(credits.viewers).toHaveLength(1);
+    expect(credits.achievements).toHaveLength(1);
+  });
+
+  test("a banned viewer should not appear in chat, in alerts nor in credits", async () => {
+    const sendChatMessage = jest.fn();
+    const showAchievement = jest.fn();
+    const domain = new Domain(
+      new PgStorage(db),
+      sendChatMessage,
+      showAchievement,
+      testOptions
+    );
+
+    const viewer = await domain.store.getViewer("123");
+    await viewer.setName("Someone");
+    await viewer.chatMessage("something bad");
+    await viewer.receiveBan();
+    await viewer.follow(); // should not trigger welcome message in chat
+    await viewer.host(10); // shoud not trigger achievement
+    await wait();
+
+    const credits = await domain.query.getCredits();
+    expect(sendChatMessage).not.toHaveBeenCalled();
+    expect(showAchievement).not.toHaveBeenCalled();
+    expect(credits.viewers).toHaveLength(0);
+    expect(credits.achievements).toHaveLength(0);
+  });
 });
