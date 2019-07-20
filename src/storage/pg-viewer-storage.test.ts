@@ -135,9 +135,11 @@ describe("PgViewerStorage", () => {
     const storage = new PgViewerStorage(db);
     await storage.update("123", lastAction, "Someone");
     await storage.update("456", lastAction, "Other");
+    await storage.update("789", lastAction, "Banned", true);
     await storage.addAchievement("123", "supporter", date1);
     await storage.addAchievement("456", "supporter", date2);
     await storage.addAchievement("123", "cheerleader", date3);
+    await storage.addAchievement("789", "cheerleader", date3);
 
     const achievements = await storage.getAllAchievements();
 
@@ -170,9 +172,11 @@ describe("PgViewerStorage", () => {
     const storage = new PgViewerStorage(db);
     await storage.update("123", lastAction, "Someone");
     await storage.update("456", lastAction, "Other");
+    await storage.update("789", lastAction, "Banned", true);
     await storage.addAchievement("123", "supporter", date1);
     await storage.addAchievement("456", "supporter", date2);
     await storage.addAchievement("123", "cheerleader", date3);
+    await storage.addAchievement("789", "cheerleader", date3);
 
     const achievements = await storage.getLastAchievements(2);
 

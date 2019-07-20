@@ -65,6 +65,7 @@ export class PgViewerStorage {
       select achievements.*, viewers.name as viewerName
       from achievements
       inner join viewers on achievements.viewerId = viewers.id
+      where viewers.banned = FALSE
       order by achievements.date
     `);
     return result.rows.map(row => ({
@@ -81,6 +82,7 @@ export class PgViewerStorage {
       select achievements.*, viewers.name as viewerName
       from achievements
       inner join viewers on achievements.viewerId = viewers.id
+      where viewers.banned = FALSE
       order by achievements.date desc
       limit $1
     `,
