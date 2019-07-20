@@ -59,8 +59,11 @@ export class Viewer extends Entity<DecisionState> {
   public async giveAchievement(achievement: string) {
     if (this.getDecision().achievementsReceived.includes(achievement)) {
       throw new Error(
-        `user ${this.getId()} already has achievement ${achievement}`
+        `viewer ${this.getId()} already has achievement ${achievement}`
       );
+    }
+    if (this.getDecision().banned) {
+      throw new Error(`viewer ${this.getId()} is banned`);
     }
     if (!this.options.achievements[achievement]) {
       throw new Error(`achievement ${achievement} doesnt exist`);
