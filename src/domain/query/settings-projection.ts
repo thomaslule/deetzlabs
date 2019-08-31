@@ -12,6 +12,7 @@ export class SettingsProjection extends PersistedReduceProjection<Settings> {
 }
 
 export interface Settings {
+  muted: boolean;
   achievementVolume: number;
   followersGoal: {
     goal: number;
@@ -21,6 +22,12 @@ export interface Settings {
 }
 
 const reducer: Reducer<Settings> = (state = initialState, event: Event) => {
+  if (event.type === "muted") {
+    return { ...state, muted: true };
+  }
+  if (event.type === "unmuted") {
+    return { ...state, muted: false };
+  }
   if (event.type === "achievement-volume-changed") {
     return { ...state, achievementVolume: event.volume };
   }
@@ -31,6 +38,7 @@ const reducer: Reducer<Settings> = (state = initialState, event: Event) => {
 };
 
 const initialState: Settings = {
+  muted: false,
   achievementVolume: 0.5,
   followersGoal: {
     goal: 100,

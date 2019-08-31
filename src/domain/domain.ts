@@ -27,8 +27,8 @@ export class Domain {
 
   constructor(
     private storage: PgStorage,
-    sendChatMessage: (msg: string) => void,
-    showAchievement: (
+    private doSendChatMessage: (msg: string) => void,
+    private doShowAchievement: (
       achievement: string,
       username: string,
       text: string,
@@ -71,9 +71,15 @@ export class Domain {
         event.type
       );
     });
-    bus.onEvent(commandsListener(this.query, sendChatMessage, options));
     bus.onEvent(
-      displayAchievementListener(this.query, showAchievement, options)
+      commandsListener(this.query, msg => this.sendChatMessage(msg), options)
+    );
+    bus.onEvent(
+      displayAchievementListener(
+        this.query,
+        (a, u, t, v) => this.showAchievement(a, u, t, v),
+        options
+      )
     );
   }
 
@@ -109,6 +115,35 @@ export class Domain {
       )
     );
     log.info("rebuild finished");
+  }
+
+  public async sendChatMessage(message: string) {
+    try {
+      const settings = await this.query.getSettings();
+      if (!settings.muted) {
+        this.doSendChatMessage(message);
+      }
+    } catch (err) {
+      log.error("error while trying to send a chat message");
+      log.error(err);
+    }
+  }
+
+  public async showAchievement(
+    achievement: string,
+    username: string,
+    text: string,
+    volume: number
+  ) {
+    try {
+      const settings = await this.query.getSettings();
+      if (!settings.muted) {
+        this.doShowAchievement(achievement, username, text, volume);
+      }
+    } catch (err) {
+      log.error("error while trying to send a chat message");
+      log.error(err);
+    }
   }
 
   private logStream() {

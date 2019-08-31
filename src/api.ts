@@ -239,6 +239,32 @@ export class Api {
     );
 
     this.router.post(
+      "/mute",
+      async (req: any, res: Response, next: NextFunction) => {
+        try {
+          const settings = await this.domain.store.getSettings();
+          await settings.mute();
+          res.sendStatus(200);
+        } catch (err) {
+          next(err);
+        }
+      }
+    );
+
+    this.router.post(
+      "/unmute",
+      async (req: any, res: Response, next: NextFunction) => {
+        try {
+          const settings = await this.domain.store.getSettings();
+          await settings.unmute();
+          res.sendStatus(200);
+        } catch (err) {
+          next(err);
+        }
+      }
+    );
+
+    this.router.post(
       "/achievement_alert_volume",
       check("volume").isFloat({ min: 0.1, max: 1 }),
       sanitize("volume").toFloat(),
