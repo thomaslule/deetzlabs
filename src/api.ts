@@ -136,6 +136,18 @@ export class Api {
     );
 
     this.router.get(
+      "/muted",
+      async (req: Request, res: Response, next: NextFunction) => {
+        try {
+          const muted = (await this.domain.query.getSettings()).muted;
+          res.send({ muted });
+        } catch (err) {
+          next(err);
+        }
+      }
+    );
+
+    this.router.get(
       "/achievement_alert_volume",
       async (req: Request, res: Response, next: NextFunction) => {
         try {
