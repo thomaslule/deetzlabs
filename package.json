@@ -52,7 +52,7 @@
     "@types/socket.io": "^1.4.38",
     "@types/stream-to-array": "^2.3.0",
     "body-parser": "^1.18.3",
-    "deetzlabs-web": "^0.2.0",
+    "deetzlabs-web": "^0.3.0",
     "es-objects": "^0.1.2",
     "express": "^4.16.3",
     "express-http-proxy": "^1.4.0",
