@@ -31,7 +31,7 @@ export class Twitch {
     });
     this.channel.on("error", err => {
       log.error("twitch-channel error");
-      log.error(err);
+      log.error(err as string);
     });
     this.proxy = proxy(`http://localhost:${options.webhook_port}`);
   }
@@ -73,7 +73,7 @@ export class Twitch {
         const viewer = await domain.store.getViewer(viewerId);
         const broadcastNo = domain.query.getBroadcastNumber();
         await viewer.setName(viewerName);
-        await viewer.subscribe(plan, message, broadcastNo);
+        await viewer.subscribe(plan || "1000", message, broadcastNo);
       } catch (err) {
         log.error("sub command error");
         log.error(err);
@@ -87,7 +87,7 @@ export class Twitch {
           const viewer = await domain.store.getViewer(viewerId);
           const broadcastNo = domain.query.getBroadcastNumber();
           await viewer.setName(viewerName);
-          await viewer.resub(months, plan, message, broadcastNo);
+          await viewer.resub(months || 0, plan || "1000", message, broadcastNo);
         } catch (err) {
           log.error("resub command error");
           log.error(err);
@@ -101,7 +101,7 @@ export class Twitch {
         try {
           const viewer = await domain.store.getViewer(viewerId);
           await viewer.setName(viewerName);
-          await viewer.giveSub(recipientId, plan);
+          await viewer.giveSub(recipientId, plan || "1000");
           const recipient = await domain.store.getViewer(recipientId);
           await recipient.setName(recipientName);
         } catch (err) {
