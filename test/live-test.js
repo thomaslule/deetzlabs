@@ -14,9 +14,7 @@ async function start() {
   await db.end();
   const deetzlabs = new Deetzlabs({
     ...testOptions,
-    ...secretOptions,
-    log_to_console: true,
-    protect_api: false
+    ...secretOptions
   });
   await deetzlabs.start();
 }
