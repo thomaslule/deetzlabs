@@ -1,8 +1,8 @@
-const { Pool } = require("pg");
-const { readFileSync } = require("fs");
-const { Deetzlabs } = require("../lib");
-const testOptions = require("./test-options");
-const secretOptions = require("./secret-options");
+import { readFileSync } from "fs";
+import { Pool } from "pg";
+import { Deetzlabs } from "../src";
+import { secretOptions } from "./secret-options";
+import { testOptions } from "./test-options";
 
 async function start() {
   const db = new Pool({

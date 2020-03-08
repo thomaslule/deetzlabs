@@ -4,8 +4,7 @@ import { Pool } from "pg";
 import { Readable } from "stream";
 import { getOptions } from "../src/options";
 import { Obj } from "../src/util";
-// @ts-ignore
-import * as testOptionsObj from "./test-options";
+import { testOptions as testOptionsObj } from "./test-options";
 
 export const testOptions = getOptions(testOptionsObj);
 

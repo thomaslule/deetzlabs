@@ -1,20 +1,16 @@
 {
   "compilerOptions": {
-      "target": "es5",
-      "module": "commonjs",
-      "declaration": true,
-      "outDir": "./lib",
-      "lib": [ "es2015", "es2017" ],
-      "forceConsistentCasingInFileNames": true,
-      "noImplicitReturns": true,
-      "strict": true,
-      "noUnusedLocals": true
+    "target": "es5",
+    "module": "commonjs",
+    "declaration": true,
+    "outDir": "./lib",
+    "lib": ["es2015", "es2017"],
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "typeRoots": ["./node_modules/@types", "./typings"]
   },
-  "include": [
-      "src/**/*.ts"
-  ],
-  "exclude": [
-      "node_modules",
-      "**/*.test.ts"
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "**/*.test.ts"]
 }

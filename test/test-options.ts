@@ -1,11 +1,15 @@
-const isGG = event => event.type === "sent-chat-message" && event.message.gg;
+import { Event } from "es-objects";
+import { Options } from "../src/options";
 
-module.exports = {
+const isGG = (event: Event) =>
+  event.type === "sent-chat-message" && event.message.gg;
+
+export const testOptions: Partial<Options> = {
   db_url: "postgresql://postgres:admin@localhost:5432/deetzlabs_test",
   protect_api: false,
   log_level: "debug",
   log_to_file: false,
-  log_to_console: false,
+  log_to_console: true,
   messageToObject: message => ({
     commandsCommand: message === "!commands" ? true : undefined,
     achievementsCommand: message === "!achievements" ? true : undefined,
