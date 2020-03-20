@@ -15,9 +15,7 @@ const defaultOptions: Options = {
   streamlabs_socket_token: "",
   secret: "",
   protect_api: true,
-  logins: {
-    test: "n4bQgYhMfWWaL+qgxVrQFaO/TxsrC4Is0V1sFbDwCgg=" // test
-  },
+  logins: [],
   log_level: "info",
   log_to_console: true,
   log_to_file: true,
@@ -40,7 +38,7 @@ export interface Options {
   streamlabs_socket_token: string;
   secret: string;
   protect_api: boolean;
-  logins: Dictionary<string>;
+  logins: string[];
   log_level: string;
   log_to_console: boolean;
   log_to_file: boolean;

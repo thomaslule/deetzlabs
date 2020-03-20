@@ -1,16 +1,12 @@
-import { createHash } from "crypto";
 import { NextFunction, Request, Response, Router } from "express";
-import * as expressjwt from "express-jwt";
 import { check, validationResult } from "express-validator/check";
 import { matchedData, sanitize } from "express-validator/filter";
-import { sign } from "jsonwebtoken";
-import mapValues = require("lodash.mapvalues");
 import { Domain } from "./domain/domain";
+import { getAuthenticationMiddleware } from "./getAuthenticationMiddleware";
 import { Options } from "./options";
 import { Twitch } from "./twitch";
 import { Widgets } from "./widgets";
-
-const LOGIN_DURATION = 60 * 60 * 24 * 30;
+import mapValues = require("lodash.mapvalues");
 
 const validationMiddleware = (req: any, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -32,15 +28,6 @@ export class Api {
     private options: Options
   ) {
     this.router = Router();
-    if (this.options.protect_api) {
-      this.router.use(
-        expressjwt({
-          secret: this.options.secret
-        }).unless({
-          path: ["/api/login", "/api/followers_goal", "/api/credits"]
-        })
-      );
-    }
     this.setRoutes();
   }
 
@@ -49,43 +36,9 @@ export class Api {
   }
 
   private setRoutes() {
-    this.router.post(
-      "/login",
-      check("username").exists(),
-      check("password").exists(),
-      validationMiddleware,
-      (req: any, res, next) => {
-        try {
-          if (this.options.protect_api) {
-            const { username, password } = req.validParams;
-            const { logins } = this.options;
-            if (
-              logins[username] &&
-              logins[username] ===
-                createHash("sha256")
-                  .update(password)
-                  .digest("base64")
-            ) {
-              const token = sign({ username }, this.options.secret, {
-                expiresIn: LOGIN_DURATION
-              });
-              const expiresAt = Date.now() + LOGIN_DURATION * 1000;
-              res.send({ token, expiresAt });
-            } else {
-              res.sendStatus(401);
-            }
-          } else {
-            const expiresAt = Date.now() + LOGIN_DURATION * 1000;
-            res.send({ token: "DUMMY_TOKEN", expiresAt });
-          }
-        } catch (err) {
-          next(err);
-        }
-      }
-    );
-
     this.router.get(
       "/viewer_names",
+      getAuthenticationMiddleware(this.options),
       async (req: Request, res: Response, next: NextFunction) => {
         try {
           res.send(await this.domain.query.getRecentViewerNames());
@@ -97,6 +50,7 @@ export class Api {
 
     this.router.get(
       "/viewer_achievements",
+      getAuthenticationMiddleware(this.options),
       async (req: Request, res: Response, next: NextFunction) => {
         try {
           res.send(await this.domain.query.getAllViewerAchievements());
@@ -108,6 +62,7 @@ export class Api {
 
     this.router.get(
       "/last_achievements",
+      getAuthenticationMiddleware(this.options),
       async (req: Request, res: Response, next: NextFunction) => {
         try {
           res.send(await this.domain.query.getLastViewerAchievements());
@@ -119,6 +74,7 @@ export class Api {
 
     this.router.get(
       "/achievements",
+      getAuthenticationMiddleware(this.options),
       (req: Request, res: Response, next: NextFunction) => {
         try {
           const achievements = mapValues(
@@ -137,6 +93,7 @@ export class Api {
 
     this.router.get(
       "/muted",
+      getAuthenticationMiddleware(this.options),
       async (req: Request, res: Response, next: NextFunction) => {
         try {
           const muted = (await this.domain.query.getSettings()).muted;
@@ -149,6 +106,7 @@ export class Api {
 
     this.router.get(
       "/achievement_alert_volume",
+      getAuthenticationMiddleware(this.options),
       async (req: Request, res: Response, next: NextFunction) => {
         try {
           const volume = (await this.domain.query.getSettings())
@@ -184,6 +142,7 @@ export class Api {
 
     this.router.post(
       "/give_achievement",
+      getAuthenticationMiddleware(this.options),
       check("achievement")
         .not()
         .isEmpty(),
@@ -212,6 +171,7 @@ export class Api {
 
     this.router.post(
       "/replay_achievement",
+      getAuthenticationMiddleware(this.options),
       check("achievement")
         .not()
         .isEmpty(),
@@ -233,6 +193,7 @@ export class Api {
 
     this.router.post(
       "/show_test_achievement",
+      getAuthenticationMiddleware(this.options),
       async (req: any, res: Response, next: NextFunction) => {
         try {
           const volume = (await this.domain.query.getSettings())
@@ -252,6 +213,7 @@ export class Api {
 
     this.router.post(
       "/mute",
+      getAuthenticationMiddleware(this.options),
       async (req: any, res: Response, next: NextFunction) => {
         try {
           const settings = await this.domain.store.getSettings();
@@ -265,6 +227,7 @@ export class Api {
 
     this.router.post(
       "/unmute",
+      getAuthenticationMiddleware(this.options),
       async (req: any, res: Response, next: NextFunction) => {
         try {
           const settings = await this.domain.store.getSettings();
@@ -278,6 +241,7 @@ export class Api {
 
     this.router.post(
       "/achievement_alert_volume",
+      getAuthenticationMiddleware(this.options),
       check("volume").isFloat({ min: 0.1, max: 1 }),
       sanitize("volume").toFloat(),
       validationMiddleware,
@@ -295,6 +259,7 @@ export class Api {
 
     this.router.post(
       "/change_followers_goal",
+      getAuthenticationMiddleware(this.options),
       check("goal").isInt({ min: 1 }),
       check("html").exists(),
       check("css").exists(),
