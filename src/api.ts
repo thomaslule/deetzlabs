@@ -37,6 +37,17 @@ export class Api {
 
   private setRoutes() {
     this.router.get(
+      "/client_id",
+      (req: Request, res: Response, next: NextFunction) => {
+        try {
+          res.send({ clientId: this.options.client_id });
+        } catch (err) {
+          next(err);
+        }
+      }
+    );
+
+    this.router.get(
       "/viewer_names",
       getAuthenticationMiddleware(this.options),
       async (req: Request, res: Response, next: NextFunction) => {
