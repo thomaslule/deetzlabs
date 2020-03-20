@@ -48,6 +48,14 @@ export class Api {
     );
 
     this.router.get(
+      "/check_token",
+      getAuthenticationMiddleware(this.options),
+      (req: Request, res: Response, next: NextFunction) => {
+        res.sendStatus(204);
+      }
+    );
+
+    this.router.get(
       "/viewer_names",
       getAuthenticationMiddleware(this.options),
       async (req: Request, res: Response, next: NextFunction) => {
