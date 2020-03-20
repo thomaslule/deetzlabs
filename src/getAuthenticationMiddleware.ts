@@ -11,17 +11,17 @@ export function getAuthenticationMiddleware(options: Options): RequestHandler {
     try {
       const authorization = req.get("Authorization");
       if (authorization === undefined) {
-        res.sendStatus(401);
+        res.status(401).send({ error: "Authorization header not found" });
         return;
       }
       const userResponse = await getLoginFromToken(authorization);
       if (!userResponse.success) {
-        res.sendStatus(401);
+        res.status(401).send({ error: userResponse.error });
         return;
       }
-      const login = userResponse.login;
+      const login = userResponse.login.toLowerCase();
       if (!options.logins.map(login => login.toLowerCase()).includes(login)) {
-        res.sendStatus(401);
+        res.status(403).send({ error: `Login ${login} not authorized` });
         return;
       }
       next();
@@ -43,10 +43,11 @@ async function getLoginFromToken(
     }
   );
   if (!validateHttpResponse.ok) {
-    return { success: false };
+    const twitchError = await validateHttpResponse.text();
+    return { success: false, error: `Twitch answered; ${twitchError}` };
   }
   const validateResponse = await validateHttpResponse.json();
-  return { success: true, login: validateResponse.login.toLowerCase() };
+  return { success: true, login: validateResponse.login };
 }
 type TokenValidationResult = TokenValidationSuccess | TokenValidationFailure;
 interface TokenValidationSuccess {
@@ -55,6 +56,7 @@ interface TokenValidationSuccess {
 }
 interface TokenValidationFailure {
   success: false;
+  error: string;
 }
 
 function noopMiddleware(req: Request, res: Response, next: NextFunction) {
