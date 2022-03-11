@@ -4,6 +4,7 @@ import * as express from "express";
 import { createServer, Server as HttpServer } from "http";
 import * as morgan from "morgan";
 import { log } from "./log";
+import { Twitch } from "./twitch";
 
 export class Server {
   private server: HttpServer;
@@ -12,15 +13,15 @@ export class Server {
     apiRouter: Router,
     widgetsRouter: Router,
     adminRouter: Router,
-    twitchProxy: any
+    twitch: Twitch
   ) {
     const app = express();
     app.use(
       morgan('http ":method :url" - :status - :response-time ms', {
-        stream: { write: (message: string) => log.info(message.slice(0, -1)) }
+        stream: { write: (message: string) => log.info(message.slice(0, -1)) },
       })
     );
-    app.use("/twitch-callback", twitchProxy);
+    twitch.applyMiddleware(app);
     app.use(json());
 
     app.use("/api", apiRouter);
@@ -45,6 +46,6 @@ export class Server {
   }
 
   public async close() {
-    return new Promise(resolve => this.server.close(resolve));
+    return new Promise((resolve) => this.server.close(resolve));
   }
 }

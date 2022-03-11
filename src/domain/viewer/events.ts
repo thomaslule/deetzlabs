@@ -19,11 +19,8 @@ export const gotAchievement = (achievement: string) =>
 export const replayedAchievement = (achievement: string) =>
   createEvent("replayed-achievement", { achievement });
 
-export const subscribed = (plan: string) =>
-  createEvent("subscribed", { version: 3, plan });
-
-export const resubscribed = (months: number, plan: string) =>
-  createEvent("resubscribed", { version: 3, months, plan });
+export const subscribed = (months: number, plan: string) =>
+  createEvent("subscribed", { version: 3, months, plan });
 
 export const gaveSub = (recipient: string, plan: string) =>
   createEvent("gave-sub", { version: 3, recipient, plan });

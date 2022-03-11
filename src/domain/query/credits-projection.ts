@@ -115,7 +115,7 @@ function reducer(state = emptyCredits(""), event: Event): Credits {
         }),
       };
     }
-    if (event.type === "subscribed" || event.type === "resubscribed") {
+    if (event.type === "subscribed") {
       return addItem(state, "subscribes", event.id);
     }
     if (event.type === "gave-sub") {

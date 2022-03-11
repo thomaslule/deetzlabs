@@ -34,7 +34,7 @@ export class Deetzlabs {
       api.getRouter(),
       widgets.getRouter(),
       admin.getRouter(),
-      this.twitch.getProxy()
+      this.twitch
     );
     widgets.setupSocket(this.server.get());
   }
@@ -44,10 +44,10 @@ export class Deetzlabs {
   }
 
   public async start() {
-    await Promise.all([this.domain.init(), this.twitch.connect()]);
     this.server.get().listen(this.opts.port, () => {
       log.info(`listening on ${this.opts.port}`);
     });
+    await Promise.all([this.domain.init(), this.twitch.connect()]);
   }
 
   public async stop() {

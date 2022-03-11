@@ -1,43 +1,70 @@
 import { EventEmitter } from "events";
-import * as proxy from "express-http-proxy";
 import { TwitchChannel } from "twitch-channel";
 import { Domain } from "./domain/domain";
 import { log } from "./log";
 import { Options } from "./options";
+import { Client } from "tmi.js";
+import { ClientCredentialsAuthProvider } from "@twurple/auth";
+import { ApiClient } from "@twurple/api";
+import { Express } from "express";
 
 export class Twitch {
   private channel: TwitchChannel;
-  private proxy: any;
   private bus = new EventEmitter();
   private intervalId?: NodeJS.Timer;
+  private bot: Client;
+  private api: ApiClient;
 
-  constructor(options: Options) {
+  constructor(private options: Options) {
     this.channel = new TwitchChannel({
       channel: options.channel,
-      bot_name: options.bot_name,
-      bot_token: options.bot_token,
-      client_id: options.client_id,
-      client_secret: options.client_secret,
-      streamlabs_socket_token: options.streamlabs_socket_token,
-      callback_url: `${options.self_url}/twitch-callback`,
-      secret: options.secret,
-      port: options.webhook_port,
+      clientId: options.client_id,
+      clientSecret: options.client_secret,
+      callbackUrl: `${options.self_url}/twitch-callback`,
+      removePreviousEventSubSubscriptions: true,
     });
-    this.channel.on("debug", (message) => {
-      log.debug("twitch-channel: %s", message);
+    this.bot = Client({
+      connection: {
+        secure: true,
+        reconnect: true,
+      },
+      identity: {
+        username: options.bot_name,
+        password: options.bot_token,
+      },
+      channels: [options.channel],
+      logger: {
+        info: (message) => {
+          log.debug("tmi.js: %s", message);
+        },
+        warn: (message) => {
+          log.warn("tmi.js: %s", message);
+        },
+        error: (message) => {
+          log.error("tmi.js: %s", message);
+        },
+      },
     });
-    this.channel.on("info", (message) => {
-      log.info("twitch-channel: %s", message);
+    this.channel.on("log", (logEvent) => {
+      if (logEvent.level === "error") {
+        log.error("twitch-channel: %s %s", logEvent.message, logEvent.error);
+      } else if (logEvent.level === "warn") {
+        log.warn("twitch-channel: %s", logEvent.message);
+      } else if (logEvent.level === "info") {
+        log.info("twitch-channel: %s", logEvent.message);
+      } else if (logEvent.level === "debug") {
+        log.debug("twitch-channel: %s", logEvent.message);
+      }
     });
-    this.channel.on("error", (err) => {
-      log.error("twitch-channel error");
-      log.error(err as string);
-    });
-    this.proxy = proxy(`http://localhost:${options.webhook_port}`);
+    const authProvider = new ClientCredentialsAuthProvider(
+      options.client_id,
+      options.client_secret
+    );
+    this.api = new ApiClient({ authProvider });
   }
 
   public say(message: string) {
-    this.channel.say(message);
+    this.bot.say(this.options.channel, message);
   }
 
   public connectToDomain(domain: Domain) {
@@ -68,63 +95,35 @@ export class Twitch {
       }
     );
 
-    this.channel.on("sub", async ({ viewerId, viewerName, plan, message }) => {
-      try {
-        const viewer = await domain.store.getViewer(viewerId);
-        const broadcastNo = domain.query.getBroadcastNumber();
-        await viewer.setName(viewerName);
-        await viewer.subscribe(plan || "1000", message, broadcastNo);
-      } catch (err) {
-        log.error("sub command error");
-        log.error(err as string);
-      }
-    });
-
     this.channel.on(
-      "resub",
-      async ({ viewerId, viewerName, months, plan, message }) => {
+      "sub",
+      async ({ viewerId, viewerName, tier, message, months }) => {
         try {
           const viewer = await domain.store.getViewer(viewerId);
           const broadcastNo = domain.query.getBroadcastNumber();
           await viewer.setName(viewerName);
-          await viewer.resub(months || 0, plan || "1000", message, broadcastNo);
+          await viewer.subscribe(months, tier, message, broadcastNo);
         } catch (err) {
-          log.error("resub command error");
+          log.error("sub command error");
           log.error(err as string);
         }
       }
     );
 
     this.channel.on(
-      "subgift",
-      async ({ viewerId, viewerName, recipientId, recipientName, plan }) => {
+      "sub-gift-received",
+      async ({ gifterId, gifterName, recipientId, recipientName, tier }) => {
         try {
-          const viewer = await domain.store.getViewer(viewerId);
-          await viewer.setName(viewerName);
-          await viewer.giveSub(recipientId, plan || "1000");
+          if (gifterId) {
+            const gifter = await domain.store.getViewer(gifterId);
+            await gifter.setName(gifterName!);
+            await gifter.giveSub(recipientId, tier);
+          }
           const recipient = await domain.store.getViewer(recipientId);
           await recipient.setName(recipientName);
         } catch (err) {
-          log.error("subgift command error");
+          log.error("sub-gift-received command error");
           log.error(err as string);
-        }
-      }
-    );
-
-    this.channel.on(
-      "streamlabs/donation",
-      async ({ viewerId, viewerName, amount, message }) => {
-        if (viewerId) {
-          try {
-            const viewer = await domain.store.getViewer(viewerId);
-            await viewer.setName(viewerName);
-            await viewer.donate(amount, message);
-          } catch (err) {
-            log.error("donation command error");
-            log.error(err as string);
-          }
-        } else {
-          log.info("got a donation from an unknown viewer: %s", viewerName);
         }
       }
     );
@@ -173,22 +172,22 @@ export class Twitch {
       }
     });
 
-    this.channel.on("stream-begin", async ({ game }) => {
+    this.channel.on("stream-begin", async ({ categoryName }) => {
       try {
         const broadcast = await domain.store.getBroadcast();
-        await broadcast.begin(game);
+        await broadcast.begin(categoryName);
       } catch (err) {
         log.error("stream-begin command error");
         log.error(err as string);
       }
     });
 
-    this.channel.on("stream-change-game", async ({ game }) => {
+    this.channel.on("stream-change-category", async ({ categoryName }) => {
       try {
         const broadcast = await domain.store.getBroadcast();
-        await broadcast.changeGame(game);
+        await broadcast.changeGame(categoryName);
       } catch (err) {
-        log.error("stream-change-game command error");
+        log.error("stream-change-category command error");
         log.error(err as string);
       }
     });
@@ -215,15 +214,17 @@ export class Twitch {
 
   public async getViewer(
     viewerName: string
-  ): Promise<{ id: string; display_name: string } | undefined> {
-    const twitchViewer = await this.channel.getTwitchUserByName(viewerName);
-    return twitchViewer
-      ? (twitchViewer as unknown as { id: string; display_name: string })
-      : undefined;
+  ): Promise<{ viewerId: string; viewerName: string } | undefined> {
+    const viewer = await this.api.users.getUserByName(viewerName);
+    if (!viewer) {
+      return undefined;
+    }
+    return { viewerId: viewer.id, viewerName: viewer.displayName };
   }
 
   public async connect(): Promise<void> {
     await this.channel.connect();
+    await this.bot.connect();
     await this.fetchTopClipper();
     this.intervalId = setInterval(async () => {
       try {
@@ -236,23 +237,30 @@ export class Twitch {
 
   public async disconnect(): Promise<void> {
     await this.channel.disconnect();
+    await this.bot.disconnect();
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
   }
 
-  public getProxy(): any {
-    return this.proxy;
+  public applyMiddleware(server: Express): void {
+    this.channel.applyEventSubMiddleware(server);
   }
 
   private async fetchTopClipper() {
-    const topClipper = await this.channel.getTopClipper();
-    log.info(
-      "fetched top clipper: %s",
-      topClipper ? topClipper.viewerName : undefined
+    const lastWeek = new Date(
+      new Date().getTime() - 7 * 24 * 60 * 60 * 1000
+    ).toISOString();
+    const topClips = await this.api.clips.getClipsForBroadcaster(
+      this.options.channel,
+      { limit: 1, startDate: lastWeek }
     );
-    if (topClipper !== undefined) {
-      this.bus.emit("top-clipper", topClipper);
+    if (topClips.data.length > 0) {
+      const topClip = topClips.data[0];
+      this.bus.emit("top-clipper", {
+        viewerId: topClip.creatorId,
+        viewerName: topClip.creatorDisplayName,
+      });
     }
   }
 }

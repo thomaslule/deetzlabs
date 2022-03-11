@@ -16,7 +16,6 @@ import {
   lostTopClipper,
   raided,
   replayedAchievement,
-  resubscribed,
   sentChatMessage,
   subscribed,
   gotUnban,
@@ -92,16 +91,7 @@ export class Viewer extends Entity<DecisionState> {
     await this.chatMessage(message, broadcastNo);
   }
 
-  public async subscribe(plan: string, message?: string, broadcastNo?: number) {
-    ow(plan, ow.string);
-    const event = await this.publishAndApply(subscribed(plan));
-    await this.distributeAchievements(event);
-    if (message) {
-      await this.chatMessage(message, broadcastNo);
-    }
-  }
-
-  public async resub(
+  public async subscribe(
     months: number,
     plan: string,
     message?: string,
@@ -109,7 +99,7 @@ export class Viewer extends Entity<DecisionState> {
   ) {
     ow(months, ow.number);
     ow(plan, ow.string);
-    const event = await this.publishAndApply(resubscribed(months, plan));
+    const event = await this.publishAndApply(subscribed(months, plan));
     await this.distributeAchievements(event);
     if (message) {
       await this.chatMessage(message, broadcastNo);

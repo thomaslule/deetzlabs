@@ -149,12 +149,13 @@ describe("Viewer", () => {
       const publish = jest.fn().mockImplementation((event) => event);
       const someone = getViewer(publish);
 
-      await someone.subscribe("1000", "hi");
+      await someone.subscribe(6, "1000", "hi");
 
       expect(publish).toHaveBeenCalledTimes(2);
       expect(publish.mock.calls[0][0]).toMatchObject({
         type: "subscribed",
         version: 3,
+        months: 6,
         plan: "1000",
       });
       expect(publish.mock.calls[1][0]).toMatchObject({
@@ -166,33 +167,14 @@ describe("Viewer", () => {
       const publish = jest.fn().mockImplementation((event) => event);
       const someone = getViewer(publish);
 
-      await someone.subscribe("1000");
+      await someone.subscribe(6, "1000");
 
       expect(publish).toHaveBeenCalledTimes(1);
       expect(publish.mock.calls[0][0]).toMatchObject({
         type: "subscribed",
         version: 3,
-        plan: "1000",
-      });
-    });
-  });
-
-  describe("resub", () => {
-    test("it should publish a sent-chat-message and a resubscribed event", async () => {
-      const publish = jest.fn().mockImplementation((event) => event);
-      const someone = getViewer(publish);
-
-      await someone.resub(6, "1000", "hi");
-
-      expect(publish).toHaveBeenCalledTimes(2);
-      expect(publish.mock.calls[0][0]).toMatchObject({
-        type: "resubscribed",
-        version: 3,
         months: 6,
         plan: "1000",
-      });
-      expect(publish.mock.calls[1][0]).toMatchObject({
-        type: "sent-chat-message",
       });
     });
   });

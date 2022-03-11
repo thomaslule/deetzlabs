@@ -5,15 +5,12 @@ import { Obj } from "./util";
 const defaultOptions: Options = {
   port: 3100,
   self_url: "http://localhost",
-  webhook_port: 3333,
   db_url: "postgresql://postgres:admin@localhost:5432/deetzlabs",
   channel: "",
   client_id: "",
   client_secret: "",
   bot_name: "",
   bot_token: "",
-  streamlabs_socket_token: "",
-  secret: "",
   protect_api: true,
   logins: [],
   log_level: "info",
@@ -28,15 +25,12 @@ const defaultOptions: Options = {
 export interface Options {
   port: number;
   self_url: string;
-  webhook_port: number;
   db_url: string;
   channel: string;
   client_id: string;
   client_secret: string;
   bot_name: string;
   bot_token: string;
-  streamlabs_socket_token: string;
-  secret: string;
   protect_api: boolean;
   logins: string[];
   log_level: string;
