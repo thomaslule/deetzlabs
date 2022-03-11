@@ -37,7 +37,7 @@ export class Domain {
     options: Options
   ) {
     const bus = new EventBus(this.storage.getEventStorage());
-    bus.on("error", err => {
+    bus.on("error", (err) => {
       log.error("An error happened in an event handler");
       log.error(err);
     });
@@ -55,15 +55,15 @@ export class Domain {
       },
       getViewer(id) {
         return viewer.get(id);
-      }
+      },
     };
     this.service = {
       async setTopClipper(id, name) {
         await viewer.setTopClipper(id, name, query);
-      }
+      },
     };
 
-    bus.onEvent(event => {
+    bus.onEvent((event) => {
       log.info(
         `event happened: %s %s %s`,
         event.aggregate,
@@ -72,7 +72,7 @@ export class Domain {
       );
     });
     bus.onEvent(
-      commandsListener(this.query, msg => this.sendChatMessage(msg), options)
+      commandsListener(this.query, (msg) => this.sendChatMessage(msg), options)
     );
     bus.onEvent(
       displayAchievementListener(
@@ -100,13 +100,13 @@ export class Domain {
     const rebuildStreams = [
       this.viewer.decisionRebuildStream(),
       ...this.query.rebuildStreams(),
-      this.logStream()
+      this.logStream(),
     ];
     const events = this.storage.getEventStorage().getEvents();
     events.setMaxListeners(Infinity);
     await Promise.all(
       rebuildStreams.map(
-        stream =>
+        (stream) =>
           new Promise((resolve, reject) => {
             events.pipe(stream);
             stream.on("finish", resolve);
@@ -125,7 +125,7 @@ export class Domain {
       }
     } catch (err) {
       log.error("error while trying to send a chat message");
-      log.error(err);
+      log.error(err as Error);
     }
   }
 
@@ -142,7 +142,7 @@ export class Domain {
       }
     } catch (err) {
       log.error("error while trying to send a chat message");
-      log.error(err);
+      log.error(err as Error);
     }
   }
 
@@ -156,7 +156,7 @@ export class Domain {
           log.info(`read ${count} events...`);
         }
         callback();
-      }
+      },
     });
   }
 }

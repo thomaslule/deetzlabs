@@ -4,7 +4,7 @@ import {
   achievementVolumeChanged,
   followersGoalChanged,
   muted,
-  unmuted
+  unmuted,
 } from "./events";
 
 export class Settings extends Entity<undefined> {

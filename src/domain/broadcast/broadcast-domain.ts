@@ -2,7 +2,7 @@ import {
   EventBus,
   EventStorage,
   FromEventsDecisionProvider,
-  Store
+  Store,
 } from "es-objects";
 import { Broadcast, decisionReducer } from "./broadcast";
 
@@ -19,7 +19,7 @@ export class BroadcastDomain {
       (id, decisionSequence, publish) =>
         new Broadcast(decisionSequence, publish),
       decisionProvider,
-      event => eventBus.publish(event)
+      (event) => eventBus.publish(event)
     );
   }
 

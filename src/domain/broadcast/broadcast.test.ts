@@ -9,11 +9,11 @@ describe("Broadcast", () => {
     id: "broadcast",
     sequence: 0,
     date: expect.anything(),
-    version: 1
+    version: 1,
   };
 
   beforeEach(() => {
-    publish = jest.fn().mockImplementation(event => event);
+    publish = jest.fn().mockImplementation((event) => event);
     broadcast = new Broadcast(
       { sequence: -1, decision: { broadcasting: false, game: undefined } },
       publish

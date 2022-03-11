@@ -35,19 +35,19 @@ function reducer(
     return {
       number: state.number + 1,
       isBroadcasting: true,
-      game: event.game
+      game: event.game,
     };
   }
   if (event.type === "changed-game") {
     return {
       ...state,
-      game: event.game
+      game: event.game,
     };
   }
   if (event.type === "ended") {
     return {
       ...state,
-      isBroadcasting: false
+      isBroadcasting: false,
     };
   }
   return state;

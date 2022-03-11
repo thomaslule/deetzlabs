@@ -21,14 +21,14 @@ describe("PgViewerStorage", () => {
       id: "123",
       name: "Someone",
       lastAction,
-      banned: false
+      banned: false,
     });
     await storage.update("123", lastAction, "Someone2");
     expect(await storage.get("123")).toEqual({
       id: "123",
       name: "Someone2",
       lastAction,
-      banned: false
+      banned: false,
     });
     await storage.deleteAll();
     expect(await storage.get("123")).toBeUndefined();
@@ -41,7 +41,7 @@ describe("PgViewerStorage", () => {
       id: "123",
       name: "",
       lastAction,
-      banned: false
+      banned: false,
     });
     const lastAction2 = new Date(2018, 1, 2);
     await storage.update("123", lastAction2);
@@ -49,7 +49,7 @@ describe("PgViewerStorage", () => {
       id: "123",
       name: "",
       lastAction: lastAction2,
-      banned: false
+      banned: false,
     });
   });
 
@@ -61,14 +61,14 @@ describe("PgViewerStorage", () => {
       id: "123",
       name: "",
       lastAction,
-      banned: true
+      banned: true,
     });
     await storage.update("123", lastAction, undefined, false);
     expect(await storage.get("123")).toEqual({
       id: "123",
       name: "",
       lastAction,
-      banned: false
+      banned: false,
     });
     await storage.deleteAll();
     expect(await storage.get("123")).toBeUndefined();
@@ -82,7 +82,7 @@ describe("PgViewerStorage", () => {
       name: "Someone",
       lastAction,
       banned: false,
-      achievements: []
+      achievements: [],
     });
     await storage.addAchievement("123", "cheerleader", lastAction);
     expect(await storage.getWithAchievements("123")).toEqual({
@@ -90,7 +90,7 @@ describe("PgViewerStorage", () => {
       name: "Someone",
       lastAction,
       banned: false,
-      achievements: ["cheerleader"]
+      achievements: ["cheerleader"],
     });
     await storage.addAchievement("123", "supporter", lastAction);
     expect(await storage.getWithAchievements("123")).toEqual({
@@ -98,7 +98,7 @@ describe("PgViewerStorage", () => {
       name: "Someone",
       lastAction,
       banned: false,
-      achievements: ["cheerleader", "supporter"]
+      achievements: ["cheerleader", "supporter"],
     });
   });
 
@@ -112,7 +112,7 @@ describe("PgViewerStorage", () => {
 
     expect(viewers).toEqual([
       { id: "123", name: "Someone", lastAction, banned: false },
-      { id: "456", name: "Other", lastAction, banned: false }
+      { id: "456", name: "Other", lastAction, banned: false },
     ]);
   });
 
@@ -148,20 +148,20 @@ describe("PgViewerStorage", () => {
         achievement: "supporter",
         viewerId: "123",
         viewerName: "Someone",
-        date: date1
+        date: date1,
       },
       {
         achievement: "supporter",
         viewerId: "456",
         viewerName: "Other",
-        date: date2
+        date: date2,
       },
       {
         achievement: "cheerleader",
         viewerId: "123",
         viewerName: "Someone",
-        date: date3
-      }
+        date: date3,
+      },
     ]);
   });
 
@@ -185,14 +185,14 @@ describe("PgViewerStorage", () => {
         achievement: "cheerleader",
         viewerId: "123",
         viewerName: "Someone",
-        date: date3
+        date: date3,
       },
       {
         achievement: "supporter",
         viewerId: "456",
         viewerName: "Other",
-        date: date2
-      }
+        date: date2,
+      },
     ]);
   });
 });

@@ -9,11 +9,11 @@ describe("commandsListener", () => {
       getViewerWithAchievements: jest.fn().mockResolvedValue({
         name: "Someone",
         achievements: ["cheerleader"],
-        banned: false
-      })
+        banned: false,
+      }),
     };
     const listener = commandsListener(
-      (query as unknown) as Query,
+      query as unknown as Query,
       sendChatMessage,
       testOptions
     );
@@ -21,7 +21,7 @@ describe("commandsListener", () => {
     await listener(
       makeViewerEvent({
         type: "sent-chat-message",
-        message: { achievementsCommand: true }
+        message: { achievementsCommand: true },
       })
     );
 
@@ -33,10 +33,10 @@ describe("commandsListener", () => {
   test("it should throw if it cannot get the viewer state", async () => {
     const sendChatMessage = jest.fn();
     const query = {
-      getViewerWithAchievements: jest.fn().mockResolvedValue(undefined)
+      getViewerWithAchievements: jest.fn().mockResolvedValue(undefined),
     };
     const listener = commandsListener(
-      (query as unknown) as Query,
+      query as unknown as Query,
       sendChatMessage,
       testOptions
     );
@@ -45,7 +45,7 @@ describe("commandsListener", () => {
       listener(
         makeViewerEvent({
           type: "sent-chat-message",
-          message: { achievementsCommand: true }
+          message: { achievementsCommand: true },
         })
       )
     ).rejects.toThrow("couldnt get the viewer 123");
@@ -57,11 +57,11 @@ describe("commandsListener", () => {
       getViewerWithAchievements: jest.fn().mockResolvedValue({
         name: "Someone",
         achievements: [],
-        banned: false
-      })
+        banned: false,
+      }),
     };
     const listener = commandsListener(
-      (query as unknown) as Query,
+      query as unknown as Query,
       sendChatMessage,
       testOptions
     );
@@ -77,11 +77,11 @@ describe("commandsListener", () => {
       getViewerWithAchievements: jest.fn().mockResolvedValue({
         name: "Someone",
         achievements: [],
-        banned: true
-      })
+        banned: true,
+      }),
     };
     const listener = commandsListener(
-      (query as unknown) as Query,
+      query as unknown as Query,
       sendChatMessage,
       testOptions
     );

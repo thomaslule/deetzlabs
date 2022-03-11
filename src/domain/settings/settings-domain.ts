@@ -3,7 +3,7 @@ import {
   DecisionSequence,
   EventBus,
   EventStorage,
-  Store
+  Store,
 } from "es-objects";
 import { Settings } from "./settings";
 
@@ -15,7 +15,7 @@ export class SettingsDomain {
       (id, decisionSequence, publish) =>
         new Settings(decisionSequence, publish),
       new VoidDecisionProvider(eventStorage),
-      event => eventBus.publish(event)
+      (event) => eventBus.publish(event)
     );
   }
 

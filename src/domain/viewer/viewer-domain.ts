@@ -3,7 +3,7 @@ import {
   makeDecisionReducer,
   PersistedDecisionProvider,
   projectFromEvents,
-  Store
+  Store,
 } from "es-objects";
 import * as logger from "winston";
 import { PgStorage } from "../../storage/pg-storage";
@@ -28,8 +28,8 @@ export class ViewerDomain {
       (id, decisionSequence, publish) =>
         new Viewer(id, decisionSequence, publish, this.options),
       this.viewerDecisionProvider,
-      event =>
-        eventBus.publish(event).catch(err => {
+      (event) =>
+        eventBus.publish(event).catch((err) => {
           this.rebuildDecisionFor(event.id);
           throw err;
         })

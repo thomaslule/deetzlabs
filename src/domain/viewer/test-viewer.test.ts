@@ -22,7 +22,7 @@ describe("TestViewer", () => {
       version: 1,
       type: "cheered",
       date: "2018-01-01T12:00:00.000Z",
-      amount: 500
+      amount: 500,
     });
     expect(viewer.hasAchievement("cheerleader")).toBeTruthy();
   });

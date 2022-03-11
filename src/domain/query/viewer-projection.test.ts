@@ -25,8 +25,8 @@ describe("ViewersProjection", () => {
         type: "migrated-data",
         achievements: [
           { achievement: "cheerleader", date: cheerleaderDate.toISOString() },
-          { achievement: "supporter", date: supporterDate.toISOString() }
-        ]
+          { achievement: "supporter", date: supporterDate.toISOString() },
+        ],
       })
     );
     const stored = await storage.getAllAchievements();
@@ -35,14 +35,14 @@ describe("ViewersProjection", () => {
         achievement: "cheerleader",
         viewerId: "123",
         viewerName: "Someone",
-        date: cheerleaderDate
+        date: cheerleaderDate,
       },
       {
         achievement: "supporter",
         viewerId: "123",
         viewerName: "Someone",
-        date: supporterDate
-      }
+        date: supporterDate,
+      },
     ]);
   });
 });

@@ -16,12 +16,12 @@ export class CreditsProjection extends PersistedReduceProjection<Credits> {
         ...credits.hosts,
         ...credits.donators,
         ...credits.follows,
-        ...credits.achievements.map(a => a.viewer)
+        ...credits.achievements.map((a) => a.viewer),
       ])
     );
     const viewers = await viewerStorage.getMany(viewerIds);
     function getViewer(id: string) {
-      const viewer = viewers.find(viewer => viewer.id === id);
+      const viewer = viewers.find((viewer) => viewer.id === id);
       if (viewer === undefined) {
         log.error(`couldnt find name of ${id}`);
         return undefined;
@@ -30,9 +30,9 @@ export class CreditsProjection extends PersistedReduceProjection<Credits> {
     }
     function getViewerNames(viewerIds: string[]): string[] {
       return viewerIds
-        .map(id => getViewer(id))
-        .map(viewer => (viewer === undefined ? undefined : viewer.name))
-        .filter(name => name !== undefined) as string[];
+        .map((id) => getViewer(id))
+        .map((viewer) => (viewer === undefined ? undefined : viewer.name))
+        .filter((name) => name !== undefined) as string[];
     }
     return {
       games: credits.games,
@@ -42,16 +42,16 @@ export class CreditsProjection extends PersistedReduceProjection<Credits> {
       donators: getViewerNames(credits.donators),
       follows: getViewerNames(credits.follows),
       achievements: credits.achievements
-        .map(a => {
+        .map((a) => {
           const viewer = getViewer(a.viewer);
           return viewer === undefined
             ? undefined
             : {
                 viewer: viewer.name,
-                achievement: this.options.achievements[a.achievement].name
+                achievement: this.options.achievements[a.achievement].name,
               };
         })
-        .filter(a => a !== undefined) as CreditsAchievement[]
+        .filter((a) => a !== undefined) as CreditsAchievement[],
     };
   }
 }
@@ -79,7 +79,7 @@ function emptyCredits(game: string): Credits {
     achievements: [],
     subscribes: [],
     donators: [],
-    follows: []
+    follows: [],
   };
 }
 
@@ -111,8 +111,8 @@ function reducer(state = emptyCredits(""), event: Event): Credits {
         ...state,
         achievements: state.achievements.concat({
           viewer: event.id,
-          achievement: event.achievement
-        })
+          achievement: event.achievement,
+        }),
       };
     }
     if (event.type === "subscribed" || event.type === "resubscribed") {

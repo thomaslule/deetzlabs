@@ -8,7 +8,8 @@
     "prepublishOnly": "npm run build",
     "build": "rimraf ./lib && tsc && copyfiles -u 1 \"./src/widgets/public/**/*\" ./lib",
     "test": "jest --runInBand",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "lint": "eslint src"
   },
   "husky": {
     "hooks": {
@@ -30,26 +31,27 @@
     "@types/jest": "^23.3.2",
     "@types/lodash.mapvalues": "^4.6.4",
     "@types/morgan": "^1.7.35",
-    "@types/node": "^10.10.0",
+    "@types/node": "^16.11.7",
     "@types/node-fetch": "^2.5.5",
     "@types/pg": "^7.4.10",
     "@types/pg-query-stream": "^1.0.2",
     "@types/socket.io": "^1.4.38",
     "@types/stream-to-array": "^2.3.0",
+    "@typescript-eslint/eslint-plugin": "^5.14.0",
+    "@typescript-eslint/parser": "^5.14.0",
     "babel-core": "^6.26.3",
     "babel-jest": "^25.1.0",
     "copyfiles": "^2.1.0",
+    "eslint": "^8.10.0",
     "husky": "^1.3.1",
     "jest": "^25.1.0",
     "nodemon": "^2.0.2",
-    "prettier": "1.15.3",
+    "prettier": "^2.5.1",
     "pretty-quick": "^1.10.0",
     "rimraf": "^2.6.2",
     "ts-jest": "^23.1.4",
     "ts-node": "^8.6.2",
-    "tslint": "^5.11.0",
-    "tslint-config-prettier": "^1.17.0",
-    "typescript": "^3.0.3"
+    "typescript": "^4.6.2"
   },
   "dependencies": {
     "body-parser": "^1.18.3",

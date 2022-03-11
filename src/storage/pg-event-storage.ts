@@ -48,19 +48,19 @@ export class PgEventStorage implements EventStorage {
     const stream = new PassThrough({ objectMode: true });
     this.db
       .connect()
-      .then(client => {
+      .then((client) => {
         client
           .query(query)
           .on("end", () => {
             client.release();
           })
-          .on("error", err => {
+          .on("error", (err) => {
             client.release();
             stream.emit("error", err);
           })
           .pipe(stream);
       })
-      .catch(err => {
+      .catch((err) => {
         stream.emit("error", err);
       });
     return stream;
@@ -73,6 +73,6 @@ function rowToEvent() {
     transform(row, encoding, callback) {
       this.push(row.event);
       callback();
-    }
+    },
   });
 }

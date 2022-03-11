@@ -44,7 +44,7 @@ describe("ViewerDomain", () => {
       const query = new Query(storage, bus, testOptions);
       await domain.setTopClipper("123", "Someone", query);
       await wait();
-      bus.onEvent(e => {
+      bus.onEvent((e) => {
         if (e.type.includes("top-clipper")) {
           handleEvent(e);
         }
@@ -56,11 +56,11 @@ describe("ViewerDomain", () => {
       expect(handleEvent).toHaveBeenCalledTimes(2);
       expect(handleEvent.mock.calls[0][0]).toMatchObject({
         id: "123",
-        type: "lost-top-clipper"
+        type: "lost-top-clipper",
       });
       expect(handleEvent.mock.calls[1][0]).toMatchObject({
         id: "456",
-        type: "became-top-clipper"
+        type: "became-top-clipper",
       });
     });
 
@@ -70,7 +70,7 @@ describe("ViewerDomain", () => {
       const handleEvent = jest.fn();
       const domain = new ViewerDomain(bus, storage, testOptions);
       const query = new Query(storage, bus, testOptions);
-      bus.onEvent(e => {
+      bus.onEvent((e) => {
         if (e.type.includes("top-clipper")) {
           handleEvent(e);
         }
@@ -82,7 +82,7 @@ describe("ViewerDomain", () => {
       expect(handleEvent).toHaveBeenCalledTimes(1);
       expect(handleEvent.mock.calls[0][0]).toMatchObject({
         id: "123",
-        type: "became-top-clipper"
+        type: "became-top-clipper",
       });
     });
 
@@ -94,7 +94,7 @@ describe("ViewerDomain", () => {
       const query = new Query(storage, bus, testOptions);
       await domain.setTopClipper("123", "Someone", query);
       await wait();
-      bus.onEvent(e => {
+      bus.onEvent((e) => {
         if (e.type.includes("top-clipper")) {
           handleEvent(e);
         }

@@ -21,15 +21,15 @@ export class Twitch {
       streamlabs_socket_token: options.streamlabs_socket_token,
       callback_url: `${options.self_url}/twitch-callback`,
       secret: options.secret,
-      port: options.webhook_port
+      port: options.webhook_port,
     });
-    this.channel.on("debug", message => {
+    this.channel.on("debug", (message) => {
       log.debug("twitch-channel: %s", message);
     });
-    this.channel.on("info", message => {
+    this.channel.on("info", (message) => {
       log.info("twitch-channel: %s", message);
     });
-    this.channel.on("error", err => {
+    this.channel.on("error", (err) => {
       log.error("twitch-channel error");
       log.error(err as string);
     });
@@ -49,7 +49,7 @@ export class Twitch {
         await viewer.chatMessage(message, broadcastNo);
       } catch (err) {
         log.error("chat command error");
-        log.error(err);
+        log.error(err as string);
       }
     });
 
@@ -63,7 +63,7 @@ export class Twitch {
           await viewer.cheer(amount, message, broadcastNo);
         } catch (err) {
           log.error("cheer command error");
-          log.error(err);
+          log.error(err as string);
         }
       }
     );
@@ -76,7 +76,7 @@ export class Twitch {
         await viewer.subscribe(plan || "1000", message, broadcastNo);
       } catch (err) {
         log.error("sub command error");
-        log.error(err);
+        log.error(err as string);
       }
     });
 
@@ -90,7 +90,7 @@ export class Twitch {
           await viewer.resub(months || 0, plan || "1000", message, broadcastNo);
         } catch (err) {
           log.error("resub command error");
-          log.error(err);
+          log.error(err as string);
         }
       }
     );
@@ -106,7 +106,7 @@ export class Twitch {
           await recipient.setName(recipientName);
         } catch (err) {
           log.error("subgift command error");
-          log.error(err);
+          log.error(err as string);
         }
       }
     );
@@ -121,7 +121,7 @@ export class Twitch {
             await viewer.donate(amount, message);
           } catch (err) {
             log.error("donation command error");
-            log.error(err);
+            log.error(err as string);
           }
         } else {
           log.info("got a donation from an unknown viewer: %s", viewerName);
@@ -136,7 +136,7 @@ export class Twitch {
         await viewer.host(viewers);
       } catch (err) {
         log.error("host command error");
-        log.error(err);
+        log.error(err as string);
       }
     });
 
@@ -147,7 +147,7 @@ export class Twitch {
         await viewer.raid(viewers);
       } catch (err) {
         log.error("raid command error");
-        log.error(err);
+        log.error(err as string);
       }
     });
 
@@ -158,7 +158,7 @@ export class Twitch {
         await viewer.follow();
       } catch (err) {
         log.error("follow command error");
-        log.error(err);
+        log.error(err as string);
       }
     });
 
@@ -169,7 +169,7 @@ export class Twitch {
         await viewer.receiveBan();
       } catch (err) {
         log.error("ban command error");
-        log.error(err);
+        log.error(err as string);
       }
     });
 
@@ -179,7 +179,7 @@ export class Twitch {
         await broadcast.begin(game);
       } catch (err) {
         log.error("stream-begin command error");
-        log.error(err);
+        log.error(err as string);
       }
     });
 
@@ -189,7 +189,7 @@ export class Twitch {
         await broadcast.changeGame(game);
       } catch (err) {
         log.error("stream-change-game command error");
-        log.error(err);
+        log.error(err as string);
       }
     });
 
@@ -199,7 +199,7 @@ export class Twitch {
         await broadcast.end();
       } catch (err) {
         log.error("stream-end command error");
-        log.error(err);
+        log.error(err as string);
       }
     });
 
@@ -208,14 +208,18 @@ export class Twitch {
         await domain.service.setTopClipper(viewerId, viewerName);
       } catch (err) {
         log.error("top-clipper command error");
-        log.error(err);
+        log.error(err as string);
       }
     });
   }
 
-  public async getViewer(viewerName: string) {
+  public async getViewer(
+    viewerName: string
+  ): Promise<{ id: string; display_name: string } | undefined> {
     const twitchViewer = await this.channel.getTwitchUserByName(viewerName);
-    return twitchViewer ? twitchViewer : undefined;
+    return twitchViewer
+      ? (twitchViewer as unknown as { id: string; display_name: string })
+      : undefined;
   }
 
   public async connect(): Promise<void> {
@@ -225,7 +229,7 @@ export class Twitch {
       try {
         this.fetchTopClipper();
       } catch (err) {
-        log.error(err);
+        log.error(err as string);
       }
     }, 30 * 60 * 1000);
   }

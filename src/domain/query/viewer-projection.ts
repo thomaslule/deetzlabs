@@ -57,7 +57,7 @@ export class ViewerProjection implements Rebuildable {
           await handleEvent(event);
           callback();
         } catch (err) {
-          callback(err);
+          callback(err as Error);
         }
       },
       async final(callback) {
@@ -67,9 +67,9 @@ export class ViewerProjection implements Rebuildable {
           }
           callback();
         } catch (err) {
-          callback(err);
+          callback(err as Error);
         }
-      }
+      },
     });
   }
 }

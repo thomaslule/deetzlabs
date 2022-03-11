@@ -10,7 +10,7 @@ body {
   position: relative;
   transform: scale(0);
   transition: 250ms ease-in-out;
-  box-shadow: 0 3px 20px #1E7195;
+  box-shadow: 0 3px 20px #1e7195;
 }
 #achievement.expand {
   transform: scale(1);
@@ -26,7 +26,7 @@ body {
   width: 160px;
   height: 160px;
   border-radius: 50%;
-  background: #E4BF2B;
+  background: #e4bf2b;
   position: absolute;
   top: 20px;
   left: 20px;

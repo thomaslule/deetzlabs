@@ -50,6 +50,7 @@ export class Api {
     this.router.get(
       "/check_token",
       getAuthenticationMiddleware(this.options),
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       (req: Request, res: Response, next: NextFunction) => {
         res.sendStatus(204);
       }
@@ -98,9 +99,9 @@ export class Api {
         try {
           const achievements = mapValues(
             this.options.achievements,
-            achievement => ({
+            (achievement) => ({
               name: achievement.name,
-              description: achievement.description
+              description: achievement.description,
             })
           );
           res.send(achievements);
@@ -162,12 +163,8 @@ export class Api {
     this.router.post(
       "/give_achievement",
       getAuthenticationMiddleware(this.options),
-      check("achievement")
-        .not()
-        .isEmpty(),
-      check("viewerName")
-        .not()
-        .isEmpty(),
+      check("achievement").not().isEmpty(),
+      check("viewerName").not().isEmpty(),
       validationMiddleware,
       async (req: any, res: Response, next: NextFunction) => {
         try {
@@ -191,12 +188,8 @@ export class Api {
     this.router.post(
       "/replay_achievement",
       getAuthenticationMiddleware(this.options),
-      check("achievement")
-        .not()
-        .isEmpty(),
-      check("viewerId")
-        .not()
-        .isEmpty(),
+      check("achievement").not().isEmpty(),
+      check("viewerId").not().isEmpty(),
       validationMiddleware,
       async (req: any, res: Response, next: NextFunction) => {
         try {

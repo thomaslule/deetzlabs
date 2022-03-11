@@ -4,7 +4,7 @@ export class TopClipperProjection extends PersistedReduceProjection<
   string | undefined
 > {
   constructor(storage: ValueStorage<string | undefined>) {
-    super(reducer, storage, event => event.aggregate === "viewer");
+    super(reducer, storage, (event) => event.aggregate === "viewer");
   }
 }
 

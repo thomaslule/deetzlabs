@@ -1,19 +1,24 @@
-const ding = new Audio('ding.mp3');
+const ding = new Audio("ding.mp3");
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function showAchievement(achievement) {
   ding.volume = Number(achievement.volume);
-  $('#achievement-name').text(achievement.achievement);
-  $('#achievement-text').html($(`<div>${achievement.text}</div>`).text().replace('%USER%', `<strong>${achievement.username}</strong>`));
+  $("#achievement-name").text(achievement.achievement);
+  $("#achievement-text").html(
+    $(`<div>${achievement.text}</div>`)
+      .text()
+      .replace("%USER%", `<strong>${achievement.username}</strong>`)
+  );
   setTimeout(() => ding.play(), 1000);
 
-  $('#achievement .circle').removeClass('rotate');
+  $("#achievement .circle").removeClass("rotate");
   // Run the animations
   setTimeout(() => {
-    $('#achievement').addClass('expand');
+    $("#achievement").addClass("expand");
     setTimeout(() => {
-      $('#achievement').addClass('widen');
+      $("#achievement").addClass("widen");
       setTimeout(() => {
-        $('#achievement .copy').addClass('show');
+        $("#achievement .copy").addClass("show");
       }, 1000);
     }, 1000);
   }, 1000);
@@ -25,12 +30,12 @@ function showAchievement(achievement) {
 
 function hideAchievement() {
   setTimeout(() => {
-    $('#achievement .copy').removeClass('show');
+    $("#achievement .copy").removeClass("show");
     setTimeout(() => {
-      $('#achievement').removeClass('widen');
-      $('#achievement .circle').addClass('rotate');
+      $("#achievement").removeClass("widen");
+      $("#achievement .circle").addClass("rotate");
       setTimeout(() => {
-        $('#achievement').removeClass('expand');
+        $("#achievement").removeClass("expand");
       }, 1000);
     }, 1000);
   }, 3000);

@@ -6,7 +6,7 @@ export class PgViewerStorage {
       id: row.id,
       name: row.name,
       lastAction: row.last_action,
-      banned: row.banned
+      banned: row.banned,
     };
   }
 
@@ -14,7 +14,7 @@ export class PgViewerStorage {
 
   public async get(id: string): Promise<PgViewer | undefined> {
     const result = await this.db.query("select * from viewers where id = $1", [
-      id
+      id,
     ]);
     return result.rowCount === 0
       ? undefined
@@ -33,7 +33,7 @@ export class PgViewerStorage {
     const result = await this.db.query(
       "select name from viewers order by last_action desc limit 100"
     );
-    return result.rows.map(row => row.name);
+    return result.rows.map((row) => row.name);
   }
 
   public async getWithAchievements(
@@ -54,7 +54,7 @@ export class PgViewerStorage {
     return result.rows.reduce(
       (state, row) => ({
         ...PgViewerStorage.rowToPgViewer(row),
-        achievements: (state.achievements || []).concat(row.achievement || [])
+        achievements: (state.achievements || []).concat(row.achievement || []),
       }),
       {}
     );
@@ -68,11 +68,11 @@ export class PgViewerStorage {
       where viewers.banned = FALSE
       order by achievements.date
     `);
-    return result.rows.map(row => ({
+    return result.rows.map((row) => ({
       achievement: row.achievement,
       viewerId: row.viewerid,
       date: row.date,
-      viewerName: row.viewername
+      viewerName: row.viewername,
     }));
   }
 
@@ -88,11 +88,11 @@ export class PgViewerStorage {
     `,
       [n]
     );
-    return result.rows.map(row => ({
+    return result.rows.map((row) => ({
       achievement: row.achievement,
       viewerId: row.viewerid,
       date: row.date,
-      viewerName: row.viewername
+      viewerName: row.viewername,
     }));
   }
 
@@ -104,7 +104,7 @@ export class PgViewerStorage {
   ) {
     const updates: Array<{ column: string; value: unknown }> = [
       { column: "id", value: id },
-      { column: "last_action", value: lastAction }
+      { column: "last_action", value: lastAction },
     ];
     if (name !== undefined) {
       updates.push({ column: "name", value: name });
@@ -112,13 +112,13 @@ export class PgViewerStorage {
     if (banned !== undefined) {
       updates.push({ column: "banned", value: banned });
     }
-    const columns = updates.map(u => u.column).join(", ");
+    const columns = updates.map((u) => u.column).join(", ");
     const dollars = updates.map((u, i) => `$${i + 1}`).join(", ");
     const sets = updates
       .filter((u, i) => i > 0)
       .map((u, i) => `${u.column} = $${i + 2}`)
       .join(", ");
-    const values = updates.map(u => u.value);
+    const values = updates.map((u) => u.value);
     const query = `
       insert into viewers(${columns}) values (${dollars})
       on conflict (id) do update set ${sets}

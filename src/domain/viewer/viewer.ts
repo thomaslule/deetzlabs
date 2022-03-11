@@ -19,7 +19,7 @@ import {
   resubscribed,
   sentChatMessage,
   subscribed,
-  gotUnban
+  gotUnban,
 } from "./events";
 
 export class Viewer extends Entity<DecisionState> {
@@ -173,9 +173,9 @@ export class Viewer extends Entity<DecisionState> {
     }
     await Object.keys(this.options.achievements)
       .filter(
-        achievement => !decision.achievementsReceived.includes(achievement)
+        (achievement) => !decision.achievementsReceived.includes(achievement)
       )
-      .map(achievement => {
+      .map((achievement) => {
         const { distributeWhen } = this.options.achievements[achievement];
         if (distributeWhen(decision.achievementsProgress[achievement], event)) {
           return gotAchievement(achievement);
@@ -205,7 +205,7 @@ const initialState = {
   achievementsReceived: [],
   achievementsProgress: {},
   topClipper: false,
-  banned: false
+  banned: false,
 };
 
 function topClipperReducer(state = false, event: Event) {
@@ -260,7 +260,7 @@ export function getDecisionReducer(options: Options): Reducer<DecisionState> {
       achievementsProgress,
       achievementsReceived,
       topClipper,
-      banned
+      banned,
     };
   };
 }

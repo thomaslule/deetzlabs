@@ -14,7 +14,7 @@ export class Widgets {
       try {
         const publicConfig = {
           channel: options.channel,
-          client_id: options.client_id
+          client_id: options.client_id,
         };
         res.type("application/javascript");
         res.send(`window.config = ${JSON.stringify(publicConfig)}`);
@@ -45,7 +45,7 @@ export class Widgets {
         achievement,
         username,
         text,
-        volume
+        volume,
       });
     }
   }

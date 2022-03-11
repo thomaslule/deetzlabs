@@ -21,8 +21,8 @@ const defaultOptions: Options = {
   log_to_file: true,
   widgets_folder: undefined,
   achievements: {},
-  messageToObject: (message: string) => ({}),
-  commands: []
+  messageToObject: () => ({}),
+  commands: [],
 };
 
 export interface Options {

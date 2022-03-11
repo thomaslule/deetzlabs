@@ -9,7 +9,7 @@ export function commandsListener(
 ) {
   return async (event: Event) => {
     if (event.aggregate === "viewer") {
-      const successfulCommands = options.commands.filter(command =>
+      const successfulCommands = options.commands.filter((command) =>
         command.when(event)
       );
       if (successfulCommands.length > 0) {
@@ -21,14 +21,14 @@ export function commandsListener(
           // we don't react to commands if viewer is banned
           return;
         }
-        successfulCommands.forEach(command => {
+        successfulCommands.forEach((command) => {
           const viewerName = viewer.name;
           const viewerAchievements = viewer.achievements;
           const message = command.say({
             event,
             viewerName,
             viewerAchievements,
-            options
+            options,
           });
           if (message) {
             sendChatMessage(message);

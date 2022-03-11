@@ -4,7 +4,7 @@ const createEvent = (type: string, content: Obj) => ({
   version: 1,
   type,
   date: new Date().toISOString(),
-  ...content
+  ...content,
 });
 
 export function begun(game: string) {

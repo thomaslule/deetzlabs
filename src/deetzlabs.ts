@@ -23,7 +23,7 @@ export class Deetzlabs {
     const admin = new Admin();
     this.domain = new Domain(
       new PgStorage(new Pool({ connectionString: this.opts.db_url })),
-      msg => this.twitch.say(msg),
+      (msg) => this.twitch.say(msg),
       (achievement, username, text, volume) =>
         widgets.showAchievement(achievement, username, text, volume),
       this.opts

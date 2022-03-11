@@ -19,9 +19,9 @@ export const consumeStream = async (
         await handler(data);
         callback();
       } catch (err) {
-        this.destroy(err);
+        this.destroy(err as Error);
       }
-    }
+    },
   });
   const promise = new Promise((resolve, reject) => {
     readable.on("error", reject);

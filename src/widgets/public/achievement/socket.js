@@ -11,6 +11,6 @@ function queue(fn, delay) {
   endsAt = new Date(endsAt.getTime() + delay);
 }
 
-socket.on('achievement', (achievement) => {
+socket.on("achievement", (achievement) => {
   queue(() => window.showAchievement(achievement), 10000);
 });

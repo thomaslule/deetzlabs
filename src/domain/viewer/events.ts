@@ -4,7 +4,7 @@ const createEvent = (type: string, content: any = {}) => ({
   version: 1,
   type,
   date: new Date().toISOString(),
-  ...content
+  ...content,
 });
 
 export const changedName = (name: string) =>

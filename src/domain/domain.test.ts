@@ -4,7 +4,7 @@ import {
   makeBroadcastEvent,
   makeViewerEvent,
   testOptions,
-  wait
+  wait,
 } from "../../test/test-util";
 import { configureLog } from "../log";
 import { PgStorage } from "../storage/pg-storage";
@@ -74,7 +74,12 @@ describe("Domain", () => {
 
   test("query.getCredits should return the credits with names", async () => {
     const storage = new PgStorage(db);
-    const domain = new Domain(storage, () => {}, () => {}, testOptions);
+    const domain = new Domain(
+      storage,
+      () => {},
+      () => {},
+      testOptions
+    );
 
     const broadcast = await domain.store.getBroadcast();
     await broadcast.begin("Tetris");
@@ -89,7 +94,7 @@ describe("Domain", () => {
       achievements: [{ viewer: "Someone", achievement: "Cheerleader" }],
       subscribes: [],
       donators: ["Someone"],
-      follows: []
+      follows: [],
     });
   });
 
@@ -131,7 +136,12 @@ describe("Domain", () => {
       .store(
         makeBroadcastEvent({ sequence: 0, type: "begun", game: "Tetris" })
       );
-    const domain = new Domain(storage, () => {}, () => {}, testOptions);
+    const domain = new Domain(
+      storage,
+      () => {},
+      () => {},
+      testOptions
+    );
     await domain.init();
     expect(domain.query.isBroadcasting()).toBeTruthy();
   });
@@ -143,26 +153,31 @@ describe("Domain", () => {
       makeViewerEvent({
         sequence: 1,
         type: "sent-chat-message",
-        message: "hi"
+        message: "hi",
       }),
       makeViewerEvent({
         sequence: 2,
         type: "got-achievement",
-        achievement: "cheerleader"
+        achievement: "cheerleader",
       }),
       {
         aggregate: "settings",
         id: "settings",
         sequence: 0,
         type: "achievement-volume-changed",
-        volume: 0.8
-      }
+        volume: 0.8,
+      },
     ];
     const storage = new PgStorage(db);
     for (const event of events) {
       await storage.getEventStorage().store(event);
     }
-    const domain = new Domain(storage, () => {}, () => {}, testOptions);
+    const domain = new Domain(
+      storage,
+      () => {},
+      () => {},
+      testOptions
+    );
 
     await domain.rebuild();
 
@@ -179,8 +194,8 @@ describe("Domain", () => {
         viewerId: "123",
         viewerName: "Someone",
         achievement: "cheerleader",
-        date: expect.anything()
-      }
+        date: expect.anything(),
+      },
     ]);
   });
 
