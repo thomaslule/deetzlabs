@@ -6,7 +6,8 @@
   "typings": "./lib/index.d.ts",
   "scripts": {
     "build": "rimraf ./lib && tsc && copyfiles -u 1 \"./src/widgets/public/**/*\" ./lib",
-    "test": "jest --runInBand",
+    "test": "docker-compose -f docker-compose.test.yml up --build deetzlabs",
+    "test:dbready": "jest --runInBand",
     "dev": "nodemon",
     "lint": "eslint src"
   },

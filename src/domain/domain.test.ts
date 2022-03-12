@@ -272,6 +272,8 @@ describe("Domain", () => {
     await settings.mute();
 
     const someone = await domain.store.getViewer("123");
+    await someone.chatMessage("hello");
+    await wait();
     await someone.chatMessage("!commands");
     await wait();
 
@@ -288,6 +290,8 @@ describe("Domain", () => {
     await settings.unmute();
 
     const someone = await domain.store.getViewer("123");
+    await someone.chatMessage("hello");
+    await wait();
     await someone.chatMessage("!commands");
     await wait();
 
