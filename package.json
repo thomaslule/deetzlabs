@@ -5,7 +5,6 @@
   "main": "lib/index.js",
   "typings": "./lib/index.d.ts",
   "scripts": {
-    "prepublishOnly": "npm run build",
     "build": "rimraf ./lib && tsc && copyfiles -u 1 \"./src/widgets/public/**/*\" ./lib",
     "test": "jest --runInBand",
     "dev": "nodemon",
