@@ -20,10 +20,11 @@ export function getAuthenticationMiddleware(options: Options): RequestHandler {
         return;
       }
       const login = userResponse.login.toLowerCase();
-      if (!options.logins.map(login => login.toLowerCase()).includes(login)) {
+      if (!options.logins.map((login) => login.toLowerCase()).includes(login)) {
         res.status(403).send({ error: `Login ${login} not authorized` });
         return;
       }
+      res.locals.userLogin = login;
       next();
     } catch (err) {
       next(err);
@@ -38,9 +39,7 @@ async function getLoginFromToken(
 ): Promise<TokenValidationResult> {
   const validateHttpResponse = await fetch(
     "https://id.twitch.tv/oauth2/validate",
-    {
-      headers: { Authorization: authorization }
-    }
+    { headers: { Authorization: authorization } }
   );
   if (!validateHttpResponse.ok) {
     const twitchError = await validateHttpResponse.text();

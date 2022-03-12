@@ -52,7 +52,9 @@ export class Api {
       getAuthenticationMiddleware(this.options),
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       (req: Request, res: Response, next: NextFunction) => {
-        res.sendStatus(204);
+        res.send({
+          isBroadcaster: res.locals.userLogin === this.options.channel,
+        });
       }
     );
 
