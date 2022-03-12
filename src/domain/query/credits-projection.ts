@@ -118,9 +118,11 @@ function reducer(state = emptyCredits(""), event: Event): Credits {
     if (event.type === "subscribed") {
       return addItem(state, "subscribes", event.id);
     }
-    if (event.type === "gave-sub") {
-      const intermediateState = addItem(state, "subscribes", event.recipient);
-      return addItem(intermediateState, "donators", event.id);
+    if (event.type === "received-sub") {
+      const intermediateState = event.gifter
+        ? addItem(state, "donators", event.gifter)
+        : state;
+      return addItem(intermediateState, "subscribes", event.id);
     }
     if (event.type === "cheered") {
       return addItem(state, "donators", event.id);

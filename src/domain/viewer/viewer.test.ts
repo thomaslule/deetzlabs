@@ -179,18 +179,18 @@ describe("Viewer", () => {
     });
   });
 
-  describe("giveSub", () => {
-    test("it should publish a gaveSub event", async () => {
+  describe("giveSubs", () => {
+    test("it should publish a gaveSubs event", async () => {
       const publish = jest.fn().mockImplementation((event) => event);
       const someone = getViewer(publish);
 
-      await someone.giveSub("456", "1000");
+      await someone.giveSubs("1000", 5, undefined);
 
       expect(publish.mock.calls[0][0]).toMatchObject({
-        type: "gave-sub",
-        version: 3,
-        recipient: "456",
+        type: "gave-subs",
+        version: 1,
         plan: "1000",
+        number: 5,
       });
     });
   });

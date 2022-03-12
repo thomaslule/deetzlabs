@@ -10,7 +10,6 @@ import {
   cheered,
   donated,
   followed,
-  gaveSub,
   gotAchievement,
   hosted,
   lostTopClipper,
@@ -19,6 +18,8 @@ import {
   sentChatMessage,
   subscribed,
   gotUnban,
+  receivedSub,
+  gaveSubs,
 } from "./events";
 
 export class Viewer extends Entity<DecisionState> {
@@ -106,10 +107,22 @@ export class Viewer extends Entity<DecisionState> {
     }
   }
 
-  public async giveSub(recipient: string, plan: string) {
-    ow(recipient, ow.string);
+  public async giveSubs(
+    plan: string,
+    number: number,
+    total: number | undefined
+  ) {
     ow(plan, ow.string);
-    const event = await this.publishAndApply(gaveSub(recipient, plan));
+    ow(number, ow.number);
+    ow(total, ow.optional.number);
+    const event = await this.publishAndApply(gaveSubs(plan, number, total));
+    await this.distributeAchievements(event);
+  }
+
+  public async receiveSub(plan: string, gifter: string | undefined) {
+    ow(plan, ow.string);
+    ow(gifter, ow.optional.string);
+    const event = await this.publishAndApply(receivedSub(plan, gifter));
     await this.distributeAchievements(event);
   }
 

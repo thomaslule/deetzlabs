@@ -111,16 +111,32 @@ export class Twitch {
     );
 
     this.channel.on(
+      "sub-gift",
+      async ({ viewerId, viewerName, number, tier, total }) => {
+        try {
+          if (viewerId) {
+            const viewer = await domain.store.getViewer(viewerId);
+            await viewer.setName(viewerName!);
+            await viewer.giveSubs(tier, number, total);
+          }
+        } catch (err) {
+          log.error("sub-gift-received command error");
+          log.error(err as string);
+        }
+      }
+    );
+
+    this.channel.on(
       "sub-gift-received",
       async ({ gifterId, gifterName, recipientId, recipientName, tier }) => {
         try {
           if (gifterId) {
             const gifter = await domain.store.getViewer(gifterId);
             await gifter.setName(gifterName!);
-            await gifter.giveSub(recipientId, tier);
           }
           const recipient = await domain.store.getViewer(recipientId);
           await recipient.setName(recipientName);
+          await recipient.receiveSub(tier, gifterId);
         } catch (err) {
           log.error("sub-gift-received command error");
           log.error(err as string);
