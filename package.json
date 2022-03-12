@@ -1,6 +1,6 @@
 {
   "name": "deetzlabs",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Add viewers achievements and other widgets to a twitch stream",
   "main": "lib/index.js",
   "typings": "./lib/index.d.ts",
@@ -58,7 +58,7 @@
     "@twurple/api": "^5.0.18",
     "@twurple/auth": "^5.0.18",
     "body-parser": "^1.18.3",
-    "deetzlabs-web": "^0.4.1",
+    "deetzlabs-web": "^0.5.0",
     "es-objects": "^0.1.2",
     "express": "^4.16.3",
     "express-validator": "^5.3.0",
