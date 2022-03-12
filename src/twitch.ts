@@ -120,7 +120,7 @@ export class Twitch {
             await viewer.giveSubs(tier, number, total);
           }
         } catch (err) {
-          log.error("sub-gift-received command error");
+          log.error("sub-gift command error");
           log.error(err as string);
         }
       }
@@ -176,6 +176,40 @@ export class Twitch {
         log.error(err as string);
       }
     });
+
+    this.channel.on("hype-train-end", async ({ level, topViewers }) => {
+      try {
+        for (const { viewerId, viewerName } of topViewers) {
+          const viewer = await domain.store.getViewer(viewerId);
+          await viewer.setName(viewerName);
+          await viewer.isInHypeTrain(level);
+        }
+      } catch (err) {
+        log.error("hype-train-end command error");
+        log.error(err as string);
+      }
+    });
+
+    this.channel.on(
+      "reward-redeem",
+      async ({
+        viewerId,
+        viewerName,
+        rewardId,
+        rewartTitle,
+        rewardCost,
+        message,
+      }) => {
+        try {
+          const viewer = await domain.store.getViewer(viewerId);
+          await viewer.setName(viewerName);
+          await viewer.redeemReward(rewardId, rewartTitle, rewardCost, message);
+        } catch (err) {
+          log.error("reward-redeem command error");
+          log.error(err as string);
+        }
+      }
+    );
 
     this.channel.on("ban", async ({ viewerId, viewerName }) => {
       try {

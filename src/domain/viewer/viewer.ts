@@ -20,6 +20,8 @@ import {
   gotUnban,
   receivedSub,
   gaveSubs,
+  wasInHypeTrain,
+  redeemedReward,
 } from "./events";
 
 export class Viewer extends Entity<DecisionState> {
@@ -154,6 +156,28 @@ export class Viewer extends Entity<DecisionState> {
 
   public async follow() {
     const event = await this.publishAndApply(followed());
+    await this.distributeAchievements(event);
+  }
+
+  public async isInHypeTrain(level: number) {
+    ow(level, ow.number);
+    const event = await this.publishAndApply(wasInHypeTrain(level));
+    await this.distributeAchievements(event);
+  }
+
+  public async redeemReward(
+    rewardId: string,
+    rewartTitle: string,
+    rewardCost: number,
+    message: string | undefined
+  ) {
+    ow(rewardId, ow.string);
+    ow(rewartTitle, ow.string);
+    ow(rewardCost, ow.number);
+    ow(message, ow.optional.string);
+    const event = await this.publishAndApply(
+      redeemedReward(rewardId, rewartTitle, rewardCost, message)
+    );
     await this.distributeAchievements(event);
   }
 

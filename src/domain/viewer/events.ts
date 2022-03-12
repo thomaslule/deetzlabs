@@ -48,6 +48,22 @@ export const gotBan = () => createEvent("got-ban");
 
 export const gotUnban = () => createEvent("got-unban");
 
+export const wasInHypeTrain = (level: number) =>
+  createEvent("was-in-hype-train", { level });
+
+export const redeemedReward = (
+  rewardId: string,
+  rewartTitle: string,
+  rewardCost: number,
+  message: string | undefined
+) =>
+  createEvent("redeemed-reward", {
+    rewardId,
+    rewartTitle,
+    rewardCost,
+    message,
+  });
+
 export const becameTopClipper = () => createEvent("became-top-clipper");
 
 export const lostTopClipper = () => createEvent("lost-top-clipper");
