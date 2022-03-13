@@ -21,7 +21,6 @@ export class Twitch {
       clientId: options.client_id,
       clientSecret: options.client_secret,
       callbackUrl: `${options.self_url}/twitch-callback`,
-      removePreviousEventSubSubscriptions: true,
     });
     this.bot = Client({
       connection: {
@@ -273,6 +272,7 @@ export class Twitch {
   }
 
   public async connect(): Promise<void> {
+    await this.api.eventSub.deleteAllSubscriptions();
     await this.channel.connect();
     await this.bot.connect();
     await this.fetchTopClipper();
