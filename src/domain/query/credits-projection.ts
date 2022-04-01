@@ -14,6 +14,7 @@ export class CreditsProjection extends PersistedReduceProjection<Credits> {
       new Set([
         ...credits.viewers,
         ...credits.hosts,
+        ...credits.subscribes,
         ...credits.donators,
         ...credits.follows,
         ...credits.achievements.map((a) => a.viewer),
