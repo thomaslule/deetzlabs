@@ -58,7 +58,7 @@
     "@twurple/api": "^5.0.18",
     "@twurple/auth": "^5.0.18",
     "body-parser": "^1.18.3",
-    "deetzlabs-web": "^0.5.0",
+    "deetzlabs-web": "^0.6.0",
     "es-objects": "^0.1.2",
     "express": "^4.16.3",
     "express-validator": "^5.3.0",
