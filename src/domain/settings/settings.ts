@@ -3,8 +3,8 @@ import ow from "ow";
 import {
   achievementVolumeChanged,
   followersGoalChanged,
-  muted,
-  unmuted,
+  started,
+  stopped,
 } from "./events";
 
 export class Settings extends Entity<undefined> {
@@ -18,12 +18,12 @@ export class Settings extends Entity<undefined> {
     super("settings", decisionSequence, publish);
   }
 
-  public async mute() {
-    await this.publishAndApply(muted());
+  public async start() {
+    await this.publishAndApply(started());
   }
 
-  public async unmute() {
-    await this.publishAndApply(unmuted());
+  public async stop() {
+    await this.publishAndApply(stopped());
   }
 
   public async changeAchievementVolume(volume: number) {

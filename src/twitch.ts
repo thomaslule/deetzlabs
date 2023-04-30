@@ -1,12 +1,12 @@
+import { ApiClient } from "@twurple/api";
+import { ClientCredentialsAuthProvider } from "@twurple/auth";
 import { EventEmitter } from "events";
+import { Express } from "express";
+import { Client } from "tmi.js";
 import { TwitchChannel } from "twitch-channel";
 import { Domain } from "./domain/domain";
 import { log } from "./log";
 import { Options } from "./options";
-import { Client } from "tmi.js";
-import { ClientCredentialsAuthProvider } from "@twurple/auth";
-import { ApiClient } from "@twurple/api";
-import { Express } from "express";
 
 export class Twitch {
   private channel: TwitchChannel;
@@ -69,6 +69,8 @@ export class Twitch {
   public connectToDomain(domain: Domain) {
     this.channel.on("chat", async ({ viewerId, viewerName, message }) => {
       try {
+        const settings = await domain.query.getSettings();
+        if (!settings.started) return;
         const viewer = await domain.store.getViewer(viewerId);
         const broadcastNo = domain.query.getBroadcastNumber();
         await viewer.setName(viewerName);
@@ -83,6 +85,8 @@ export class Twitch {
       "cheer",
       async ({ viewerId, viewerName, amount, message }) => {
         try {
+          const settings = await domain.query.getSettings();
+          if (!settings.started) return;
           const viewer = await domain.store.getViewer(viewerId);
           const broadcastNo = domain.query.getBroadcastNumber();
           await viewer.setName(viewerName);
@@ -98,6 +102,8 @@ export class Twitch {
       "sub",
       async ({ viewerId, viewerName, tier, message, months }) => {
         try {
+          const settings = await domain.query.getSettings();
+          if (!settings.started) return;
           const viewer = await domain.store.getViewer(viewerId);
           const broadcastNo = domain.query.getBroadcastNumber();
           await viewer.setName(viewerName);
@@ -113,6 +119,8 @@ export class Twitch {
       "sub-gift",
       async ({ viewerId, viewerName, number, tier, total }) => {
         try {
+          const settings = await domain.query.getSettings();
+          if (!settings.started) return;
           if (viewerId) {
             const viewer = await domain.store.getViewer(viewerId);
             await viewer.setName(viewerName!);
@@ -129,6 +137,8 @@ export class Twitch {
       "sub-gift-received",
       async ({ gifterId, gifterName, recipientId, recipientName, tier }) => {
         try {
+          const settings = await domain.query.getSettings();
+          if (!settings.started) return;
           if (gifterId) {
             const gifter = await domain.store.getViewer(gifterId);
             await gifter.setName(gifterName!);
@@ -145,6 +155,8 @@ export class Twitch {
 
     this.channel.on("host", async ({ viewerId, viewerName, viewers }) => {
       try {
+        const settings = await domain.query.getSettings();
+        if (!settings.started) return;
         const viewer = await domain.store.getViewer(viewerId);
         await viewer.setName(viewerName);
         await viewer.host(viewers);
@@ -156,6 +168,8 @@ export class Twitch {
 
     this.channel.on("raid", async ({ viewerId, viewerName, viewers }) => {
       try {
+        const settings = await domain.query.getSettings();
+        if (!settings.started) return;
         const viewer = await domain.store.getViewer(viewerId);
         await viewer.setName(viewerName);
         await viewer.raid(viewers);
@@ -167,6 +181,8 @@ export class Twitch {
 
     this.channel.on("follow", async ({ viewerId, viewerName }) => {
       try {
+        const settings = await domain.query.getSettings();
+        if (!settings.started) return;
         const viewer = await domain.store.getViewer(viewerId);
         await viewer.setName(viewerName);
         await viewer.follow();
@@ -178,6 +194,8 @@ export class Twitch {
 
     this.channel.on("hype-train-end", async ({ level, topViewers }) => {
       try {
+        const settings = await domain.query.getSettings();
+        if (!settings.started) return;
         for (const { viewerId, viewerName } of topViewers) {
           const viewer = await domain.store.getViewer(viewerId);
           await viewer.setName(viewerName);
@@ -200,6 +218,8 @@ export class Twitch {
         message,
       }) => {
         try {
+          const settings = await domain.query.getSettings();
+          if (!settings.started) return;
           const viewer = await domain.store.getViewer(viewerId);
           await viewer.setName(viewerName);
           await viewer.redeemReward(rewardId, rewartTitle, rewardCost, message);
@@ -253,6 +273,8 @@ export class Twitch {
 
     this.bus.on("top-clipper", async ({ viewerId, viewerName }) => {
       try {
+        const settings = await domain.query.getSettings();
+        if (!settings.started) return;
         await domain.service.setTopClipper(viewerId, viewerName);
       } catch (err) {
         log.error("top-clipper command error");

@@ -117,29 +117,23 @@ export class Domain {
     log.info("rebuild finished");
   }
 
-  public async sendChatMessage(message: string) {
+  public sendChatMessage(message: string) {
     try {
-      const settings = await this.query.getSettings();
-      if (!settings.muted) {
-        this.doSendChatMessage(message);
-      }
+      this.doSendChatMessage(message);
     } catch (err) {
       log.error("error while trying to send a chat message");
       log.error(err as Error);
     }
   }
 
-  public async showAchievement(
+  public showAchievement(
     achievement: string,
     username: string,
     text: string,
     volume: number
   ) {
     try {
-      const settings = await this.query.getSettings();
-      if (!settings.muted) {
-        this.doShowAchievement(achievement, username, text, volume);
-      }
+      this.doShowAchievement(achievement, username, text, volume);
     } catch (err) {
       log.error("error while trying to send a chat message");
       log.error(err as Error);

@@ -114,12 +114,12 @@ export class Api {
     );
 
     this.router.get(
-      "/muted",
+      "/started",
       getAuthenticationMiddleware(this.options),
       async (req: Request, res: Response, next: NextFunction) => {
         try {
-          const muted = (await this.domain.query.getSettings()).muted;
-          res.send({ muted });
+          const started = (await this.domain.query.getSettings()).started;
+          res.send({ started });
         } catch (err) {
           next(err);
         }
@@ -228,12 +228,12 @@ export class Api {
     );
 
     this.router.post(
-      "/mute",
+      "/start",
       getAuthenticationMiddleware(this.options),
       async (req: any, res: Response, next: NextFunction) => {
         try {
           const settings = await this.domain.store.getSettings();
-          await settings.mute();
+          await settings.start();
           res.sendStatus(200);
         } catch (err) {
           next(err);
@@ -242,12 +242,12 @@ export class Api {
     );
 
     this.router.post(
-      "/unmute",
+      "/stop",
       getAuthenticationMiddleware(this.options),
       async (req: any, res: Response, next: NextFunction) => {
         try {
           const settings = await this.domain.store.getSettings();
-          await settings.unmute();
+          await settings.stop();
           res.sendStatus(200);
         } catch (err) {
           next(err);

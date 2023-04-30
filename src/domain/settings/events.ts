@@ -5,9 +5,9 @@ const createEvent = (type: string, content = {}) => ({
   ...content,
 });
 
-export const muted = () => createEvent("muted");
+export const started = () => createEvent("started");
 
-export const unmuted = () => createEvent("unmuted");
+export const stopped = () => createEvent("stopped");
 
 export const achievementVolumeChanged = (volume: number) =>
   createEvent("achievement-volume-changed", { volume });
