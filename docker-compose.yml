@@ -1,0 +1,23 @@
+version: "3"
+services:
+  deetzlabs:
+    build:
+      context: .
+      dockerfile: develop.Dockerfile
+    ports:
+      - 3100:3100
+    depends_on:
+      - postgres
+    environment:
+      DEETZLABS_db_url: postgresql://postgres:admin@postgres:5432/deetzlabs
+    volumes:
+      - .:/usr/src/app
+
+  postgres:
+    image: postgres:14
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: deetzlabs
