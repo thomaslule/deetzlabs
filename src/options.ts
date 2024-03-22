@@ -1,5 +1,7 @@
 import { Event, Reducer } from "es-objects";
 import { Dictionary } from "lodash";
+import { Domain } from "./domain/domain";
+import { Twitch } from "./twitch";
 import { Obj } from "./util";
 
 const defaultOptions: Options = {
@@ -52,13 +54,21 @@ interface AchievementOption {
 
 interface Command {
   when: (event: Event) => boolean;
-  say: (inputs: CommandInputs) => string | undefined;
+  say?: (inputs: CommandInputs) => string | undefined;
+  do?: (inputs: CommandDoInputs) => Promise<void>;
 }
 
 interface CommandInputs {
   event: Event;
   viewerName: string;
   viewerAchievements: string[];
+  options: Options;
+}
+
+interface CommandDoInputs {
+  event: Event;
+  domain: Domain;
+  twitch: Twitch;
   options: Options;
 }
 

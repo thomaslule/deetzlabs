@@ -3,6 +3,7 @@ import { Writable } from "stream";
 import { log } from "../log";
 import { Options } from "../options";
 import { PgStorage } from "../storage/pg-storage";
+import { Twitch } from "../twitch";
 import { Broadcast } from "./broadcast/broadcast";
 import { BroadcastDomain } from "./broadcast/broadcast-domain";
 import { commandsListener } from "./commands-listener";
@@ -34,6 +35,7 @@ export class Domain {
       text: string,
       volume: number
     ) => void,
+    private twitch: Twitch,
     options: Options
   ) {
     const bus = new EventBus(this.storage.getEventStorage());
@@ -72,7 +74,12 @@ export class Domain {
       );
     });
     bus.onEvent(
-      commandsListener(this.query, (msg) => this.sendChatMessage(msg), options)
+      commandsListener(
+        this,
+        this.twitch,
+        (msg) => this.sendChatMessage(msg),
+        options
+      )
     );
     bus.onEvent(
       displayAchievementListener(

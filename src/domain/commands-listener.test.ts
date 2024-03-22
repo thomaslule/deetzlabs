@@ -1,19 +1,23 @@
 import { makeViewerEvent, testOptions } from "../../test/test-util";
+import { Twitch } from "../twitch";
 import { commandsListener } from "./commands-listener";
-import { Query } from "./query/query";
+import { Domain } from "./domain";
 
 describe("commandsListener", () => {
   test("it should be able to list a viewer's achievements in chat", async () => {
     const sendChatMessage = jest.fn();
-    const query = {
-      getViewerWithAchievements: jest.fn().mockResolvedValue({
-        name: "Someone",
-        achievements: ["cheerleader"],
-        banned: false,
-      }),
+    const domain = {
+      query: {
+        getViewerWithAchievements: jest.fn().mockResolvedValue({
+          name: "Someone",
+          achievements: ["cheerleader"],
+          banned: false,
+        }),
+      },
     };
     const listener = commandsListener(
-      query as unknown as Query,
+      domain as unknown as Domain,
+      {} as Twitch,
       sendChatMessage,
       testOptions
     );
@@ -32,11 +36,14 @@ describe("commandsListener", () => {
 
   test("it should throw if it cannot get the viewer state", async () => {
     const sendChatMessage = jest.fn();
-    const query = {
-      getViewerWithAchievements: jest.fn().mockResolvedValue(undefined),
+    const domain = {
+      query: {
+        getViewerWithAchievements: jest.fn().mockResolvedValue(undefined),
+      },
     };
     const listener = commandsListener(
-      query as unknown as Query,
+      domain as unknown as Domain,
+      {} as Twitch,
       sendChatMessage,
       testOptions
     );
@@ -53,15 +60,18 @@ describe("commandsListener", () => {
 
   test("it should be able to react to follow events", async () => {
     const sendChatMessage = jest.fn();
-    const query = {
-      getViewerWithAchievements: jest.fn().mockResolvedValue({
-        name: "Someone",
-        achievements: [],
-        banned: false,
-      }),
+    const domain = {
+      query: {
+        getViewerWithAchievements: jest.fn().mockResolvedValue({
+          name: "Someone",
+          achievements: [],
+          banned: false,
+        }),
+      },
     };
     const listener = commandsListener(
-      query as unknown as Query,
+      domain as unknown as Domain,
+      {} as Twitch,
       sendChatMessage,
       testOptions
     );
@@ -73,15 +83,18 @@ describe("commandsListener", () => {
 
   test("it should not react to banned viewers' events", async () => {
     const sendChatMessage = jest.fn();
-    const query = {
-      getViewerWithAchievements: jest.fn().mockResolvedValue({
-        name: "Someone",
-        achievements: [],
-        banned: true,
-      }),
+    const domain = {
+      query: {
+        getViewerWithAchievements: jest.fn().mockResolvedValue({
+          name: "Someone",
+          achievements: [],
+          banned: true,
+        }),
+      },
     };
     const listener = commandsListener(
-      query as unknown as Query,
+      domain as unknown as Domain,
+      {} as Twitch,
       sendChatMessage,
       testOptions
     );

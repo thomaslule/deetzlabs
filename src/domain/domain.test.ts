@@ -8,6 +8,7 @@ import {
 } from "../../test/test-util";
 import { configureLog } from "../log";
 import { PgStorage } from "../storage/pg-storage";
+import { Twitch } from "../twitch";
 import { Domain } from "./domain";
 
 describe("Domain", () => {
@@ -23,7 +24,13 @@ describe("Domain", () => {
   test("it should respond to !commands command", async () => {
     const storage = new PgStorage(db);
     const sendChatMessage = jest.fn();
-    const domain = new Domain(storage, sendChatMessage, () => {}, testOptions);
+    const domain = new Domain(
+      storage,
+      sendChatMessage,
+      () => {},
+      {} as Twitch,
+      testOptions
+    );
     const someone = await domain.store.getViewer("123");
 
     await someone.chatMessage("not the command");
@@ -41,7 +48,13 @@ describe("Domain", () => {
   test("it should respond to !achievements command", async () => {
     const storage = new PgStorage(db);
     const sendChatMessage = jest.fn();
-    const domain = new Domain(storage, sendChatMessage, () => {}, testOptions);
+    const domain = new Domain(
+      storage,
+      sendChatMessage,
+      () => {},
+      {} as Twitch,
+      testOptions
+    );
     const someone = await domain.store.getViewer("123");
     await someone.setName("Someone");
     await someone.giveAchievement("cheerleader");
@@ -57,7 +70,13 @@ describe("Domain", () => {
   test("on achievement, it should call showAchievement", async () => {
     const storage = new PgStorage(db);
     const showAchievement = jest.fn();
-    const domain = new Domain(storage, () => {}, showAchievement, testOptions);
+    const domain = new Domain(
+      storage,
+      () => {},
+      showAchievement,
+      {} as Twitch,
+      testOptions
+    );
 
     const viewer = await domain.store.getViewer("123");
     await viewer.setName("Someone");
@@ -78,6 +97,7 @@ describe("Domain", () => {
       storage,
       () => {},
       () => {},
+      {} as Twitch,
       testOptions
     );
 
@@ -103,6 +123,7 @@ describe("Domain", () => {
       new PgStorage(db),
       () => {},
       () => {},
+      {} as Twitch,
       testOptions
     );
     expect((await domain.query.getSettings()).achievementVolume).toBe(0.5);
@@ -120,6 +141,7 @@ describe("Domain", () => {
       new PgStorage(db),
       () => {},
       () => {},
+      {} as Twitch,
       testOptions
     );
     expect(domain.query.getBroadcastNumber()).toBeUndefined();
@@ -140,6 +162,7 @@ describe("Domain", () => {
       storage,
       () => {},
       () => {},
+      {} as Twitch,
       testOptions
     );
     await domain.init();
@@ -176,6 +199,7 @@ describe("Domain", () => {
       storage,
       () => {},
       () => {},
+      {} as Twitch,
       testOptions
     );
 
@@ -206,6 +230,7 @@ describe("Domain", () => {
       new PgStorage(db),
       sendChatMessage,
       showAchievement,
+      {} as Twitch,
       testOptions
     );
 
@@ -230,6 +255,7 @@ describe("Domain", () => {
       new PgStorage(db),
       sendChatMessage,
       showAchievement,
+      {} as Twitch,
       testOptions
     );
 

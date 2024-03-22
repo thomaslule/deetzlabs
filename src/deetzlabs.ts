@@ -3,7 +3,7 @@ import { Admin } from "./admin";
 import { Api } from "./api";
 import { Domain } from "./domain/domain";
 import { configureLog, log } from "./log";
-import { getOptions, Options } from "./options";
+import { Options, getOptions } from "./options";
 import { Server } from "./server";
 import { PgStorage } from "./storage/pg-storage";
 import { Twitch } from "./twitch";
@@ -26,6 +26,7 @@ export class Deetzlabs {
       (msg) => this.twitch.say(msg),
       (achievement, username, text, volume) =>
         widgets.showAchievement(achievement, username, text, volume),
+      this.twitch,
       this.opts
     );
     this.twitch.connectToDomain(this.domain);
